@@ -9,6 +9,7 @@ const Courses = sequelize.define('Courses', {
     title: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        unique: true,
     },
     description: {
         type: DataTypes.TEXT,

@@ -9,6 +9,7 @@ const Fields = sequelize.define('Fields', {
     title: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        unique: true,
     },
     description: {
         type: DataTypes.TEXT,
