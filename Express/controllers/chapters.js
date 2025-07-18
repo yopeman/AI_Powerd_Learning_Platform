@@ -1,4 +1,3 @@
-import { Router } from 'express';
 import { Chapters, Courses, Topics } from '../models/index.js';
 const routes = Router();
 

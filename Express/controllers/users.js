@@ -1,6 +1,3 @@
-import { Router } from 'express';
-const routes = Router();
-
 async function user_current_get(req, res, next) {}
 async function user_current_update(req, res, next) {}
 async function user_get(req, res, next) {}

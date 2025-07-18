@@ -1,6 +1,4 @@
-import { Router } from 'express';
 import { Chapters, Courses } from '../models/index.js';
-const routes = Router();
 
 async function course_chapter(req, res, next) {
     const { courseId } = req.params;

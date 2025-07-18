@@ -1,6 +1,4 @@
-import { Router } from 'express';
 import { Courses, Fields, Subscriptions } from '../models';
-const routes = Router();
 
 async function field_get(req, res, next) {
     const all_fields = await Fields.findAll();

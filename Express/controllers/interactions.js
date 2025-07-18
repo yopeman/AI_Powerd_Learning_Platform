@@ -1,6 +1,4 @@
-import { Router } from 'express';
 import { Interactions } from '../models/index.js';
-const routes = Router();
 
 async function interaction_get(req, res, next) {
     const interactions = await Interactions.findAll({

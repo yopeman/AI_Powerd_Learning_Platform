@@ -1,11 +1,9 @@
-import { Router } from 'express';
 import { Interactions, Topics } from '../models/index.js';
 import ai from '../utilities/ai-service.js';
 import fs from 'fs';
 import { and, Op } from 'sequelize';
 import { find_topics } from '../utilities/contents.js';
 import path from 'path';
-const routes = Router();
 
 async function topic_get_by_id(req, res, next) {
     const { id } = req.params;
