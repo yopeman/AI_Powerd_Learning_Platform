@@ -1,8 +1,15 @@
-async function user_current_get(req, res, next) {}
+async function user_current_get(req, res, next) {
+    // const 
+}
+
 async function user_current_update(req, res, next) {}
+
 async function user_get(req, res, next) {}
+
 async function user_get_by_id(req, res, next) {}
+
 async function user_update(req, res, next) {}
+
 async function user_delete(req, res, next) {}
 
 export {
