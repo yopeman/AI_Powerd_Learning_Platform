@@ -1,13 +1,17 @@
 import { sequelize, DataTypes, uuidv4 } from './config.js';
 
 const Assistants = sequelize.define('Assistants', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: uuidv4(),
+        primaryKey: true,
+    },
     userId: {
         type: DataTypes.UUID,
         references: {
             model: 'Users',
             key: 'id'
         },
-        primaryKey: true,
     },
     fieldId: {
         type: DataTypes.UUID,
@@ -15,7 +19,7 @@ const Assistants = sequelize.define('Assistants', {
             model: 'Fields',
             key: 'id'
         },
-        primaryKey: true,
+        unique: true
     }
 }, { 
     timestamps: true,

@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import * as controllers from '../controllers/assistants.js';
+import { isAdmin, isAssistant, isStudent } from '../utilities/auths.js';
 const routes = Router();
 
-routes.post('/', controllers.assistant_create);
-routes.get('/', controllers.assistant_get);
-routes.delete('/:userId/fields/:fieldId', controllers.assistant_delete);
+routes.post('/', isAdmin, controllers.assistant_create); // verified
+routes.get('/', isAdmin, controllers.assistant_get); // verified
+routes.delete('/:id', isAdmin, controllers.assistant_delete); // verified
 
 export default routes;

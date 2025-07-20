@@ -13,15 +13,15 @@ import users from './users.js';
 const routes = Router();
 
 routes.use('/auths', auths); // verified
-routes.use('/fields', fields);
+routes.use('/fields', fields); // verified
+routes.use('/assistants', assistants); // verified
 routes.use('/courses', courses);
 routes.use('/chapters', chapters);
 routes.use('/topics', topics);
-routes.use('/interactions', interactions);
-routes.use('/assistants', assistants);
-routes.use('/users', users);
 routes.use('/subscriptions', subscriptions);
 routes.use('/payments', payments);
+routes.use('/interactions', interactions);
+routes.use('/users', users);
 routes.use('/analytics', analytics);
 
 export default routes;
