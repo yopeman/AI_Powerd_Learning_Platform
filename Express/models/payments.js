@@ -39,6 +39,12 @@ const Payments = sequelize.define('Payments', {
     },
     transactionId: {
         type: DataTypes.STRING(255),
+    },
+    year: {
+        type: DataTypes.INTEGER,
+    },
+    semester: {
+        type: DataTypes.INTEGER,
     }
 }, { 
     timestamps: true,
