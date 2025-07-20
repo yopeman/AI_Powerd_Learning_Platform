@@ -1,5 +1,4 @@
 import { Chapters, Courses, Topics } from '../models/index.js';
-const routes = Router();
 
 async function chapter_topics(req, res, next) {
     const { chapterId } = req.params;

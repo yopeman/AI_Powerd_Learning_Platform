@@ -23,6 +23,19 @@ const Payments = sequelize.define('Payments', {
     status: {
         type: DataTypes.ENUM('pending', 'completed', 'failed'),
         allowNull: false,
+        defaultValue: 'pending'
+    },
+    checkout_url: {
+        type: DataTypes.STRING(),
+        validate: {
+            isUrl: true
+        }
+    },
+    recipt_url: {
+        type: DataTypes.STRING(),
+        validate: {
+            isUrl: true
+        }
     },
     transactionId: {
         type: DataTypes.STRING(255),
@@ -30,7 +43,7 @@ const Payments = sequelize.define('Payments', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'payments'
+    tableName: 'Payments'
 });
 
 Payments.sync().then().catch();

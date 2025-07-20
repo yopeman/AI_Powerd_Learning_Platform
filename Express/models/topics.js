@@ -24,7 +24,7 @@ const Topics = sequelize.define('Topics', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'topics'
+    tableName: 'Topics'
 });
 
 Topics.sync().then().catch();

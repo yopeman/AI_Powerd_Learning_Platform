@@ -41,8 +41,8 @@ async function auth_register(req, res, next) {
     res.status(201).json({
         message: 'user are created',
         data: {
-            ...new_user,
-            token: token
+            new_user,
+            token
         },
         success: true
     });
@@ -50,6 +50,12 @@ async function auth_register(req, res, next) {
 
 async function auth_login(req, res, next) {
     const { email, password } = req.body;
+    if (!email || !password) {
+        const e = new Error('email and password are required');
+        e.status = 400;
+        return next(e);
+    }
+
     const login_user = await Users.findOne({
         where: { email: email }
     });
@@ -73,16 +79,18 @@ async function auth_login(req, res, next) {
         { expiresIn: '30d' }
     );
     res.status(201).json({
-        message: 'user are created',
+        message: 'user are logined',
         data: {
-            ...login_user,
-            token: token
+            login_user,
+            token
         },
         success: true
     });
 }
 
-async function auth_logout(req, res, next) {}
+async function auth_logout(req, res, next) {
+    ///
+}
 
 export {
     auth_register,

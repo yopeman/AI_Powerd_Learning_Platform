@@ -2,7 +2,7 @@ import { Interactions, Topics } from '../models/index.js';
 import ai from '../utilities/ai-service.js';
 import fs from 'fs';
 import { and, Op } from 'sequelize';
-import { find_topics } from '../utilities/contents.js';
+import { find_topics } from '../utilities/finds.js';
 import path from 'path';
 
 async function topic_get_by_id(req, res, next) {

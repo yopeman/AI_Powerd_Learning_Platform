@@ -20,7 +20,7 @@ const Assistants = sequelize.define('Assistants', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'assistants'
+    tableName: 'Assistants'
 });
 
 Assistants.sync().then().catch();

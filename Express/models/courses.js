@@ -33,7 +33,7 @@ const Courses = sequelize.define('Courses', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'courses'
+    tableName: 'Courses'
 });
 
 Courses.sync().then().catch();

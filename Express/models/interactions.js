@@ -29,7 +29,7 @@ const Interactions = sequelize.define('Interactions', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'interactions'
+    tableName: 'Interactions'
 });
 
 Interactions.sync().then().catch();

@@ -11,7 +11,7 @@ import Interactions from './interactions.js';
 
 sequelize.sync({ force: false })
     .then(() => {
-        console.log('Database & tables created!');
+        // console.log('Database & tables created!');
     })
     .catch((error) => {
         console.error('Error creating database tables:', error);

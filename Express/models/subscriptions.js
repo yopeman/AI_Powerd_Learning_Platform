@@ -23,14 +23,16 @@ const Subscriptions = sequelize.define('Subscriptions', {
     status: {
         type: DataTypes.ENUM('active', 'inactive'),
         allowNull: false,
+        defaultValue: 'active'
     },
     learned_topic_numbers: {
         type: DataTypes.INTEGER,
+        defaultValue: 0
     }
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'subscriptions'
+    tableName: 'Subscriptions'
 });
 
 Subscriptions.sync().then().catch();

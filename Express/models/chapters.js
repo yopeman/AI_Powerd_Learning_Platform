@@ -26,7 +26,7 @@ const Chapters = sequelize.define('Chapters', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'chapters'
+    tableName: 'Chapters'
 });
 
 Chapters.sync().then().catch();

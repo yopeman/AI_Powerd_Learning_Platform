@@ -21,6 +21,7 @@ const Users = sequelize.define('Users', {
     },
     phone: {
         type: DataTypes.STRING(20),
+        unique: true,
     },
     password: {
         type: DataTypes.STRING(255),
@@ -34,7 +35,7 @@ const Users = sequelize.define('Users', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'users'
+    tableName: 'Users'
 });
 
 Users.sync().then().catch();

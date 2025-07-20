@@ -27,7 +27,7 @@ const Fields = sequelize.define('Fields', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'fields'
+    tableName: 'Fields'
 });
 
 Fields.sync().then().catch();

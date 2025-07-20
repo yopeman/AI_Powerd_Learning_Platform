@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 const generate_content = async (topicTitle, context) => {
     const client = new OpenAI({
-    apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
+    apiKey: process.env[`${process.env.OPENAI_API_KEY}`], // This is the default and can be omitted
     });
 
     const prompt = `Generate comprehensive learning material about: ${topicTitle}

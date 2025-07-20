@@ -1,180 +1,161 @@
-import { Courses, Fields, Subscriptions } from '../models';
+import { Courses, Fields, Subscriptions } from '../models/index.js';
 
 async function field_get(req, res, next) {
-    const all_fields = await Fields.findAll();
-    if (!all_fields) {
-        const e = new Error('field not found');
-        e.status = 500;
-        return next(e);
-    }
+    try {
+        const all_fields = await Fields.findAll();
+        if (!all_fields.length) {
+            return next(createError(404, 'No fields found.'));
+        }
 
-    res.status(200).json({
-        message: 'field are fetched',
-        success: true,
-        data: all_fields
-    });
+        res.status(200).json({
+            message: 'Fields fetched successfully.',
+            success: true,
+            data: all_fields
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching fields.'));
+    }
 }
 
 async function field_get_by_id(req, res, next) {
-    const { fieldId } = req.params;
-    if (!fieldId) {
-        const e = new Error('field id is required');
-        e.status = 400;
-        return next(e);
+    const { id } = req.params;
+    if (!id) {
+        return next(createError(400, 'Field ID is required.'));
     }
 
-    const field = await Fields.findByPk(fieldId);
-    if (!field) {
-        const e = new Error('field not found');
-        e.status = 500;
-        return next(e);
-    }
+    try {
+        const field = await Fields.findByPk(id);
+        if (!field) {
+            return next(createError(404, 'Field not found.'));
+        }
 
-    res.status(200).json({
-        message: 'field is fetched',
-        success: true,
-        data: field
-    });
+        res.status(200).json({
+            message: 'Field fetched successfully.',
+            success: true,
+            data: field
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching field.'));
+    }
 }
 
 async function field_create(req, res, next) {
-    const {
-        title,
-        description,
-        years_length,
-        isFree,
-        number_of_free_topics
-    } = req.body;
+    const { title, description, years_length, isFree, number_of_free_topics } = req.body;
 
     if (!title || !years_length || !number_of_free_topics) {
-        const e = new Error('all required field are must be fulfield');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'All required fields must be fulfilled.'));
     }
 
-    const new_field = await Fields.create({
-        title: title,
-        description: description,
-        years_length: years_length,
-        isFree: isFree,
-        number_of_free_topics: number_of_free_topics
-    })
+    try {
+        const new_field = await Fields.create({
+            title,
+            description,
+            years_length,
+            isFree,
+            number_of_free_topics
+        });
 
-    if (!new_field) {
-        const e = new Error('field are not be created');
-        e.status = 500;
-        return next(e);
+        res.status(201).json({
+            message: 'Field created successfully.',
+            success: true,
+            data: new_field
+        });
+    } catch (error) {
+        next(createError(500, 'Error creating field.'));
     }
-
-    res.status(201).json({
-        message: 'field are created',
-        success: true,
-        data: new_field
-    });
 }
 
 async function field_update(req, res, next) {
     const { id } = req.params;
     if (!id) {
-        const e = new Error('field id are must be provided');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Field ID must be provided.'));
     }
 
-    const updated_field = await Fields.update({
-        values: req.body,
-        where: { id: id }
-    });
+    try {
+        const [updated] = await Fields.update(req.body, { where: { id } });
+        if (!updated) {
+            return next(createError(404, 'Field not found or not updated.'));
+        }
 
-    if (!updated_field) {
-        const e = new Error('field are not updated');
-        e.status = 500;
-        return next(e);
+        res.status(200).json({
+            message: 'Field updated successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error updating field.'));
     }
-
-    res.status(201).json({
-        message: 'field is updated',
-        success: true,
-        data: updated_field,
-    });
 }
 
 async function field_delete(req, res, next) {
     const { id } = req.params;
     if (!id) {
-        const e = new Error('field id are must be provided');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Field ID must be provided.'));
     }
 
-    const delete_count = await Fields.destroy({
-        where: { id: id }
-    });
+    try {
+        const delete_count = await Fields.destroy({ where: { id } });
+        if (!delete_count) {
+            return next(createError(404, 'Field not found or not deleted.'));
+        }
 
-    if (!delete_count) {
-        const e = new Error('field are not deleted');
-        e.status = 500;
-        return next(e);
+        res.status(200).json({
+            message: 'Field deleted successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error deleting field.'));
     }
-
-    res.status(200).json({
-        message: 'field are deleted',
-        success: true
-    })
 }
 
 async function field_course(req, res, next) {
     const { fieldId } = req.params;
     if (!fieldId) {
-        const e = new Error('field id are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Field ID is required.'));
     }
 
-    const courses = await Courses.findAll({
-        where: { fieldId: fieldId }
-    });
+    try {
+        const courses = await Courses.findAll({ where: { fieldId } });
+        if (!courses.length) {
+            return next(createError(404, 'No courses available for this field.'));
+        }
 
-    if (!courses) {
-        const e = new Error('no fields are avilable in this fields');
-        e.status = 500;
-        return next(e);
+        res.status(200).json({
+            message: 'Courses fetched successfully.',
+            success: true,
+            data: courses
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching courses.'));
     }
-
-    res.status(200).json({
-        message: 'field course are fetched',
-        success: true,
-        data: courses
-    });
 }
 
-async function field_subscription_status(req, res, next) {
-    const { userId } = req.user;
+async function field_subscriptions(req, res, next) {
     const { fieldId } = req.params;
-    if (!userId || fieldId) {
-        const e = new Error('field id and user id is required');
-        e.status = 400;
-        return next(e);
+    if (!fieldId) {
+        return next(createError(400, 'Field ID are required.'));
     }
 
-    const sub_status = await Subscriptions.findOne({
-        where: {
-            userId: userId,
-            fieldId: fieldId
+    try {
+        const subscriptions = await Subscriptions.findAll({ where: { fieldId } });
+        if (!subscriptions.length) {
+            return next(createError(404, 'No subscription found.'));
         }
-    });
 
-    if (!sub_status) {
-        const e = new Error('no subscription is found');
-        e.status = 500;
-        return next(e);
+        res.status(200).json({
+            message: 'Subscriptions fetched successfully.',
+            success: true,
+            data: subscriptions
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching subscription status.'));
     }
+}
 
-    res.status(200).json({
-        message: 'subscription status are fetched',
-        success: true,
-        data: sub_status.status
-    });
+// Helper function to create standardized errors
+function createError(status, message) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
 }
 
 export {
@@ -184,5 +165,5 @@ export {
     field_update,
     field_delete,
     field_course,
-    field_subscription_status
+    field_subscriptions
 }
