@@ -15,9 +15,9 @@ const routes = Router();
 routes.use('/auths', auths); // verified
 routes.use('/fields', fields); // verified
 routes.use('/assistants', assistants); // verified
-routes.use('/courses', courses);
-routes.use('/chapters', chapters);
-routes.use('/topics', topics);
+routes.use('/courses', courses); // verified
+routes.use('/chapters', chapters); // verified
+routes.use('/topics', topics); //
 routes.use('/subscriptions', subscriptions);
 routes.use('/payments', payments);
 routes.use('/interactions', interactions);

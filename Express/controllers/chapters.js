@@ -1,109 +1,120 @@
+import { uuidv4 } from '../models/config.js';
 import { Chapters, Courses, Topics } from '../models/index.js';
+
+// Helper function to create standardized errors
+function createError(status, message) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
+}
 
 async function chapter_topics(req, res, next) {
     const { chapterId } = req.params;
+    
     if (!chapterId) {
-        const e = new Error('chapter id are not required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Chapter ID is required.'));
     }
 
-    const topics = await Topics.findAll({
-        where: { chapterId: chapterId }
-    });
+    try {
+        const topics = await Topics.findAll({ where: { chapterId } });
 
-    if (!topics) {
-        const e = new Error('topics are not found in chapters');
-        e.status = 404;
-        return next(e);
+        if (!topics.length) {
+            return next(createError(404, 'No topics found in this chapter.'));
+        }
+
+        res.status(200).json({
+            message: 'Topics fetched successfully.',
+            data: topics,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching topics.'));
     }
-
-    res.status(200).json({
-        message: 'topics are fetched',
-        data: topics,
-        success: true
-    });
 }
 
 async function chapter_create(req, res, next) {
-    const {
-        courseId,
-        chapters
-    } = req.body;
+    const { courseId, chapters } = req.body;
 
-    const courses = await Courses.findByPk(courseId);
-    if (courses.chapters_length !== chapters.length) {
-        const e = new Error('chapters length are not matched');
-        e.status = 400;
-        return next(e);
-    }
-
-    chapters.map(chapter => {
-        const { title, description, order } = chapter;
-        if (!title || !description || !order) {
-            const e = new Error('all data are required');
-            e.status = 400;
-            return next(e);
+    try {
+        const course = await Courses.findByPk(courseId);
+        if (!course) {
+            return next(createError(404, 'Course not found.'));
         }
 
-        const new_chapter = async () => await Chapters.create({
-            courseId,
-            title,
-            description,
-            order
+        if (course.chapters_length !== chapters.length) {
+            return next(createError(400, 'Chapters length does not match.'));
+        }
+
+        for (const chapter of chapters) {
+            const { title, description, order } = chapter;
+            if (!title || !order) {
+                return next(createError(400, 'All chapter data is required.'));
+            }
+
+            await Chapters.create({
+                id: uuidv4(),
+                courseId,
+                title,
+                description,
+                order
+            });
+        }
+
+        res.status(201).json({
+            message: 'Chapters created successfully.',
+            success: true
         });
-        new_chapter();
-    });
+    } catch (error) {
+        console.log(error);
+        
+        next(createError(500, 'Error creating chapters.'));
+    }
 }
 
 async function chapter_update(req, res, next) {
     const { id } = req.params;
+    
     if (!id) {
-        const e = new Error('chapter id are not required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Chapter ID is required.'));
     }
 
-    const updated_chapter = await Chapters.update({
-        value: req.body,
-        where: { id: id }
-    });
+    try {
+        const [updated] = await Chapters.update(req.body, { where: { id } });
 
-    if (!updated_chapter) {
-        const e = new Error('chapter are not updated');
-        e.status = 500;
-        return next(e);
+        if (!updated) {
+            return next(createError(404, 'Chapter not found or not updated.'));
+        }
+
+        res.status(200).json({
+            message: 'Chapter updated successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error updating chapter.'));
     }
-
-    res.status(201).json({
-        message: 'chapter are updated',
-        data: updated_chapter,
-        success: true
-    });
 }
 
 async function chapter_delete(req, res, next) {
     const { id } = req.params;
+    
     if (!id) {
-        const e = new Error('chapter id are not required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Chapter ID is required.'));
     }
 
-    const deleted_chapter = await Chapters.destroy({
-        where: { id: id }
-    });
+    try {
+        const deleted = await Chapters.destroy({ where: { id } });
 
-    if (!deleted_chapter) {
-        const e = new Error('chapter are not deleted');
-        e.status = 500;
-        return next(e);
+        if (!deleted) {
+            return next(createError(404, 'Chapter not found or already deleted.'));
+        }
+
+        res.status(200).json({
+            message: 'Chapter deleted successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error deleting chapter.'));
     }
-
-    res.status(200).json({
-        message: 'chapter are deleted',
-        success: true
-    });
 }
 
 export {

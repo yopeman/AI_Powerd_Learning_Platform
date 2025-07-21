@@ -1,116 +1,107 @@
 import { Chapters, Courses } from '../models/index.js';
 
+// Helper function to create standardized errors
+function createError(status, message) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
+}
+
 async function course_chapter(req, res, next) {
     const { courseId } = req.params;
+    
     if (!courseId) {
-        const e = new Error('course id is required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Course ID is required.'));
     }
 
-    const chapters = await Chapters.findAll({
-        where: { courseId: courseId }
-    })
+    try {
+        const chapters = await Chapters.findAll({ where: { courseId } });
 
-    if (!chapters) {
-        const e = new Error('Chapter not found in this courses');
-        e.status = 404;
-        next(e);
+        if (!chapters.length) {
+            return next(createError(404, 'No chapters found for this course.'));
+        }
+
+        res.status(200).json({
+            message: 'Course chapters fetched successfully.',
+            data: chapters,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching chapters.'));
     }
-
-    res.status(200).json({
-        message: 'course chapters are fetched',
-        data: chapters,
-        success: true
-    })
 }
 
 async function course_create(req, res, next) {
-    const {
-        title,
-        description,
-        fieldId,
-        year,
-        semester,
-        chapters_length
-    } = req.body;
+    const { title, description, fieldId, year, semester, chapters_length } = req.body;
 
     if (!title || !fieldId || !year || !semester || !chapters_length) {
-        const e = new Error('all field are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'All fields are required.'));
     }
 
-    const new_course = await Courses.create({
-        title: title,
-        description: description,
-        fieldId: fieldId,
-        year: year,
-        semester: semester,
-        chapters_length: chapters_length
-    });
+    try {
+        const new_course = await Courses.create({
+            title,
+            description,
+            fieldId,
+            year,
+            semester,
+            chapters_length
+        });
 
-    if (!new_course) {
-        const e = new Error('course are not created');
-        e.status = 500;
-        return next(e);
+        res.status(201).json({
+            message: 'Course created successfully.',
+            data: new_course,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error creating course.'));
     }
-
-    res.status(201).json({
-        message: 'course are created',
-        data: new_course,
-        success: true
-    })
 }
 
 async function course_update(req, res, next) {
     const { id } = req.params;
+    
     if (!id) {
-        const e = new Error('course id are required');
-        e.status(400);
-        return next(e);
+        return next(createError(400, 'Course ID is required.'));
     }
 
-    const updated_course = await Courses.update({
-        values: req.body,
-        where: { id: id }
-    });
+    try {
+        const [updated] = await Courses.update(req.body, { where: { id } });
 
-    if (!updated_course) {
-        const e = new Error('course are not updated');
-        e.status = 500;
-        return next(e);
+        if (!updated) {
+            return next(createError(404, 'Course not found or not updated.'));
+        }
+
+        res.status(200).json({
+            message: 'Course updated successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error updating course.'));
     }
-
-    res.status(201).json({
-        message: 'course are updated',
-        data: updated_course,
-        success: true
-    });
 }
 
 async function course_delete(req, res, next) {
     const { id } = req.params;
+    
     if (!id) {
-        const e = new Error('course id are required');
-        e.status(400);
-        return next(e);
+        return next(createError(400, 'Course ID is required.'));
     }
 
-    const delete_course = await Courses.destroy({
-        where: { id: id }
-    });
+    try {
+        const deleted_course = await Courses.destroy({ where: { id } });
 
-    if (!delete_course) {
-        const e = new Error('course are not deleted');
-        e.status = 500;
-        return next(e);
+        if (!deleted_course) {
+            return next(createError(404, 'Course not found or already deleted.'));
+        }
+
+        res.status(200).json({
+            message: 'Course deleted successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error deleting course.'));
     }
-
-    res.status(200).json({
-        message: 'course are deleted',
-        success: true
-    });
 }
 
 export {

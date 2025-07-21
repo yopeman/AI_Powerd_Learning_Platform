@@ -8,8 +8,7 @@ const Topics = sequelize.define('Topics', {
     },
     title: {
         type: DataTypes.STRING(255),
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     content_file_path: {
         type: DataTypes.STRING(255),
