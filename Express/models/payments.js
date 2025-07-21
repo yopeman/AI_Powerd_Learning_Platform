@@ -20,6 +20,12 @@ const Payments = sequelize.define('Payments', {
     method: {
         type: DataTypes.STRING(50),
     },
+    year: {
+        type: DataTypes.INTEGER,
+    },
+    semester: {
+        type: DataTypes.INTEGER,
+    },
     status: {
         type: DataTypes.ENUM('pending', 'completed', 'failed'),
         allowNull: false,
@@ -39,12 +45,6 @@ const Payments = sequelize.define('Payments', {
     },
     transactionId: {
         type: DataTypes.STRING(255),
-    },
-    year: {
-        type: DataTypes.INTEGER,
-    },
-    semester: {
-        type: DataTypes.INTEGER,
     }
 }, { 
     timestamps: true,

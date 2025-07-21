@@ -8,6 +8,7 @@ import { handler, error_handler } from './utilities/error-handler.js';
 import { sequelize } from './models/index.js';
 import request_parser from './utilities/requests.js';
 import isAuth from './utilities/auths.js';
+import { payment_webhook } from './controllers/payments.js';
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(request_parser);
 app.get('/api', (req, res) => { res.json('AiPLP is lived...') })
 app.use(auth_routes);
+app.use('/payments/webhook', payment_webhook);
 app.use('/api/v1/', isAuth, routes);
 app.use(handler);
 app.use(error_handler);

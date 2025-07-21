@@ -1,121 +1,91 @@
-import { uuidv4 } from '../models/config.js';
-import { Payments, Subscriptions, Users } from '../models/index.js';
-import axios from 'axios';
-import { find_fields } from '../utilities/finds.js';
+import { Subscriptions } from '../models/index.js';
+import { Op } from 'sequelize';
+
+// Helper function to create standardized errors
+function createError(status, message) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
+}
 
 async function subscription_create(req, res, next) {
     const { userId, fieldId } = req.body;
+
     if (!userId || !fieldId) {
-        const e = new Error('subscription detail are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Subscription details are required.'));
     }
 
-    const new_subscription = await Subscriptions.create({
-        userId: userId,
-        fieldId: fieldId
-    });
+    try {
+        const new_subscription = await Subscriptions.create({ userId, fieldId });
 
-    if (!new_subscription) {
-        const e = new Error('subscription are not created');
-        e.status = 500;
-        return next(e);
-    }
-    
-    let new_payment;
-    const field_info = await find_fields(fieldId);
-    if (field_info.fields.isFree) {
-        let amount = 100;
-        const payment_id = uuidv4();
-        const user = await Users.findByPk(userId);
-        const payment_init = await axios.post('https://api.chapa.co/v1/transaction/initialize', {
-            amount: amount,
-            currency: 'ETB',
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            phone_number: user.phone,
-            tx_ref: payment_id,
-            callback_url: `${process.env.DOMMAIN}/payments/webhook`,
-            // return_url: 'https://www.google.com/',
-        }, {
-            'Authorization': `Bearer ${process.env.CHAPA_SECRET}`,
-            'Content-Type': 'application/json'
+        res.status(201).json({
+            message: 'Subscription created successfully.',
+            data: new_subscription,
+            success: true
         });
-                
-        const payment_info = payment_init.data;
-        if (payment_info.status != 'success') {
-            const e = new Error('payment is not enitailized');
-            e.status = 500;
-            return next(e);
-        }
-
-        new_payment = await Payments.create({
-            id: payment_id,
-            subscriptionId: new_subscription.id,
-            amount: amount,
-            checkout_url: payment_info.data.checkout_url,
-        });
+    } catch (error) {
+        next(createError(500, 'Error creating subscription.'));
     }
-
-    res.status(201).json({
-        message: 'subscription are created',
-        data: {
-            ...new_subscription,
-            ...new_payment
-        },
-        success: true
-    });
 }
 
-async function subscription_get(req, res, next) {
-    const { id } = req.params;
-    if (!id) {
-        const e = new Error('subscription id are required');
-        e.status = 400;
-        return next(e);
-    }
+async function subscription_current_user(req, res, next) {
+    const userId = req.user.id;
 
-    const subscription = await Subscriptions.findByPk(id);
-    if (!subscription) {
-        const e = new Error('subscription are not found');
-        e.status = 404;
-        return next(e);
-    }
+    try {
+        const subscriptions = await Subscriptions.findAll({ where: { userId } });
 
-    res.status(200).json({
-        message: 'subscription are fetched',
-        data: subscription,
-        success: true
-    });
+        if (!subscriptions.length) {
+            return next(createError(404, 'No subscriptions found for this user.'));
+        }
+
+        res.status(200).json({
+            message: 'Subscriptions fetched successfully.',
+            data: subscriptions,
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
+        
+        next(createError(500, 'Error fetching subscriptions.'));
+    }
 }
 
 async function subscription_cancel(req, res, next) {
     const { id } = req.params;
+    const userId = req.user.id;
+
     if (!id) {
-        const e = new Error('subscription id are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'Subscription ID is required.'));
     }
 
-    const canceld_subscription = await Subscriptions.findByPk(id);
-    if (!canceld_subscription) {
-        const e = new Error('subscription are not found');
-        e.status = 404;
-        return next(e);
-    }
+    try {
+        const [updated] = await Subscriptions.update(
+            { status: 'inactive' },
+            {
+                where: {
+                    [Op.and]: [
+                        { id },
+                        { userId }
+                    ]
+                }
+            }
+        );
 
-    canceld_subscription.status = 'inactive';
-    await canceld_subscription.save();
-    res.status(201).json({
-        message: 'subscription are canceled',
-        data: canceld_subscription,
-        success: true
-    });
+        if (!updated) {
+            return next(createError(404, 'Subscription not found.'));
+        }
+
+        res.status(200).json({
+            message: 'Subscription canceled successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error canceling subscription.'));
+    }
 }
 
 export {
     subscription_create,
-    subscription_get,
+    subscription_current_user,
     subscription_cancel
 }

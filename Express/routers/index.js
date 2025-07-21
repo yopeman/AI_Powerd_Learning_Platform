@@ -18,8 +18,8 @@ routes.use('/assistants', assistants); // verified
 routes.use('/courses', courses); // verified
 routes.use('/chapters', chapters); // verified
 routes.use('/topics', topics); //
-routes.use('/subscriptions', subscriptions);
-routes.use('/payments', payments);
+routes.use('/subscriptions', subscriptions); // verified
+routes.use('/payments', payments); // verified
 routes.use('/interactions', interactions);
 routes.use('/users', users);
 routes.use('/analytics', analytics);
