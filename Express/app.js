@@ -4,7 +4,7 @@ dotenv.config();
 import express from 'express';
 import routes from './routers/index.js';
 import auth_routes from './routers/auths.js';
-import { handler, error_handler } from './utilities/error-handler.js';
+import { handler, error_handler } from './utilities/error-handlers.js';
 import { sequelize } from './models/index.js';
 import request_parser from './utilities/requests.js';
 import isAuth from './utilities/auths.js';

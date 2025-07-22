@@ -11,7 +11,7 @@ const Topics = sequelize.define('Topics', {
         allowNull: false
     },
     content_file_path: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(5000),
     },
     chapterId: {
         type: DataTypes.UUID,

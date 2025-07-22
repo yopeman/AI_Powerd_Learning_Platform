@@ -24,7 +24,7 @@ const Interactions = sequelize.define('Interactions', {
         type: DataTypes.TEXT,
     },
     response_file_path: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(5000),
     }
 }, { 
     timestamps: true,
