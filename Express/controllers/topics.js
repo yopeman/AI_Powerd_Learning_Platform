@@ -153,8 +153,8 @@ async function topic_content(req, res, next) {
         };
 
         const generatedContent = await generateContent(topicDetail.topics.title, context);
-        const dirPath = path.join(__dirname, sanitize(`../public/Fields_${topicDetail.fields.id}/Courses_${topicDetail.courses.id}/Chapters_${topicDetail.chapters.id}/Topics_${topicDetail.topics.id}/Contents`));
-        const filePath = path.join(dirPath, sanitize(`${topicDetail.topics.title}_${topicDetail.topics.id}.md`));
+        const dirPath = path.join(__dirname, `../public/Fields_${topicDetail.fields.id}/Courses_${topicDetail.courses.id}/Chapters_${topicDetail.chapters.id}/Topics_${topicDetail.topics.id}/Contents`);
+        const filePath = path.join(dirPath, `${sanitize(topicDetail.topics.title)}_${topicDetail.topics.id}.md`);
 
         await fs.promises.mkdir(dirPath, { recursive: true });
         await fs.promises.writeFile(filePath, generatedContent);
@@ -233,8 +233,8 @@ async function topic_ask(req, res, next) {
         };
 
         const generatedContent = await generateAnswer(question, context);
-        const dirPath = path.join(__dirname, sanitize(`../public/Fields_${topicDetail.fields.id}/Courses_${topicDetail.courses.id}/Chapters_${topicDetail.chapters.id}/Topics_${topicDetail.topics.id}/Interactions`));
-        const filePath = path.join(dirPath, sanitize(`${question}_${topicDetail.topics.id}.md`));
+        const dirPath = path.join(__dirname, `../public/Fields_${topicDetail.fields.id}/Courses_${topicDetail.courses.id}/Chapters_${topicDetail.chapters.id}/Topics_${topicDetail.topics.id}/Interactions`);
+        const filePath = path.join(dirPath, `${sanitize(question)}_${topicDetail.topics.id}.md`);
 
         await fs.promises.mkdir(dirPath, { recursive: true });
         await fs.promises.writeFile(filePath, generatedContent);
@@ -285,14 +285,14 @@ async function topic_current_interactions(req, res, next) {
 
 async function generateContent(topicTitle, context) {
     // return await generateContent_By_OpenAI(topicTitle, context);
-    // return await generateContent_By_GoogleGenAI(topicTitle, context);
-    return `# ${topicTitle, context}`;
+    return await generateContent_By_GoogleGenAI(topicTitle, context);
+    // return `# ${topicTitle, context}`;
 }
 
 async function generateAnswer(question, history) {
     // return await generateAnswer_By_OpenAI(question, history);
-    // return await generateAnswer_By_GoogleGenAI(question, history);
-    return `# ${question, history}`;
+    return await generateAnswer_By_GoogleGenAI(question, history);
+    // return `# ${question, history}`;
 }
 
 export {
