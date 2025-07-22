@@ -206,11 +206,44 @@ async function topic_ask(req, res, next) {
     }
 }
 
+async function topic_current_interactions(req, res, next) {
+    const { topicId } = req.params;
+    const userId = req.user.id;
+
+    if (!topicId) {
+        return next(createError(400, 'Topic ID is required.'));
+    }
+
+    try {
+        const interactions = await Interactions.findAll({
+            where: {
+                [Op.and]: [
+                    { topicId },
+                    { userId }
+                ]
+            },
+        });
+
+        if (interactions.length === 0) {
+            return next(createError(404, 'No interactions found for this user and topic.'));
+        }
+
+        res.status(200).json({
+            message: 'Interactions fetched successfully.',
+            data: interactions,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error fetching topic interactions: ${error.message}`));
+    }
+}
+
 export {
     topic_get_by_id,
     topic_create,
     topic_update,
     topic_delete,
     topic_content,
-    topic_ask
+    topic_ask,
+    topic_current_interactions
 }

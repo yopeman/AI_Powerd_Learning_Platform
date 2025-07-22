@@ -1,146 +1,157 @@
 import { Users } from "../models/index.js";
+import bcrypt from 'bcrypt';
 
 async function user_current_get(req, res, next) {
     if (!req.user) {
-        const e = new Error('user are unthorized');
-        e.status = 401;
-        return next(e);
+        return next(createError(401, 'User is unauthorized.'));
     }
+
+    const user = await Users.findByPk(req.user.id, {
+        attributes: { exclude: ['password'] }
+    });
 
     res.status(200).json({
-        message: 'current user are fetched',
-        data: req.user,
-        success: true
-    });
-}
-
-async function user_current_update(req, res, next) {
-    const {
-        first_name,
-        last_name,
-        email,
-        phone,
-        password
-    } = req.body;
-
-    const salt = await bcrypt.genSalt(12);
-    const hash_password = await bcrypt.hash(password, salt);
-    
-    const updated_user = await Users.update({
-        value: {
-            first_name: first_name || req.user.first_name,
-            last_name: last_name || req.user.last_name,
-            email: email || req.user.email,
-            phone: phone || req.user.phone,
-            password: hash_password || req.user.password
-        },
-        where: { id: req.user.id }
-    });
-
-    if (!updated_user) {
-        const e = new Error('user are not updated');
-        e.status = 500;
-        return next(e);
-    }
-
-    res.status(201).json({
-        message: 'user are updated successfully',
-        data: updated_user,
-        success: true
-    });
-}
-
-async function user_get(req, res, next) {
-    const users = await Users.findAll();
-    if (!users) {
-        const e = new Error('users are not found');
-        e.status = 404;
-        return next(e);
-    }
-
-    res.status(200).json({
-        message: 'users are fetched successfully',
-        data: users,
-        success: true
-    });
-}
-
-async function user_get_by_id(req, res, next) {
-    const { id } = req.params;
-    if (!id) {
-        const e = new Error('user id are required');
-        e.status = 400;
-        return next(e);
-    }
-
-    const user = await Users.findByPk(id);
-    if (!user) {
-        const e = new Error('user are not found in this id');
-        e.status = 404;
-        return next(e);
-    }
-
-    res.status(200).json({
-        message: 'user are fetched successfully',
+        message: 'Current user fetched successfully.',
         data: user,
         success: true
     });
 }
 
+async function user_current_update(req, res, next) {
+    const { first_name, last_name, email, phone, password } = req.body;
+    const id = req.user.id;
+    const user = await Users.findByPk(id);
+
+    try {
+        const updates = {
+            first_name: first_name || user.first_name,
+            last_name: last_name || user.last_name,
+            email: email || user.email,
+            phone: phone || user.phone,
+        };
+
+        if (password) {
+            const salt = await bcrypt.genSalt(12);
+            updates.password = await bcrypt.hash(password, salt);
+        }
+
+        const [updated] = await Users.update(updates, { where: { id } });
+
+        if (updated === 0) {
+            return next(createError(500, 'User not updated.'));
+        }
+
+        res.status(200).json({
+            message: 'User updated successfully.',
+            data: updates,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error updating user: ${error.message}`));
+    }
+}
+
+async function user_get(req, res, next) {
+    try {
+        const users = await Users.findAll();
+
+        if (users.length === 0) {
+            return next(createError(404, 'No users found.'));
+        }
+
+        res.status(200).json({
+            message: 'Users fetched successfully.',
+            data: users,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error fetching users: ${error.message}`));
+    }
+}
+
+async function user_get_by_id(req, res, next) {
+    const { id } = req.params;
+
+    if (!id) {
+        return next(createError(400, 'User ID is required.'));
+    }
+
+    try {
+        const user = await Users.findByPk(id);
+        
+        if (!user) {
+            return next(createError(404, 'User not found.'));
+        }
+
+        res.status(200).json({
+            message: 'User fetched successfully.',
+            data: user,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error fetching user: ${error.message}`));
+    }
+}
+
 async function user_update(req, res, next) {
     const { id } = req.params;
+
     if (!id) {
-        const e = new Error('user id are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'User ID is required.'));
     }
 
     if (!req.body) {
-        const e = new Error('user data are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'User data is required.'));
     }
 
-    const updated_user = await Users.update({
-        value: req.body,
-        where: { id: id }
-    });
-
-    if (!updated_user) {
-        const e = new Error('user are not updated');
-        e.status = 500;
-        return next(e);
+    if (req.body.password) {
+        const salt = await bcrypt.genSalt(12);
+        req.body.password = await bcrypt.hash(req.body.password, salt);
     }
 
-    res.status(201).json({
-        message: 'user are updated',
-        data: updated_user,
-        success: true
-    });
+    try {
+        const [updated] = await Users.update(req.body, { where: { id } });
+
+        if (updated === 0) {
+            return next(createError(500, 'User not updated.'));
+        }
+
+        res.status(200).json({
+            message: 'User updated successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error updating user: ${error.message}`));
+    }
 }
 
 async function user_delete(req, res, next) {
     const { id } = req.params;
+
     if (!id) {
-        const e = new Error('user id are required');
-        e.status = 400;
-        return next(e);
+        return next(createError(400, 'User ID is required.'));
     }
 
-    const deleted_user = await Users.destroy({
-        where: { id: id }
-    });
+    try {
+        const deleted = await Users.destroy({ where: { id } });
 
-    if (!deleted_user) {
-        const e = new Error('user are not deleted');
-        e.status = 500;
-        return next(e);
+        if (deleted === 0) {
+            return next(createError(404, 'User not found or already deleted.'));
+        }
+
+        res.status(200).json({
+            message: 'User deleted successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error deleting user: ${error.message}`));
     }
+}
 
-    res.status(200).json({
-        message: 'user are deleted',
-        success: true
-    });
+function createError(status, message) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
 }
 
 export {

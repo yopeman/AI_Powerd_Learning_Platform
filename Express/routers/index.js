@@ -5,7 +5,6 @@ import assistants from './assistants.js';
 import chapters from './chapters.js';
 import courses from './courses.js';
 import fields from './fields.js';
-import interactions from './interactions.js';
 import payments from './payments.js';
 import subscriptions from './subscriptions.js';
 import topics from './topics.js';
@@ -20,8 +19,7 @@ routes.use('/chapters', chapters); // verified
 routes.use('/topics', topics); //
 routes.use('/subscriptions', subscriptions); // verified
 routes.use('/payments', payments); // verified
-routes.use('/interactions', interactions);
-routes.use('/users', users);
-routes.use('/analytics', analytics);
+routes.use('/users', users); // verified
+routes.use('/analytics', analytics); // verified
 
 export default routes;
