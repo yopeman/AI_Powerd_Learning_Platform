@@ -285,14 +285,14 @@ async function topic_current_interactions(req, res, next) {
 
 async function generateContent(topicTitle, context) {
     // return await generateContent_By_OpenAI(topicTitle, context);
-    return await generateContent_By_GoogleGenAI(topicTitle, context);
-    // return `# ${topicTitle, context}`;
+    // return await generateContent_By_GoogleGenAI(topicTitle, context);
+    return `# ${JSON.stringify(topicTitle)} => ${JSON.stringify(context)}`;
 }
 
 async function generateAnswer(question, history) {
     // return await generateAnswer_By_OpenAI(question, history);
-    return await generateAnswer_By_GoogleGenAI(question, history);
-    // return `# ${question, history}`;
+    // return await generateAnswer_By_GoogleGenAI(question, history);
+    return `# ${JSON.stringify(question)} => ${JSON.stringify(history)}`;
 }
 
 export {
