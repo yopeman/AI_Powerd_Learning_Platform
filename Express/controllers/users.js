@@ -2,10 +2,6 @@ import { Users } from "../models/index.js";
 import bcrypt from 'bcrypt';
 
 async function user_current_get(req, res, next) {
-    if (!req.user) {
-        return next(createError(401, 'User is unauthorized.'));
-    }
-
     const user = await Users.findByPk(req.user.id, {
         attributes: { exclude: ['password'] }
     });

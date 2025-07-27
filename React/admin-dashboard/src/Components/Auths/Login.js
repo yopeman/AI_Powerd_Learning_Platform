@@ -4,71 +4,85 @@ import { authApi } from '../../Utilities/api';
 import store from '../../Utilities/data-storage';
 
 export default function Login() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState();
-  const [success, setSuccess] = useState();
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log('Form submitted:', formData);
 
     try {
       const response = await authApi.post('/login', formData);
-      if (response.data.success) {
-      setSuccess('Login successful');
-      setError(undefined);
-      store.set('token', response.data.data.token);
-      navigate('/');
+      const { success, data, message: responseMessage } = response.data;
+
+      if (success) {
+        if (data.user.role === 'admin') {
+          store.set('token', data.token);
+          setMessage({ text: 'Login successful', type: 'success' });
+          navigate('/');
+        } else {
+          setMessage({ text: 'You do not have admin privileges to access the Admin Dashboard', type: 'error' });
+        }
       } else {
-      setError(response.data.message);
-      setSuccess(undefined);
+        setMessage({ text: responseMessage, type: 'error' });
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-      setSuccess(undefined);
+      setMessage({ text: err.response?.data?.message || 'Login failed', type: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <h1>Loading...</h1>;
   return (
     <div>
       <h1>Login</h1>
+      {loading && <h2>Loading...</h2>}
       <form onSubmit={handleSubmit}>
-        <h3>{JSON.stringify(error)}</h3>
-        <h3>{JSON.stringify(success)}</h3>
-        <p>Email</p>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          placeholder="Email"
-        />
-        <p>Password</p>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          placeholder="Password"
-        /><br />
-        <button type="submit">Login</button>
-        <button type="reset" onClick={() => setFormData({
-          email: '',
-          password: ''
-        })}>
+        {message.text && (
+          <h3 className={message.type === 'error' ? 'error' : 'success'}>
+            {message.text}
+          </h3>
+        )}
+        <label>
+          <p>Email</p>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+          />
+        </label>
+        <label>
+          <p>Password</p>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+          />
+        </label>
+        <button type="submit" disabled={loading}>
+          Login
+        </button>
+        <button
+          type="button"
+          onClick={() => setFormData({ email: '', password: '' })}
+        >
           Reset
         </button>
-        <Link to="/register"> Go to Register </Link>
+        <Link to="/register">Go to Register</Link>
       </form>
     </div>
-  )
+  );
 }

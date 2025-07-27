@@ -18,14 +18,14 @@ export default function Headers() {
   return (
     <div>
       <h1><center><Link to='/'>Admin Dashboard</Link></center></h1>
-      {/*<p># {location.pathname}</p>*/}
-      {/*<p><sub><sup><small>{store.get('token') || 'mmm'}</small></sup></sub></p>*/}
       <Token/>
       <div>
         <button onClick={handlePreviousPage}>&lt;</button>
         <button onClick={handleNextPage}>&gt;</button>
         # {location.pathname}
+        <Link to='/profile' style={{float: 'right'}}>Profile</Link>
       </div><br/>
+      <p><sub><sup><small>{store.get('token') || 'mmm'}</small></sup></sub></p>
     </div>
   )
 }

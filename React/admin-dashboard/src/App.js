@@ -4,6 +4,7 @@ import './App.css';
 import Components from './Components/Components';
 import Register from './Components/Auths/Register';
 import Login from './Components/Auths/Login';
+import Profiles from "./Components/Auths/Profiles";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
     <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/profile' element={<Profiles />} />
         <Route path='/*' element={<Components />} />
     </Routes>
     </BrowserRouter>
