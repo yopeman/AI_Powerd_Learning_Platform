@@ -13,7 +13,7 @@ export default function FieldAnalytics() {
       setError(null);
 
       try {
-        const response = await api.get(`/analytics/users`);
+        const response = await api.get(`/analytics/payments`);
         if (response.data.success) {
           setAnalytic(response.data.data);
         } else {
@@ -36,12 +36,13 @@ export default function FieldAnalytics() {
 
   return (
     <div>
-      <h1>User Analytics</h1>
+      <h1>Payment Analytics</h1>
       <ul>
-        <li><b>Total Users</b>: {analytic.totalUsers}</li>
-        <li><b>Assistant</b>: {analytic.assistant}</li>
-        <li><b>Student</b>: {analytic.student}</li>
-        <li><b>Admin</b>: {analytic.admin}</li>
+        <li><b>Total Payments</b>: {analytic.totalPayments}</li>
+        <li><b>Completed Payments</b>: {analytic.completedPayments}</li>
+        <li><b>Pending Payments</b>: {analytic.pendingPayments}</li>
+        <li><b>Failed Payments</b>: {analytic.failedPayments}</li>
+        <li><b>Total Revenue</b>: {analytic.totalRevenue}</li>
       </ul>
     </div>
   )

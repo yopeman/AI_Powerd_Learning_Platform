@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv4 } from './config.js';
+import { sequelize, DataTypes, uuidv7 } from './config.js';
 
 const Fields = sequelize.define('Fields', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv4(),
+        defaultValue: uuidv7(),
         primaryKey: true,
     },
     title: {

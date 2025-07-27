@@ -16,6 +16,7 @@ import GetFields from '../Fields/GetFields';
 import GetFieldsById from '../Fields/GetFieldsById';
 import UpdateFields from '../Fields/UpdateFields';
 import DeleteFields from '../Fields/DeleteFields';
+import SubscriptionFields from '../Fields/SubscriptionFields';
 
 import Assistants from '../Assistants/Assistants';
 import CreateAssistants from '../Assistants/CreateAssistants';
@@ -29,6 +30,7 @@ import FieldAnalytics from '../Analytics/FieldAnalytics';
 import TopicAnalytics from '../Analytics/TopicAnalytics';
 import UserAnalytics from '../Analytics/UserAnalytics';
 import SubscriptionAnalytics from '../Analytics/SubscriptionAnalytics';
+import PaymentAnalytics from '../Analytics/PaymentAnalytics';
 
 import PageNotFound from '../Layouts/Errors/PageNotFound';
 
@@ -49,6 +51,7 @@ export default function Layouts() {
         <Route path='/fields/create' element={<CreateFields />} />
         <Route path='/fields/get' element={<GetFields />} />
         <Route path='/fields/get/:id' element={<GetFieldsById />} />
+        <Route path='/fields/subscription/:id' element={<SubscriptionFields />} />
         <Route path='/fields/update/:id' element={<UpdateFields />} />
         <Route path='/fields/delete/:id' element={<DeleteFields />} />
 
@@ -64,6 +67,7 @@ export default function Layouts() {
         <Route path='/analytics/topics' element={<TopicAnalytics />} />
         <Route path='/analytics/users' element={<UserAnalytics />} />
         <Route path='/analytics/subscriptions' element={<SubscriptionAnalytics />} />
+        <Route path='/analytics/payments' element={<PaymentAnalytics />} />
 
         <Route path='*' element={<PageNotFound />} />
       </Routes>

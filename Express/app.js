@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
+import cors from 'cors';
 import routes from './routers/index.js';
 import auth_routes from './routers/auths.js';
 import { handler, error_handler } from './utilities/error-handlers.js';
@@ -11,6 +12,7 @@ import isAuth from './utilities/auths.js';
 import { payment_webhook } from './controllers/payments.js';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

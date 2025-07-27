@@ -7,9 +7,9 @@ export default function AssistantsTab() {
       <ul>
         <li><Link to='/assistants/create'>Create Assistants</Link></li>
         <li><Link to='/assistants/get'>Get Assistants</Link></li>
-        {/* <li>Get Assistants By ID</li>
-        <li>Update Assistants</li>
-        <li>Delete Assistants</li> */}
+        {/*<li>Get Assistants By ID</li>*/}
+        {/*<li>Update Assistants</li>*/}
+        {/*<li>Delete Assistants</li>*/}
       </ul>
     </div>
   )

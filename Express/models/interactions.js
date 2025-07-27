@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv4 } from './config.js';
+import { sequelize, DataTypes, uuidv7 } from './config.js';
 
 const Interactions = sequelize.define('Interactions', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv4(),
+        defaultValue: uuidv7(),
         primaryKey: true,
     },
     userId: {
@@ -11,14 +11,18 @@ const Interactions = sequelize.define('Interactions', {
         references: {
             model: 'Users',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     topicId: {
         type: DataTypes.UUID,
         references: {
             model: 'Topics',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     questions: {
         type: DataTypes.TEXT,

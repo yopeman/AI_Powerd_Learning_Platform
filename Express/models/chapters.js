@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv4 } from './config.js';
+import { sequelize, DataTypes, uuidv7 } from './config.js';
 
 const Chapters = sequelize.define('Chapters', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv4(),
+        defaultValue: uuidv7(),
         primaryKey: true,
     },
     courseId: {
@@ -11,7 +11,9 @@ const Chapters = sequelize.define('Chapters', {
         references: {
             model: 'Courses',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     title: {
         type: DataTypes.STRING(255),

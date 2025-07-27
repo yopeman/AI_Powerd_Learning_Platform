@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv7 } from 'uuid';
 import { Users, Payments, Fields } from '../models/index.js';
 
 async function payment_create(req, res, next) {
@@ -17,7 +17,7 @@ async function payment_create(req, res, next) {
         }
 
         const amount = 200;
-        const paymentId = uuidv4();
+        const paymentId = uuidv7();
         const user = await Users.findByPk(req.user.id);
 
         const paymentInit = await axios.post('https://api.chapa.co/v1/transaction/initialize', {

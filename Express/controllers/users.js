@@ -109,6 +109,10 @@ async function user_update(req, res, next) {
         req.body.password = await bcrypt.hash(req.body.password, salt);
     }
 
+    delete req.body.id; // Ensure ID is not updated
+    delete req.body.createdAt; // Prevent updating createdAt field
+    delete req.body.updatedAt; // Prevent updating updatedAt field
+    
     try {
         const [updated] = await Users.update(req.body, { where: { id } });
 
@@ -148,6 +152,34 @@ async function user_delete(req, res, next) {
     }
 }
 
+async function user_create(req, res, next) {
+    const { first_name, last_name, email, phone, password, role } = req.body;
+    if (!first_name || !last_name || !email || !password) {
+        return next(createError(400, 'All fields are required.'));
+    }
+    try {
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = await Users.create({
+            first_name,
+            last_name,
+            email,
+            phone,
+            password: hashedPassword,
+            role
+        });
+
+        res.status(201).json({
+            message: 'User created successfully.',
+            data: newUser,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error creating user: ${error.message}`));
+    }
+}
+
 function createError(status, message) {
     const error = new Error(message);
     error.status = status;
@@ -160,5 +192,6 @@ export {
     user_get,
     user_get_by_id,
     user_update,
-    user_delete
+    user_delete,
+    user_create
 }

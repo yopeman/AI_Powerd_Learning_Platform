@@ -1,4 +1,4 @@
-import { Courses, Fields, Subscriptions } from '../models/index.js';
+import { Courses, Fields, Subscriptions, Users } from '../models/index.js';
 
 async function field_get(req, res, next) {
     try {
@@ -103,6 +103,8 @@ async function field_delete(req, res, next) {
             success: true
         });
     } catch (error) {
+        console.log(error);
+        
         next(createError(500, 'Error deleting field.'));
     }
 }
@@ -136,7 +138,14 @@ async function field_subscriptions(req, res, next) {
     }
 
     try {
+        const field = await Fields.findByPk(fieldId);
+        if (!field) {
+            return next(createError(404, 'Field not found.'));
+        }
+        
         const subscriptions = await Subscriptions.findAll({ where: { fieldId } });
+        const users = await Promise.all(subscriptions.map(async  sub => await Users.findByPk(sub.userId)));
+
         if (!subscriptions.length) {
             return next(createError(404, 'No subscription found.'));
         }
@@ -144,9 +153,11 @@ async function field_subscriptions(req, res, next) {
         res.status(200).json({
             message: 'Subscriptions fetched successfully.',
             success: true,
-            data: subscriptions
+            data: { subscriptions, users, field }
         });
     } catch (error) {
+        console.log(error.message);
+        
         next(createError(500, 'Error fetching subscription status.'));
     }
 }

@@ -7,9 +7,9 @@ export default function UsersTab() {
       <ul>
         <li><Link to='/users/create'>Create Users</Link></li>
         <li><Link to='/users/get'>Get Users</Link></li>
-        {/* <li>Get Users By ID</li>
-        <li>Update Users</li>
-        <li>Delete Users</li> */}
+        {/*<li>Get Users By ID</li>*/}
+        {/*<li>Update Users</li>*/}
+        {/*<li>Delete Users</li>*/}
       </ul>
     </div>
   )

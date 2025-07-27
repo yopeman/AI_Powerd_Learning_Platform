@@ -16,7 +16,7 @@ routes.use('/fields', fields); // verified
 routes.use('/assistants', assistants); // verified
 routes.use('/courses', courses); // verified
 routes.use('/chapters', chapters); // verified
-routes.use('/topics', topics); //
+routes.use('/topics', topics); // verified
 routes.use('/subscriptions', subscriptions); // verified
 routes.use('/payments', payments); // verified
 routes.use('/users', users); // verified

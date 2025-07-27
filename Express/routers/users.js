@@ -9,5 +9,6 @@ routes.get('/', isAdmin, controllers.user_get); // verified
 routes.get('/:id', isAdmin, controllers.user_get_by_id); // verified
 routes.put('/:id', isAdmin, controllers.user_update); // verified
 routes.delete('/:id', isAdmin, controllers.user_delete); // verified
+routes.post('/', isAdmin, controllers.user_create); // verified
 
 export default routes;

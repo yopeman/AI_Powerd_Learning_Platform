@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -15,5 +15,5 @@ const sequelize = new Sequelize(
 export {
     sequelize,
     DataTypes,
-    uuidv4
+    uuidv7
 }

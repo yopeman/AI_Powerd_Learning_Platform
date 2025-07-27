@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv4 } from './config.js';
+import { sequelize, DataTypes, uuidv7 } from './config.js';
 
 const Assistants = sequelize.define('Assistants', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv4(),
+        defaultValue: uuidv7(),
         primaryKey: true,
     },
     userId: {
@@ -12,6 +12,8 @@ const Assistants = sequelize.define('Assistants', {
             model: 'Users',
             key: 'id'
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     fieldId: {
         type: DataTypes.UUID,
@@ -19,7 +21,9 @@ const Assistants = sequelize.define('Assistants', {
             model: 'Fields',
             key: 'id'
         },
-        unique: true
+        unique: true,
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     }
 }, { 
     timestamps: true,

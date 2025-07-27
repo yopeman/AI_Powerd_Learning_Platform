@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { Users } from '../models/index.js';
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -6,18 +7,20 @@ async function isAuth(req, res, next) {
     const authorization = req.headers.authorization;
 
     if (!authorization) {
-        return res.status(401).json({ message: 'No Authorization Header' });
+        return next(createError(res, 401, 'No Authorization Header'));
     }
 
     try {
         const token = authorization.split('Bearer ')[1];
         if (!token) {
-            return res.status(401).json({ message: 'Invalid Token Format' });
+            return next(createError(401, 'Invalid Token Format'));
         }
 
         const decoded = jwt.verify(token, SECRET_KEY);
-        req.user = decoded.login_user;
-        console.log('Current user:', req.user);
+        console.log('Decoded JWT:', decoded);
+
+        req.user = await Users.findByPk(decoded.id);
+        // console.log('Current user:', req.user);
         next();
     } catch (error) {
         handleJwtError(error, next);
@@ -38,7 +41,7 @@ function handleJwtError(error, next) {
 function hasRole(role) {
     return (req, res, next) => {
         if (!req.user) {
-            return res.status(401).json({ message: 'Unauthorized user' });
+            return next(createError(401, `Unauthorized user`));
         }
 
         if (req.user.role !== role) {

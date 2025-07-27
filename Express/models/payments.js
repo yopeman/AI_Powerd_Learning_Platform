@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv4 } from './config.js';
+import { sequelize, DataTypes, uuidv7 } from './config.js';
 
 const Payments = sequelize.define('Payments', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv4(),
+        defaultValue: uuidv7(),
         primaryKey: true,
     },
     subscriptionId: {
@@ -11,7 +11,9 @@ const Payments = sequelize.define('Payments', {
         references: {
             model: 'Subscriptions',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     amount: {
         type: DataTypes.DECIMAL(10, 2),

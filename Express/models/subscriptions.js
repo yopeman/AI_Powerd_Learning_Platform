@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv4 } from './config.js';
+import { sequelize, DataTypes, uuidv7 } from './config.js';
 
 const Subscriptions = sequelize.define('Subscriptions', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv4(),
+        defaultValue: uuidv7(),
         primaryKey: true,
     },
     userId: {
@@ -11,14 +11,18 @@ const Subscriptions = sequelize.define('Subscriptions', {
         references: {
             model: 'Users',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     fieldId: {
         type: DataTypes.UUID,
         references: {
             model: 'Fields',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     },
     status: {
         type: DataTypes.ENUM('active', 'inactive'),

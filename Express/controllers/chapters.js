@@ -1,4 +1,4 @@
-import { uuidv4 } from '../models/config.js';
+import { uuidv7 } from '../models/config.js';
 import { Chapters, Courses, Topics } from '../models/index.js';
 
 // Helper function to create standardized errors
@@ -52,7 +52,7 @@ async function chapter_create(req, res, next) {
             }
 
             await Chapters.create({
-                id: uuidv4(),
+                id: uuidv7(),
                 courseId,
                 title,
                 description,

@@ -45,7 +45,55 @@ async function assistant_get(req, res, next) {
             success: true
         });
     } catch (error) {
-        next(createError(500, 'Error fetching assistants.'));
+        next(createError(500, `Error fetching assistants. ${error.message}`));
+    }
+}
+
+async function assistant_get_by_id(req, res, next) {
+    const { id } = req.params;
+
+    if (!id) {
+        return next(createError(400, 'Assistant ID is required.'));
+    }
+
+    try {
+        const assistant = await Assistants.findByPk(id);
+
+        if (!assistant) {
+            return next(createError(404, 'Assistant not found.'));
+        }
+
+        res.status(200).json({
+            message: 'Assistant fetched successfully.',
+            data: assistant,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching assistant.'));
+    }
+}
+
+async function assistant_update(req, res, next) {
+    const { id } = req.params;
+    const { fieldId, userId } = req.body;
+
+    if (!id || !fieldId || !userId) {
+        return next(createError(400, 'Assistant ID, User ID and Field ID are required.'));
+    }
+
+    try {
+        const updated_assistant = await Assistants.update({ fieldId, userId }, { where: { id } });
+
+        if (!updated_assistant[0]) {
+            return next(createError(404, 'Assistant not found.'));
+        }
+
+        res.status(200).json({
+            message: 'Assistant updated successfully.',
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error updating assistant.'));
     }
 }
 
@@ -75,5 +123,7 @@ async function assistant_delete(req, res, next) {
 export {
     assistant_create,
     assistant_get,
+    assistant_get_by_id,
+    assistant_update,
     assistant_delete
 }

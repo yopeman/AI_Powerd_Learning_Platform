@@ -7,5 +7,6 @@ routes.get('/fields', isAdmin, controllers.analytic_fields);
 routes.get('/topics', isAdmin, controllers.analytic_topics);
 routes.get('/subscriptions', isAdmin, controllers.analytic_subscriptions);
 routes.get('/users', isAdmin, controllers.analytic_users);
+routes.get('/payments', isAdmin, controllers.analytic_payments);
 
 export default routes;
