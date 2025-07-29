@@ -20,7 +20,7 @@ async function isAuth(req, res, next) {
         console.log('Decoded JWT:', decoded);
 
         req.user = await Users.findByPk(decoded.id);
-        // console.log('Current user:', req.user);
+        console.log('Current user:', req.user);
         next();
     } catch (error) {
         handleJwtError(error, next);

@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { Assistants, Users } from "../models/index.js";
+import { Assistants, Fields, Users } from "../models/index.js";
 
 // Helper function to create standardized errors
 function createError(status, message) {
@@ -119,11 +119,43 @@ async function assistant_delete(req, res, next) {
         next(createError(500, 'Error deleting assistant.'));
     }
 }
+async function assistant_current_fields(req, res, next) {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return next(createError(401, 'Unauthorized: User ID not found.'));
+        }
+
+        const assistants = await Assistants.findAll({ where: { userId } });
+
+        if (!assistants.length) {
+            return next(createError(404, 'No assistants found for the current user.'));
+        }
+
+        const fieldIds = assistants.map(a => a.fieldId);
+        const fields = await Fields.findAll({
+            where: { id: { [Op.in]: fieldIds } }
+        });
+
+        if (!fields.length) {
+            return next(createError(404, 'No assistants fields found for the current user.'));
+        }
+
+        res.status(200).json({
+            message: 'Assistant fields fetched successfully.',
+            data: { assistants, fields },
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, `Error fetching assistant fields for current user. ${error.message}`));
+    }
+}
 
 export {
     assistant_create,
     assistant_get,
     assistant_get_by_id,
     assistant_update,
-    assistant_delete
+    assistant_delete,
+    assistant_current_fields
 }

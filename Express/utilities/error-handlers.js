@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 function handler(req, res, next) {
-    const error = new Error('Not Found');
+    const error = new Error('Page Not Found');
     error.status = 404;
     next(error);
 }

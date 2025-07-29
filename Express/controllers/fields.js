@@ -123,8 +123,8 @@ async function field_course(req, res, next) {
 
         res.status(200).json({
             message: 'Courses fetched successfully.',
-            success: true,
-            data: courses
+            data: courses,
+            success: true
         });
     } catch (error) {
         next(createError(500, 'Error fetching courses.'));

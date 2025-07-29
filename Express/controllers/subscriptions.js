@@ -1,4 +1,4 @@
-import { Subscriptions } from '../models/index.js';
+import { Fields, Subscriptions } from '../models/index.js';
 import { Op } from 'sequelize';
 
 // Helper function to create standardized errors
@@ -28,7 +28,7 @@ async function subscription_create(req, res, next) {
     }
 }
 
-async function subscription_current_user(req, res, next) {
+async function subscription_current_fields(req, res, next) {
     const userId = req.user.id;
 
     try {
@@ -38,9 +38,14 @@ async function subscription_current_user(req, res, next) {
             return next(createError(404, 'No subscriptions found for this user.'));
         }
 
+        const subscriptionIds = subscriptions.map(s => s.fieldId);
+        const fields = await Fields.findAll({
+            where: { id: { [Op.in]: subscriptionIds } }
+        });
+
         res.status(200).json({
             message: 'Subscriptions fetched successfully.',
-            data: subscriptions,
+            data: { subscriptions, fields },
             success: true
         });
     } catch (error) {
@@ -86,6 +91,6 @@ async function subscription_cancel(req, res, next) {
 
 export {
     subscription_create,
-    subscription_current_user,
+    subscription_current_fields,
     subscription_cancel
 }

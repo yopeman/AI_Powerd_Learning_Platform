@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  flex: 0 1 60px;
+  border: 2px solid #3498db;
+  background-color: #ecf0f1;
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+}
+
+.side-bar {
+  flex: 0 1 200px;
+  border: 2px solid #e74c3c;
+  background-color: #f9f9f9;
+}
+
+.main-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #2ecc71;
+  background-color: #ffffff;
+}
+
+.top-tab {
+  flex: 0 1 40px;
+  border: 2px solid #f39c12;
+  background-color: #f1c40f;
+}
+
+.main-content {
+  flex: 1;
+  border: 2px solid #8e44ad;
+  background-color: #dcdcdc;
+}
+
+.footer {
+  flex: 0 1 40px;
+  border: 2px solid #e67e22;
+  background-color: #34495e;
+}

@@ -8,6 +8,28 @@ function createError(status, message) {
     return error;
 }
 
+async function chapter_get(req, res, next) {
+    const { id } = req.params;
+
+    if (!id) {
+        return next(createError(400, 'Chapter ID is required.'));
+    }
+
+    try {
+        const chapter = await Chapters.findByPk(id);
+        if (!chapter) {
+            return next(createError(404, 'Chapter not found.'));
+        }
+        res.status(200).json({
+            message: 'Chapter fetched successfully.',
+            data: chapter,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching chapter.'));
+    }
+}
+
 async function chapter_topics(req, res, next) {
     const { chapterId } = req.params;
     
@@ -118,6 +140,7 @@ async function chapter_delete(req, res, next) {
 }
 
 export {
+    chapter_get,
     chapter_topics,
     chapter_create,
     chapter_update,

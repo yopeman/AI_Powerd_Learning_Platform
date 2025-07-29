@@ -6,6 +6,27 @@ function createError(status, message) {
     error.status = status;
     return error;
 }
+async function course_get(req, res, next) {
+    const { id } = req.params;
+    if (!id) {
+        return next(createError(400, 'Course ID is required.'));
+    }
+
+    try {
+        const course = await Courses.findByPk(id);
+        if (!course) {
+            return next(createError(404, 'Course not found.'));
+        }
+
+        res.status(200).json({
+            message: 'Course fetched successfully.',
+            data: course,
+            success: true
+        });
+    } catch (error) {
+        next(createError(500, 'Error fetching course.'));
+    }
+}
 
 async function course_chapter(req, res, next) {
     const { courseId } = req.params;
@@ -54,6 +75,8 @@ async function course_create(req, res, next) {
             success: true
         });
     } catch (error) {
+        console.log(error);
+        
         next(createError(500, 'Error creating course.'));
     }
 }
@@ -105,6 +128,7 @@ async function course_delete(req, res, next) {
 }
 
 export {
+    course_get,
     course_chapter,
     course_create,
     course_update,
