@@ -43,6 +43,7 @@ async function auth_register(req, res, next) {
             success: true
         });
     } catch (error) {
+        console.log(error);
         next(createError(500, `Error creating user: ${error.message}`));
     }
 }
