@@ -8,7 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Keyboard,
-  Alert
+  Alert, ScrollView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { authApi } from '../Utilities/api';
@@ -65,7 +65,7 @@ export default function LoginScreen({ setIsAuth }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Login</Text>
       
       {message.text && (
@@ -121,7 +121,7 @@ export default function LoginScreen({ setIsAuth }) {
           <Text style={styles.registerLink}>Sign Up</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

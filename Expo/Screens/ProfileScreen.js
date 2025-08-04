@@ -17,7 +17,6 @@ import { useNavigation } from '@react-navigation/native';
 import { api } from '../Utilities/api';
 
 export default function ProfileScreen() {
-  const navigation = useNavigation();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',

@@ -9,7 +9,8 @@ function createError(status, message) {
 }
 
 async function subscription_create(req, res, next) {
-    const { userId, fieldId } = req.body;
+    const { fieldId } = req.body;
+    const userId = req.user.id;
 
     if (!userId || !fieldId) {
         return next(createError(400, 'Subscription details are required.'));
@@ -25,6 +26,8 @@ async function subscription_create(req, res, next) {
         });
     } catch (error) {
         next(createError(500, 'Error creating subscription.'));
+        console.log(error);
+        
     }
 }
 

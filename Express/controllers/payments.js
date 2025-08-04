@@ -1,17 +1,35 @@
 import axios from 'axios';
 import { v4 as uuidv7 } from 'uuid';
-import { Users, Payments, Fields } from '../models/index.js';
+import { Users, Payments, Fields, Subscriptions } from '../models/index.js';
+import { Op } from 'sequelize';
 
 async function payment_create(req, res, next) {
-    const { fieldId, subscriptionId, year, semester } = req.body;
+    const { fieldId, year, semester } = req.body;
 
     // Validate input
-    if (!fieldId || !subscriptionId || !year || !semester) {
+    if (!fieldId || !year || !semester) {
         return next(createError(400, 'Payment details are required.'));
     }
 
     try {
         const field = await Fields.findByPk(fieldId);
+        if (!field) {
+            return next(createError(404, 'Field not found.'));
+        }
+
+        const subscription = await Subscriptions.findOne({
+            where: { 
+                [Op.and]: [
+                    { userId: req.user.id },
+                    { fieldId }
+                ]
+             }
+        });
+        
+        if (!subscription) {
+            return next(createError(404, 'Subscription not found'));
+        }
+
         if (field.isFree) {
             return next(createError(400, 'Field is free, no payment required.'));
         }
@@ -42,7 +60,7 @@ async function payment_create(req, res, next) {
 
         const newPayment = await Payments.create({
             id: paymentId,
-            subscriptionId,
+            subscriptionId: subscription.id,
             amount,
             checkout_url: paymentInit.data.data.checkout_url,
             year,

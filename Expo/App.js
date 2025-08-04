@@ -16,7 +16,6 @@ import FieldScreen from './Screens/FieldScreen';
 import CourseScreen from './Screens/CourseScreen';
 import ChapterScreen from './Screens/ChapterScreen';
 import TopicScreen from './Screens/TopicScreen';
-import DetailScreen from './Screens/DetailScreen';
 import PaymentScreen from './Screens/PaymentScreen';
 import SettingScreen from './Screens/SettingScreen';
 import AboutScreen from './Screens/AboutScreen';
@@ -34,7 +33,6 @@ function LearningNavigator() {
       <Stack.Screen name="Course" component={CourseScreen} />
       <Stack.Screen name="Chapter" component={ChapterScreen} />
       <Stack.Screen name="Topic" component={TopicScreen} />
-      <Stack.Screen name="Detail" component={DetailScreen} />
       <Stack.Screen name="Certificate" component={CertificateScreen} />
     </Stack.Navigator>
   );
@@ -46,7 +44,15 @@ function TabNavigator() {
       <Tab.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ title: 'Home' }}
+        options={({navigation}) => ({
+          title: 'Home',
+          headerRight: () => (
+            <Button
+              title="Setting"
+              onPress={() => navigation.navigate('Setting')}
+            />
+          ),
+        })}
       />
       <Tab.Screen 
         name="Subscription" 
@@ -63,8 +69,16 @@ function TabNavigator() {
       />
       <Tab.Screen 
         name="Profile" 
-        component={ProfileScreen} 
-        options={{ title: 'Profile' }}
+        component={ProfileScreen}
+        options={({navigation}) => ({
+          title: 'Profile',
+          headerRight: () => (
+            <Button
+              title="About Us"
+              onPress={() => navigation.navigate('About')}
+            />
+          ),
+        })}
       />
     </Tab.Navigator>
   );
@@ -83,16 +97,16 @@ function MainDrawer() {
         component={LearningNavigator} 
         options={{ drawerLabel: 'Learning' }}
       />
-      <Drawer.Screen 
-        name="Setting" 
-        component={SettingScreen} 
-        options={{ drawerLabel: 'Settings' }}
-      />
-      <Drawer.Screen 
-        name="About" 
-        component={AboutScreen} 
-        options={{ drawerLabel: 'About Us' }}
-      />
+      {/*<Drawer.Screen */}
+      {/*  name="Setting" */}
+      {/*  component={SettingScreen} */}
+      {/*  options={{ drawerLabel: 'Settings' }}*/}
+      {/*/>*/}
+      {/*<Drawer.Screen */}
+      {/*  name="About" */}
+      {/*  component={AboutScreen} */}
+      {/*  options={{ drawerLabel: 'About Us' }}*/}
+      {/*/>*/}
     </Drawer.Navigator>
   );
 }
@@ -115,6 +129,8 @@ function RootNavigator(props) {
               options={{ headerShown: false }} 
             />
             <Stack.Screen name="Payment" component={PaymentScreen} />
+            <Stack.Screen name="Setting" component={SettingScreen} />
+            <Stack.Screen name="About" component={AboutScreen} />
           </>
         ) : (
           <>
