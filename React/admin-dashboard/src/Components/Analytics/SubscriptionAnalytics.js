@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {api} from "../../Utilities/api";
 
-export default function FieldAnalytics() {
+export default function SubscriptionAnalytics() {
   const [analytic, setAnalytic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

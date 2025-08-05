@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Homes from './Homes/Homes';
+import Help from "./Homes/Help";
+import About from "./Homes/About";
 
 import Users from '../Users/Users';
 import CreateUsers from '../Users/CreateUsers';
@@ -32,13 +34,31 @@ import UserAnalytics from '../Analytics/UserAnalytics';
 import SubscriptionAnalytics from '../Analytics/SubscriptionAnalytics';
 import PaymentAnalytics from '../Analytics/PaymentAnalytics';
 
+import Amounts from "../Amounts/Amounts";
+import GetAmounts from "../Amounts/GetAmounts";
+import UpdateAmounts from "../Amounts/UpdateAmounts";
+
+import Feedbacks from "../Feedbacks/Feedbacks";
+import GetFeedbacks from "../Feedbacks/GetFeedbacks";
+import GetFeedbacksById from "../Feedbacks/GetFeedbacksById";
+import DeleteFeedbacks from "../Feedbacks/DeleteFeedbacks";
+
+import Certificates from "../Certificates/Certificates";
+import GetCertificates from "../Certificates/GetCertificates";
+import DeleteCertificates from "../Certificates/DeleteCertificates";
+
 import PageNotFound from '../Layouts/Errors/PageNotFound';
+import FeedbackAnalytics from "../Analytics/FeedbackAnalytics";
+import CertificationAnalytics from "../Analytics/CertificationAnalytics";
 
 export default function Layouts() {
   return (
     <div>
       <Routes>
         <Route path='/' element={<Homes />} />
+        <Route path='/home' element={<Homes />} />
+        <Route path='/Home/help' element={<Help />} />
+        <Route path='/Home/about' element={<About />} />
 
         <Route path='/users' element={<Users />} />
         <Route path='/users/create' element={<CreateUsers />} />
@@ -68,6 +88,21 @@ export default function Layouts() {
         <Route path='/analytics/users' element={<UserAnalytics />} />
         <Route path='/analytics/subscriptions' element={<SubscriptionAnalytics />} />
         <Route path='/analytics/payments' element={<PaymentAnalytics />} />
+        <Route path='/analytics/feedbacks' element={<FeedbackAnalytics />} />
+        <Route path='/analytics/certifications' element={<CertificationAnalytics />} />
+
+        <Route path='/amounts' element={<Amounts />} />
+        <Route path='/amounts/get' element={<GetAmounts />} />
+        <Route path='/amounts/update' element={<UpdateAmounts />} />
+
+        <Route path='/feedbacks' element={<Feedbacks />} />
+        <Route path='/feedbacks/get' element={<GetFeedbacks />} />
+        <Route path='/feedbacks/get/:id' element={<GetFeedbacksById />} />
+        <Route path='/feedbacks/delete/:id' element={<DeleteFeedbacks />} />
+
+        <Route path='/certificates' element={<Certificates />} />
+        <Route path='/certificates/get' element={<GetCertificates />} />
+        <Route path='/certificates/delete/:id' element={<DeleteCertificates />} />
 
         <Route path='*' element={<PageNotFound />} />
       </Routes>

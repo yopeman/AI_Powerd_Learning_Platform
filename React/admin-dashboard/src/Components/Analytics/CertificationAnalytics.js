@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {api} from "../../Utilities/api";
 
-export default function PaymentAnalytics() {
+export default function CertificationAnalytics() {
   const [analytic, setAnalytic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,9 +12,10 @@ export default function PaymentAnalytics() {
       setError(null);
 
       try {
-        const response = await api.get(`/analytics/payments`);
+        const response = await api.get(`/analytics/certifications`);
         if (response.data.success) {
           setAnalytic(response.data.data);
+          console.log(response.data);
         } else {
           setError(response.data.message);
         }
@@ -35,13 +36,10 @@ export default function PaymentAnalytics() {
 
   return (
     <div>
-      <h1>Payment Analytics</h1>
+      <h1>Certification Analytics</h1>
       <ul>
-        <li><b>Total Payments</b>: {analytic.totalPayments}</li>
-        <li><b>Completed Payments</b>: {analytic.completedPayments}</li>
-        <li><b>Pending Payments</b>: {analytic.pendingPayments}</li>
-        <li><b>Failed Payments</b>: {analytic.failedPayments}</li>
-        <li><b>Total Revenue</b>: {analytic.totalRevenue}</li>
+        <li><b>Total Results</b>: {analytic.totalResults}</li>
+        <li><b>Average Score</b>: {analytic.averageScore}</li>
       </ul>
     </div>
   )

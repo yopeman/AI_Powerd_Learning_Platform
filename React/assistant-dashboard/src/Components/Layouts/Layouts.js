@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-
 import Homes from './Homes/Homes';
-
+import Help from "./Homes/Help";
+import About from "./Homes/About";
 import PageNotFound from '../Layouts/Errors/PageNotFound';
 import GetAllFields from "../Fields/GetAllFields";
 import GetFieldsById from "../Fields/GetFieldsById";
@@ -32,6 +32,9 @@ export default function Layouts() {
     <div>
       <Routes>
         <Route path='/' element={<Homes />} />
+        <Route path='/home' element={<Homes />} />
+        <Route path='/Home/help' element={<Help />} />
+        <Route path='/Home/about' element={<About />} />
 
         <Route path='/fields' element={<Fields />} />
         <Route path='/fields/get' element={<GetAllFields />} />

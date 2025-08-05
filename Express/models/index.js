@@ -8,6 +8,10 @@ import Assistants from './assistants.js';
 import Subscriptions from './subscriptions.js';
 import Payments from './payments.js';
 import Interactions from './interactions.js';
+import Amounts from './amounts.js';
+import Feedbacks from './feedbacks.js';
+import Certifications from './certifications.js';
+import Results from './results.js';
 
 sequelize.sync({ force: false })
     .then(() => {
@@ -27,5 +31,9 @@ export {
     Assistants,
     Subscriptions,
     Payments,
-    Interactions
+    Interactions,
+    Amounts,
+    Feedbacks,
+    Certifications,
+    Results
 };

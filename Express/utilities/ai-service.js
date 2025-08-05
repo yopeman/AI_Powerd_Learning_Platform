@@ -91,15 +91,70 @@ const generateAnswer = async (source, question, history) => {
     }
 };
 
+const generateQuestion = async (field, courses, source) => {
+    const count = 50;
+    // if (typeof courses !== 'string') {
+    //     courses = JSON.stringify(courses);
+    // }
+
+    const prompt = `
+        Generate ${count} quiz questions about "${field.title}". The field includes the following courses: ${courses}. 
+        Each question should have 4 options (A, B, C, D) and be formatted as JSON:
+        [
+            {
+                "question": "Question text",
+                "options": ["A", "B", "C", "D"],
+                "correct": "A"
+            }
+        ]
+    `;
+
+    try {
+        let responseContent;
+
+        if (source === 'OpenAI') {
+            const client = new OpenAI({
+                apiKey: process.env.OPENAI_API_KEY,
+            });
+
+            const response = await client.chat.completions.create({
+                model: 'gpt-4',
+                messages: [{ role: 'user', content: prompt }],
+            });
+
+            responseContent = response.choices?.[0]?.message?.content;
+        } else if (source === 'GoogleGenAI') {
+            const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
+            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+            const result = await model.generateContent([prompt]);
+            responseContent = await result.response.text();
+        } else {
+            throw new Error('Invalid source specified. Use "OpenAI" or "GoogleGenAI".');
+        }
+
+        return responseContent || 'No content generated.';
+    } catch (error) {
+        console.error(`Error generating content from ${source}:`, error);
+        throw new Error(`Failed to generate content using ${source}.`);
+    }
+};
+
 const generateContent_By_OpenAI = async (topicTitle, context) => await generateContent('OpenAI', topicTitle, context);
 const generateContent_By_GoogleGenAI = async (topicTitle, context) => await generateContent('GoogleGenAI', topicTitle, context);
 // ---
 const generateAnswer_By_OpenAI = async (question, history) => await generateAnswer('OpenAI', question, history);
-const generateAnswer_By_GoogleGenAI = async (question, history) => await generateAnswer('OpenAI', question, history);
+const generateAnswer_By_GoogleGenAI = async (question, history) => await generateAnswer('GoogleGenAI', question, history);
+// ---
+
+const generateQuestion_By_OpenAI = async (question, history) => await generateQuestion('OpenAI', question, history);
+const generateQuestion_By_GoogleGenAI = async (question, history) => await generateQuestion('GoogleGenAI', question, history);
 
 export {
     generateContent_By_OpenAI,
     generateContent_By_GoogleGenAI,
     generateAnswer_By_OpenAI,
-    generateAnswer_By_GoogleGenAI
+    generateAnswer_By_GoogleGenAI,
+    generateQuestion_By_OpenAI,
+    generateQuestion_By_GoogleGenAI
 };

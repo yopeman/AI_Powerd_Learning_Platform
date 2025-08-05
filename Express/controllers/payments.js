@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { v4 as uuidv7 } from 'uuid';
-import { Users, Payments, Fields, Subscriptions } from '../models/index.js';
+import { Users, Payments, Fields, Subscriptions, Amounts } from '../models/index.js';
 import { Op } from 'sequelize';
 
 async function payment_create(req, res, next) {
@@ -34,7 +34,11 @@ async function payment_create(req, res, next) {
             return next(createError(400, 'Field is free, no payment required.'));
         }
 
-        const amount = 200;
+        const amount = await Amounts.findOne();
+        if (!amount) {
+            return next(createError(404, 'No payment amount found.'));
+        }
+
         const paymentId = uuidv7();
         const user = await Users.findByPk(req.user.id);
 

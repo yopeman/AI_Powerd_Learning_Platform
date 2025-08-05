@@ -9,6 +9,9 @@ import payments from './payments.js';
 import subscriptions from './subscriptions.js';
 import topics from './topics.js';
 import users from './users.js';
+import amounts from './amounts.js';
+import feedbacks from './feedbacks.js';
+import certifications from './certifications.js';
 const routes = Router();
 
 routes.use('/auths', auths); // verified
@@ -20,6 +23,9 @@ routes.use('/topics', topics); // verified
 routes.use('/subscriptions', subscriptions); // verified
 routes.use('/payments', payments); // verified
 routes.use('/users', users); // verified
+routes.use('/amounts', amounts);
+routes.use('/feedbacks', feedbacks);
+routes.use('/certifications', certifications);
 routes.use('/analytics', analytics); // verified
 
 export default routes;

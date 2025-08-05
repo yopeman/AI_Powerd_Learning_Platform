@@ -101,7 +101,7 @@ export default function FieldScreen({ navigation, route }) {
       <Text>Certificate</Text>
       <Button
         title='Get Certificate Now'
-        onPress={() => console.log(0)}
+        onPress={() => navigation.navigate('Certificate', { fieldId: field.id })}
       />
     </ScrollView>
   );

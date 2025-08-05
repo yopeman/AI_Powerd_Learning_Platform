@@ -10,6 +10,8 @@ export default function AnalyticsTab() {
         <li><Link to='/analytics/subscriptions'>Subscription Analytics</Link></li>
         <li><Link to='/analytics/payments'>Payments Analytics</Link></li>
         <li><Link to='/analytics/users'>User Analytics</Link></li>
+        <li><Link to='/analytics/feedbacks'>Feedback Analytics</Link></li>
+        <li><Link to='/analytics/certifications'>Certification Analytics</Link></li>
       </ul>
     </div>
   )

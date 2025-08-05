@@ -1,4 +1,4 @@
-import { Fields, Topics, Subscriptions, Users, Payments, sequelize } from '../models/index.js';
+import { Fields, Topics, Subscriptions, Users, Payments, sequelize, Feedbacks, Results } from '../models/index.js';
 import { Op } from 'sequelize';
 
 async function analytic_fields(req, res, next) {
@@ -130,10 +130,53 @@ async function analytic_payments(req, res, next) {
     }
 }
 
+async function analytic_feedbacks(req, res, next) {
+    try {
+    const totalFeedbacks = await Feedbacks.count();
+    const averageRating = await Feedbacks.findOne({
+      attributes: [[sequelize.fn('AVG', sequelize.col('rating')), 'average']],
+    });
+  
+
+    res.status(200).json({
+        message: 'Feedback analytic are fetched successfully',
+        data: {
+            totalFeedbacks,
+            averageRating: averageRating ? parseFloat(averageRating.dataValues.average) : 0,
+        },
+        success: true
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+async function analytic_certifications(req, res, next) {
+    try {
+    const totalResults = await Results.count();
+    const averageScore = await Results.findOne({
+      attributes: [[sequelize.fn('AVG', sequelize.col('value')), 'average']],
+    });
+
+    res.status(200).json({
+        message: 'Certification Result analytic are fetched successfully',
+        data: {
+            totalResults,
+            averageScore: averageScore ? parseFloat(averageScore.dataValues.average) : 0,
+        },
+        success: true
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
 export {
     analytic_fields,
     analytic_topics,
     analytic_subscriptions,
     analytic_users,
-    analytic_payments
+    analytic_payments,
+    analytic_feedbacks,
+    analytic_certifications
 };

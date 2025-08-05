@@ -13,6 +13,7 @@ export default function CreateAssistants() {
   const [success, setSuccess] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchUsers = async () => {
       try {
         const response = await api.get("/users");
