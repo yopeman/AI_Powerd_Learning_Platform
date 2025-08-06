@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api, authApi} from './api';
+import * as Application from 'expo-application';
+import * as Device from 'expo-device';
+import DeviceInfo from 'react-native-device-info';
 
 // Function to retrieve the token from AsyncStorage
 const getToken = async () => {
@@ -12,6 +15,17 @@ const getUser = async () => {
   const response = await AsyncStorage.getItem('response');
   return response ? JSON.parse(response).user : null;
 };
+
+export const APP_ID = () => {
+  const app_id = `
+    ${Device.brand},
+    ${Device.deviceName},
+    ${DeviceInfo.getDeviceId()},
+    ${DeviceInfo.getUniqueIdSync()},
+    My Secret Here => {ksuygsuyfsegfisufgsfusgfsDIUFDHUFDFYSUDFDYUFodiufhdgfudfghyud67842645423642856364723546$#^#&%##$#$%$%*&^(&*&^*%$#$%^$&}
+  `;
+  return btoa(app_id);
+}
 
 // Centralized API response handling with caching
 const handleApiResponse = async (apiCall, storageKey) => {
@@ -136,4 +150,10 @@ export const get_certification_document = async (fieldId) => {
 export const submit_certification_answer_results = async (fieldId, value) => {
   const token = await getToken();
   return handleApiResponse(() => api(token).post(`/certifications/results`, {value, fieldId}), `/certifications/results/${fieldId}`);
+};
+
+// Function to unsubscribe the fields
+export const unsubscribe_fields = async (subscriptionId) => {
+  const token = await getToken();
+  return handleApiResponse(() => api(token).delete(`/subscriptions/${subscriptionId}`), `/subscriptions/${subscriptionId}`);
 };

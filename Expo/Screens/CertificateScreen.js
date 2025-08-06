@@ -130,7 +130,7 @@ const Quiz = ({ questions, fieldId, navigation }) => {
       if (link) {
         setDocLink(link);
       }
-
+      navigation.navigate('Certificate', { fieldId })
     } catch (err) {
       setError(err.message);
     } finally {

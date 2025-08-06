@@ -140,11 +140,17 @@ function RootNavigator(props) {
             >
               {props => <LoginScreen {...props} setIsAuth={signIn} />}
             </Stack.Screen>
-            <Stack.Screen 
-              name="Register" 
-              component={RegisterScreen} 
+            <Stack.Screen
+              name="Register"
               options={{ title: 'Create Account' }}
-            />
+            >
+              {props => <RegisterScreen {...props} setIsAuth={signIn} />}
+            </Stack.Screen>
+            {/*<Stack.Screen */}
+            {/*  name="Register" */}
+            {/*  component={RegisterScreen} */}
+            {/*  options={{ title: 'Create Account' }}*/}
+            {/*/>*/}
           </>
         )}
       </Stack.Navigator>

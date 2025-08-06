@@ -13,16 +13,18 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { authApi } from '../Utilities/api';
+import {APP_ID} from "../Utilities/operations";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function RegisterScreen() {
+export default function RegisterScreen({ setIsAuth }) {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     phone: '',
-    password: '',
-    confirm_password: '',
+    password: APP_ID(),
+    confirm_password: APP_ID(),
   });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
@@ -43,16 +45,25 @@ export default function RegisterScreen() {
 
     try {
       const response = await authApi.post('/register', formData);
-      const { success, message: responseMessage } = response.data;
+      const { success, data, message: responseMessage } = response.data;
+      console.log(data);
 
       if (success) {
-        setMessage({ text: 'Registration successful!', type: 'success' });
-        navigation.navigate('Login');
+        if (data.user.role === 'student') {
+          await AsyncStorage.setItem('response', JSON.stringify(data));
+          setIsAuth(true);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        } else {
+          setMessage({ text: 'You need student privileges to access this app', type: 'error' });
+        }
       } else {
         setMessage({ text: responseMessage, type: 'error' });
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Registration failed';
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed';
       setMessage({ text: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
@@ -65,8 +76,8 @@ export default function RegisterScreen() {
       last_name: '',
       email: '',
       phone: '',
-      password: '',
-      confirm_password: '',
+      password: APP_ID(),
+      confirm_password: APP_ID(),
     });
     setMessage({ text: '', type: '' }); // Clear message on reset
   };
@@ -85,7 +96,7 @@ export default function RegisterScreen() {
           </Text>
         )}
 
-        {['first_name', 'last_name', 'email', 'phone', 'password', 'confirm_password'].map((field, index) => (
+        {['first_name', 'last_name', 'email', 'phone' /*, 'password', 'confirm_password' */ ].map((field, index) => (
           <TextInput
             key={index}
             style={styles.input}
@@ -93,11 +104,12 @@ export default function RegisterScreen() {
             value={formData[field]}
             onChangeText={text => handleChange(field, text)}
             secureTextEntry={field.includes('password')}
+            editable={!field.includes('password')}
             autoCapitalize={field === 'email' ? 'none' : 'words'}
             keyboardType={field === 'email' ? 'email-address' : field === 'phone' ? 'phone-pad' : 'default'}
           />
         ))}
-
+        <Text>The password are managed by app for security</Text>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (

@@ -92,8 +92,42 @@ async function subscription_cancel(req, res, next) {
     }
 }
 
+
+async function subscription_delete(req, res, next) {
+    const { id } = req.params;
+
+    // Validate subscription ID
+    if (!id) {
+        return next(createError(400, 'Subscription ID is required.'));
+    }
+
+    try {
+        const deletedSubscription = await Subscriptions.destroy({
+            where: {
+                id,
+                userId: req.user.id // Implicitly checks for user ID
+            }
+        });
+
+        // Check if deletion was successful
+        if (!deletedSubscription) {
+            return next(createError(404, 'Subscription not found or already deleted.'));
+        }
+
+        res.status(200).json({
+            message: 'Subscription deleted successfully.',
+            success: true
+        });
+    } catch (err) {
+        // Handle unexpected errors
+        console.error('Error deleting subscription:', err);
+        return next(createError(500, 'An error occurred while deleting the subscription.'));
+    }
+}
+
 export {
     subscription_create,
     subscription_current_fields,
-    subscription_cancel
+    subscription_cancel,
+    subscription_delete
 }

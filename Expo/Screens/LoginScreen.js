@@ -13,10 +13,11 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { authApi } from '../Utilities/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {APP_ID} from "../Utilities/operations";
 
 export default function LoginScreen({ setIsAuth }) {
   const navigation = useNavigation();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: '', password: APP_ID() });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
   const [secureEntry, setSecureEntry] = useState(true);
@@ -87,23 +88,25 @@ export default function LoginScreen({ setIsAuth }) {
         />
       </View>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={formData.password}
-          onChangeText={text => handleChange('password', text)}
-          secureTextEntry={secureEntry}
-          testID="passwordInput"
-        />
-        <TouchableOpacity style={styles.eyeIcon} onPress={toggleSecureEntry}>
-          <Text>{secureEntry ? '👁️' : '👁️‍🗨️'}</Text>
-        </TouchableOpacity>
-      </View>
+      {/*<View style={styles.inputContainer}>*/}
+      {/*  <TextInput*/}
+      {/*    style={styles.input}*/}
+      {/*    placeholder="Password"*/}
+      {/*    value={formData.password}*/}
+      {/*    onChangeText={text => handleChange('password', text)}*/}
+      {/*    secureTextEntry={secureEntry}*/}
+      {/*    testID="passwordInput"*/}
+      {/*    editable={false}*/}
+      {/*  />*/}
+      {/*  <TouchableOpacity style={styles.eyeIcon} onPress={toggleSecureEntry}>*/}
+      {/*    <Text>{secureEntry ? '👁️' : '👁️‍🗨️'}</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
 
-      <TouchableOpacity onPress={() => Alert.alert('Forgot Password?', 'Feature coming soon!')}>
-        <Text style={styles.forgotPassword}>Forgot Password?</Text>
-      </TouchableOpacity>
+      {/*<TouchableOpacity onPress={() => Alert.alert('Forgot Password?', 'Feature coming soon!')}>*/}
+      {/*  <Text style={styles.forgotPassword}>Forgot Password?</Text>*/}
+      {/*</TouchableOpacity>*/}
+      <Text>The password are managed by app for security</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />

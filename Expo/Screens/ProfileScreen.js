@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import { AuthContext } from '../Utilities/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import { api } from '../Utilities/api';
+import {APP_ID} from "../Utilities/operations";
 
 export default function ProfileScreen() {
   const [formData, setFormData] = useState({
@@ -22,8 +22,6 @@ export default function ProfileScreen() {
     last_name: '',
     email: '',
     phone: '',
-    password: '',
-    confirm_password: '',
   });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
@@ -36,9 +34,10 @@ export default function ProfileScreen() {
       const response = await AsyncStorage.getItem('response');
       if (response) {
         const userData = JSON.parse(response).user;
+        console.log(userData);
         delete userData.password; // Remove password from user data
-        setInitialValue({...userData, password: '', confirm_password: ''});
-        setFormData({...userData, password: '', confirm_password: ''});
+        setInitialValue({...userData});
+        setFormData({...userData});
         setToken(JSON.parse(response).token);
       }
     };
@@ -96,7 +95,7 @@ export default function ProfileScreen() {
           </Text>
         )}
 
-        {['first_name', 'last_name', 'email', 'phone', 'password', 'confirm_password'].map((field, index) => (
+        {['first_name', 'last_name', 'email', 'phone'].map((field, index) => (
           <TextInput
             key={index}
             style={styles.input}
@@ -117,7 +116,15 @@ export default function ProfileScreen() {
             <View style={styles.buttonSpacer} />
             <Button title="Reset Form" onPress={resetForm} color="#999" />
             <View style={styles.buttonSpacer} />
-            <Button title="Logout" onPress={signOut} disabled={loading} />
+            <Button title="Logout" onPress={async () => {
+              try {
+                await AsyncStorage.clear();
+              } catch (err) {}
+              finally {
+                const logout = () => signOut();
+                logout();
+              }
+            }} disabled={loading} />
           </>
         )}
       </ScrollView>
