@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
@@ -12,12 +11,16 @@ import {
   Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../Utilities/ThemeContext';
+import { MaterialIcons } from '@expo/vector-icons';
 import { authApi } from '../Utilities/api';
-import {APP_ID} from "../Utilities/operations";
+import { APP_ID } from "../Utilities/operations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen({ setIsAuth }) {
   const navigation = useNavigation();
+  const { colors, textSizes, textSize } = useTheme();
+  
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -28,6 +31,7 @@ export default function RegisterScreen({ setIsAuth }) {
   });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (name, value) => {
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -35,6 +39,7 @@ export default function RegisterScreen({ setIsAuth }) {
 
   const handleSubmit = async () => {
     setLoading(true);
+    setMessage({ text: '', type: '' });
 
     // Password confirmation check
     if (formData.password !== formData.confirm_password) {
@@ -46,8 +51,7 @@ export default function RegisterScreen({ setIsAuth }) {
     try {
       const response = await authApi.post('/register', formData);
       const { success, data, message: responseMessage } = response.data;
-      console.log(data);
-
+      
       if (success) {
         if (data.user.role === 'student') {
           await AsyncStorage.setItem('response', JSON.stringify(data));
@@ -79,51 +83,105 @@ export default function RegisterScreen({ setIsAuth }) {
       password: APP_ID(),
       confirm_password: APP_ID(),
     });
-    setMessage({ text: '', type: '' }); // Clear message on reset
+    setMessage({ text: '', type: '' });
   };
+
+  const fields = [
+    { name: 'first_name', label: 'First Name', icon: 'person' },
+    { name: 'last_name', label: 'Last Name', icon: 'person' },
+    { name: 'email', label: 'Email Address', icon: 'email', keyboardType: 'email-address' },
+    { name: 'phone', label: 'Phone Number', icon: 'phone', keyboardType: 'phone-pad' },
+    // { name: 'password', label: 'Password', icon: 'lock' },
+    // { name: 'confirm_password', label: 'Confirm Password', icon: 'lock' },
+  ];
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Create Account</Text>
-        
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <MaterialIcons name="person-add" size={36} color={colors.primary} />
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Join us to start your learning journey</Text>
+        </View>
+
         {message.text && (
-          <Text style={message.type === 'error' ? styles.error : styles.success}>
-            {message.text}
-          </Text>
+          <View style={[styles.messageContainer, { backgroundColor: message.type === 'error' ? colors.error + '20' : '#4CAF50' + '20' }]}>
+            <Text style={[styles.messageText, { color: message.type === 'error' ? colors.error : '#4CAF50' }]}>{message.text}</Text>
+          </View>
         )}
 
-        {['first_name', 'last_name', 'email', 'phone' /*, 'password', 'confirm_password' */ ].map((field, index) => (
-          <TextInput
-            key={index}
-            style={styles.input}
-            placeholder={field.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase())}
-            value={formData[field]}
-            onChangeText={text => handleChange(field, text)}
-            secureTextEntry={field.includes('password')}
-            editable={!field.includes('password')}
-            autoCapitalize={field === 'email' ? 'none' : 'words'}
-            keyboardType={field === 'email' ? 'email-address' : field === 'phone' ? 'phone-pad' : 'default'}
-          />
+        {fields.map((field) => (
+          <View key={field.name} style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>{field.label}</Text>
+            <View style={styles.inputWrapper}>
+              <MaterialIcons 
+                name={field.icon} 
+                size={20} 
+                color={colors.text + '80'} 
+                style={styles.icon}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder={`Enter your ${field.label.toLowerCase()}`}
+                placeholderTextColor={colors.text + '80'}
+                value={formData[field.name]}
+                onChangeText={text => handleChange(field.name, text)}
+                secureTextEntry={field.name.includes('password') && !showPassword}
+                autoCapitalize={field.name === 'email' ? 'none' : 'words'}
+                keyboardType={field.keyboardType || 'default'}
+                autoCorrect={false}
+              />
+              {field.name.includes('password') && (
+                <TouchableOpacity 
+                  style={styles.passwordToggle}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <MaterialIcons 
+                    name={showPassword ? "visibility-off" : "visibility"} 
+                    size={20} 
+                    color={colors.text + '80'} 
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
         ))}
-        <Text>The password are managed by app for security</Text>
+
+        <Text style={styles.securityNote}>
+          Passwords are securely generated and managed by the app.
+        </Text>
+
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color={colors.primary} />
         ) : (
           <>
-            <Button title="Register" onPress={handleSubmit} disabled={loading} />
-            <View style={styles.buttonSpacer} />
-            <Button title="Reset Form" onPress={resetForm} color="#999" />
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={handleSubmit}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>Create Account</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.button, styles.secondaryButton]}
+              onPress={resetForm}
+            >
+              <Text style={styles.secondaryButtonText}>Clear Form</Text>
+            </TouchableOpacity>
           </>
         )}
 
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>Already have an account?</Text>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Already have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.registerLink}>Login</Text>
+            <Text style={styles.footerLink}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -134,54 +192,112 @@ export default function RegisterScreen({ setIsAuth }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   scrollContainer: {
     flexGrow: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    padding: 24,
     justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    color: '#333',
+    marginBottom: 8,
   },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  error: {
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 15,
-  },
-  success: {
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 15,
-  },
-  buttonSpacer: {
-    height: 15,
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 30,
-  },
-  registerText: {
+  subtitle: {
     fontSize: 16,
     color: '#666',
+    opacity: 0.8,
+    textAlign: 'center',
   },
-  registerLink: {
+  inputContainer: {
+    marginBottom: 20,
+  },
+  inputLabel: {
     fontSize: 16,
-    color: '#007bff',
-    fontWeight: 'bold',
-    marginLeft: 5,
+    color: '#666',
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 16,
+  },
+  input: {
+    flex: 1,
+    height: 56,
+    fontSize: 16,
+    color: '#333',
+    paddingVertical: 16,
+  },
+  icon: {
+    marginRight: 12,
+  },
+  passwordToggle: {
+    padding: 8,
+  },
+  messageContainer: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+  messageText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  securityNote: {
+    fontSize: 14,
+    color: '#666',
+    opacity: 0.7,
+    textAlign: 'center',
+    marginBottom: 24,
+    marginTop: 8,
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    borderRadius: 12,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  secondaryButtonText: {
+    color: '#333',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  footerText: {
+    fontSize: 16,
+    color: '#666',
+    opacity: 0.8,
+  },
+  footerLink: {
+    fontSize: 16,
+    color: '#007BFF',
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });

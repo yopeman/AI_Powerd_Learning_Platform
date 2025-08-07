@@ -7,6 +7,7 @@ import DeviceInfo from 'react-native-device-info';
 // Function to retrieve the token from AsyncStorage
 const getToken = async () => {
   const response = await AsyncStorage.getItem('response');
+  console.log(response);
   return response ? JSON.parse(response).token : null;
 };
 
@@ -141,7 +142,7 @@ export const get_certification_document = async (fieldId) => {
       return response.config.baseURL + response.config.url;
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return null;
   }
 };

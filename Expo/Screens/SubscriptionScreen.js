@@ -1,80 +1,189 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, Button, ScrollView} from 'react-native';
-import {get_all_fields, subscribe_field} from "../Utilities/operations";
+import React, { useEffect, useState } from 'react';
+import { 
+  View, Text, TouchableOpacity, 
+  ActivityIndicator, ScrollView, StyleSheet 
+} from 'react-native';
+import { useTheme } from '../Utilities/ThemeContext';
+import { get_all_fields, subscribe_field } from "../Utilities/operations";
 
-export default function SubscriptionScreen({navigation}) {
-  const [fields, setFields] = useState(null);
+const SubscriptionScreen = ({ navigation }) => {
+  const { colors, textSizes, textSize } = useTheme();
+  const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    const getFields = async () => {
+    const fetchFields = async () => {
+      setLoading(true);
       try {
-        const flds = await get_all_fields();
-        setFields(flds.data);
+        const response = await get_all_fields();
+        setFields(response.data);
         setError(null);
-        setSuccess(null);
-        console.log(flds);
+        setSuccess(response.data.message);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
         setSuccess(null);
-        console.log(err);
       } finally {
         setLoading(false);
       }
-    }
-    getFields();
+    };
+    fetchFields();
   }, []);
 
   const handleSubscribe = async (fieldId) => {
-    console.log(fieldId);
     setLoading(true);
     try {
-      const subscribe = await subscribe_field(fieldId);
-      setSuccess(subscribe);
+      const result = await subscribe_field(fieldId);
+      console.log(result);
+      setSuccess(result.message);
       setError(null);
-      console.log(subscribe);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
       setSuccess(null);
       console.log(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
 
-  if (loading) return <View><Text>Loading ...</Text></View>;
   return (
-    <ScrollView>
-      <Text>Subscribe New Fields</Text>
-      <Text>Select field to subscribe</Text>
-      {error && (<Text>{error}</Text>)}
-      {success && (<Text>{success}</Text>)}
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Explore Fields</Text>
+        <Text style={styles.subtitle}>Subscribe to new learning paths</Text>
+      </View>
 
-      <Text>.</Text><Text>.</Text><Text>.</Text>
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      {success && <Text style={styles.successText}>{success}</Text>}
 
       {fields.map((field) => (
-        <>
-          <View key={field.id}>
-            <Text>Title: {field.title}</Text>
-            <Text>Description: {field.description}</Text>
-            <Text>Years Length: {field.years_length}</Text>
-            <Text>Is Free: {field.isFree ? 'Yes' : 'No'}</Text>
-            <Text>Number Of Free Topics: {field.number_of_free_topics}</Text>
-            <Text>Created At: {new Date(field.createdAt).toLocaleString()}</Text>
-            <Text>Updated At: {new Date(field.updatedAt).toLocaleString()}</Text>
+        <View key={field.id} style={styles.card}>
+          <Text style={styles.fieldTitle}>{field.title}</Text>
+          <Text style={styles.fieldDescription}>{field.description}</Text>
+          
+          <View style={styles.metaContainer}>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaLabel}>Duration</Text>
+              <Text style={styles.metaValue}>{field.years_length} years</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaLabel}>Free Content</Text>
+              <Text style={styles.metaValue}>
+                {field.isFree ? 'Full access' : `${field.number_of_free_topics} topics`}
+              </Text>
+            </View>
           </View>
-          <Button
-            key={field.id}
+
+          <TouchableOpacity 
+            style={styles.button}
             onPress={() => handleSubscribe(field.id)}
-            title='Subscribe Now'
-          />
-        </>
+          >
+            <Text style={styles.buttonText}>
+              {field.isFree ? 'Get Started' : 'Subscribe Now'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       ))}
     </ScrollView>
-  )
-}
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    opacity: 0.8,
+  },
+  card: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  fieldTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  fieldDescription: {
+    fontSize: 16,
+    color: '#666',
+    opacity: 0.8,
+    marginBottom: 12,
+  },
+  metaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  metaItem: {
+    flex: 1,
+  },
+  metaLabel: {
+    fontSize: 14,
+    color: '#666',
+    opacity: 0.6,
+  },
+  metaValue: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 16,
+  },
+  successText: {
+    color: '#4CAF50',
+    textAlign: 'center',
+    marginVertical: 16,
+  },
+});
+
+export default SubscriptionScreen;

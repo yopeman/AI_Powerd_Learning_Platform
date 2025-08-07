@@ -43,7 +43,7 @@ async function payment_create(req, res, next) {
         const user = await Users.findByPk(req.user.id);
 
         const paymentInit = await axios.post('https://api.chapa.co/v1/transaction/initialize', {
-            amount,
+            amount: amount.amount,
             currency: 'ETB',
             email: user.email,
             first_name: user.first_name,
@@ -65,7 +65,7 @@ async function payment_create(req, res, next) {
         const newPayment = await Payments.create({
             id: paymentId,
             subscriptionId: subscription.id,
-            amount,
+            amount: amount.amount,
             checkout_url: paymentInit.data.data.checkout_url,
             year,
             semester
@@ -77,6 +77,7 @@ async function payment_create(req, res, next) {
             success: true
         });
     } catch (error) {
+        console.log(error);
         next(createError(500, `Error creating payment: ${error.message}`));
     }
 }

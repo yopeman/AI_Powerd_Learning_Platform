@@ -14,9 +14,14 @@ import {
 import { AuthContext } from '../Utilities/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '../Utilities/api';
-import {APP_ID} from "../Utilities/operations";
+import { useTheme } from '../Utilities/ThemeContext';
+import { MaterialIcons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 
 export default function ProfileScreen() {
+  const { signOut } = useContext(AuthContext);
+  const { colors, textSizes, textSize } = useTheme();
+  
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -27,17 +32,16 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [initialValue, setInitialValue] = useState(null);
   const [token, setToken] = useState(null);
-  const { signOut } = useContext(AuthContext);
+  // const [biometricsEnabled, setBiometricsEnabled] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const response = await AsyncStorage.getItem('response');
       if (response) {
         const userData = JSON.parse(response).user;
-        console.log(userData);
         delete userData.password; // Remove password from user data
-        setInitialValue({...userData});
-        setFormData({...userData});
+        setInitialValue({ ...userData });
+        setFormData({ ...userData });
         setToken(JSON.parse(response).token);
       }
     };
@@ -50,21 +54,12 @@ export default function ProfileScreen() {
 
   const handleSubmit = async () => {
     setLoading(true);
-
-    if (formData.password !== formData.confirm_password) {
-      setMessage({ text: 'Passwords do not match', type: 'error' });
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await api(token).put('/users/me', formData);
       const { success, message: responseMessage } = response.data;
 
       if (success) {
         setMessage({ text: 'Update successful!', type: 'success' });
-        delete formData.password;
-        delete formData.confirm_password;
         await AsyncStorage.setItem('response', JSON.stringify(formData));
       } else {
         setMessage({ text: responseMessage, type: 'error' });
@@ -79,6 +74,26 @@ export default function ProfileScreen() {
 
   const resetForm = () => {
     setFormData(initialValue);
+  };
+
+  // const handleBiometricToggle = async () => {
+  //   try {
+  //     const current = await SecureStore.getItemAsync('useBiometrics');
+  //     const newValue = current === 'true' ? 'false' : 'true';
+  //     await SecureStore.setItemAsync('useBiometrics', newValue);
+  //     setBiometricsEnabled(newValue === 'true');
+  //   } catch (error) {
+  //     console.error('Error toggling biometrics', error);
+  //   }
+  // };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      signOut();
+    } catch (err) {
+      console.error('Error during logout', err);
+    }
   };
 
   return (
@@ -96,37 +111,52 @@ export default function ProfileScreen() {
         )}
 
         {['first_name', 'last_name', 'email', 'phone'].map((field, index) => (
-          <TextInput
-            key={index}
-            style={styles.input}
-            placeholder={field.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase())}
-            value={formData[field]}
-            onChangeText={text => handleChange(field, text)}
-            secureTextEntry={field.includes('password')}
-            autoCapitalize={field === 'email' ? 'none' : 'words'}
-            keyboardType={field === 'email' ? 'email-address' : field === 'phone' ? 'phone-pad' : 'default'}
-          />
+          <View key={index} style={styles.inputContainer}>
+            <Text style={styles.label}>
+              {field.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase())}
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={formData[field]}
+              onChangeText={text => handleChange(field, text)}
+              autoCapitalize={field === 'email' ? 'none' : 'words'}
+              keyboardType={field === 'email' ? 'email-address' : field === 'phone' ? 'phone-pad' : 'default'}
+            />
+          </View>
         ))}
 
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color={colors.primary} />
         ) : (
           <>
-            <Button title="Update" onPress={handleSubmit} disabled={loading} />
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Update Profile</Text>
+            </TouchableOpacity>
             <View style={styles.buttonSpacer} />
-            <Button title="Reset Form" onPress={resetForm} color="#999" />
+            <TouchableOpacity style={styles.button} onPress={resetForm} color="#999">
+              <Text style={styles.buttonText}>Reset Form</Text>
+            </TouchableOpacity>
             <View style={styles.buttonSpacer} />
-            <Button title="Logout" onPress={async () => {
-              try {
-                await AsyncStorage.clear();
-              } catch (err) {}
-              finally {
-                const logout = () => signOut();
-                logout();
-              }
-            }} disabled={loading} />
+            <TouchableOpacity style={styles.button} onPress={handleLogout}>
+              <Text style={styles.buttonText}>Sign Out</Text>
+            </TouchableOpacity>
           </>
         )}
+
+        {/*<View style={styles.section}>*/}
+        {/*  <Text style={styles.sectionTitle}>Security</Text>*/}
+        {/*  <TouchableOpacity */}
+        {/*    style={styles.securityCard}*/}
+        {/*    onPress={handleBiometricToggle}*/}
+        {/*  >*/}
+        {/*    <Text style={styles.securityText}>Enable Biometric Login</Text>*/}
+        {/*    <MaterialIcons */}
+        {/*      name={biometricsEnabled ? "toggle-on" : "toggle-off"} */}
+        {/*      size={32} */}
+        {/*      color={biometricsEnabled ? colors.primary : colors.text + '80'} */}
+        {/*    />*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -147,13 +177,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 8,
+  },
   input: {
     height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
-    marginBottom: 15,
     fontSize: 16,
   },
   error: {
@@ -169,19 +206,38 @@ const styles = StyleSheet.create({
   buttonSpacer: {
     height: 15,
   },
-  registerContainer: {
-    flexDirection: 'row',
+  button: {
+    backgroundColor: '#007bff',
+    borderRadius: 12,
+    height: 56,
     justifyContent: 'center',
-    marginTop: 30,
+    alignItems: 'center',
+    marginVertical: 8,
   },
-  registerText: {
+  buttonText: {
+    color: '#FFF',
     fontSize: 16,
-    color: '#666',
+    fontWeight: '600',
   },
-  registerLink: {
+  section: {
+    marginVertical: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 16,
+    color: '#333',
+  },
+  securityCard: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  securityText: {
     fontSize: 16,
-    color: '#007bff',
-    fontWeight: 'bold',
-    marginLeft: 5,
+    color: '#333',
   },
 });

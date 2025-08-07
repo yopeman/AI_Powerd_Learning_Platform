@@ -1,38 +1,33 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Keyboard,
-  Alert, ScrollView
+import { 
+  View, Text, TextInput, TouchableOpacity, 
+  StyleSheet, ActivityIndicator, Keyboard, 
+  Alert, ScrollView 
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../Utilities/ThemeContext';
 import { authApi } from '../Utilities/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {APP_ID} from "../Utilities/operations";
+import { APP_ID } from "../Utilities/operations";
 
 export default function LoginScreen({ setIsAuth }) {
   const navigation = useNavigation();
-  const [formData, setFormData] = useState({ email: '', password: APP_ID() });
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const {darkMode, colors, textSizes, textSize} = useTheme();
+  const [formData, setFormData] = useState({email: '', password: APP_ID()});
   const [loading, setLoading] = useState(false);
-  const [secureEntry, setSecureEntry] = useState(true);
+  const [message, setMessage] = useState({text: '', type: ''});
 
   const handleChange = (name, value) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({...prev, [name]: value}));
   };
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
     setLoading(true);
-    
+
     try {
       const response = await authApi.post('/login', formData);
-      const { success, data, message: responseMessage } = response.data;
+      const {success, data, message: responseMessage} = response.data;
 
       if (success) {
         if (data.user.role === 'student') {
@@ -40,37 +35,120 @@ export default function LoginScreen({ setIsAuth }) {
           setIsAuth(true);
           navigation.reset({
             index: 0,
-            routes: [{ name: 'MainApp' }],
+            routes: [{name: 'MainApp'}],
           });
         } else {
-          setMessage({ text: 'You need student privileges to access this app', type: 'error' });
+          setMessage({text: 'You need student privileges to access this app', type: 'error'});
         }
       } else {
-        setMessage({ text: responseMessage, type: 'error' });
+        setMessage({text: responseMessage, type: 'error'});
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Login failed';
-      setMessage({ text: errorMessage, type: 'error' });
+      setMessage({text: errorMessage, type: 'error'});
     } finally {
       setLoading(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({ email: '', password: '' });
-    setMessage({ text: '', type: '' }); // Clear message on reset
+    setFormData({email: '', password: APP_ID()});
+    setMessage({text: '', type: ''});
   };
 
-  const toggleSecureEntry = () => {
-    setSecureEntry(prev => !prev);
-  };
+//}
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 24,
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    title: {
+      fontSize: textSizes[textSize] + 8,
+      fontWeight: 'bold',
+      marginBottom: 24,
+      color: colors.primary,
+      textAlign: 'center',
+    },
+    inputContainer: {
+      marginBottom: 20,
+    },
+    input: {
+      height: 56,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      fontSize: textSizes[textSize],
+      backgroundColor: colors.card,
+      color: colors.text,
+    },
+    button: {
+      backgroundColor: colors.primary,
+      borderRadius: 12,
+      height: 56,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 16,
+    },
+    buttonText: {
+      color: '#FFF',
+      fontSize: textSizes[textSize] + 2,
+      fontWeight: '600',
+    },
+    clearText: {
+      color: colors.secondary,
+      textAlign: 'center',
+      marginTop: 8,
+    },
+    footerText: {
+      // fontSize: textSizes[textSize],
+      // color: colors.text,
+      // textAlign: 'center',
+      // marginTop: 24,
+      // opacity: 0.8,
+
+      fontSize: 16,
+      color: '#666',
+      opacity: 0.8,
+    },
+    linkText: {
+      color: colors.primary,
+      // fontWeight: '600',
+
+      fontSize: 16,
+      // color: '#007BFF',
+      fontWeight: '600',
+      marginLeft: 8,
+    },
+    errorText: {
+      color: colors.error,
+      textAlign: 'center',
+      marginBottom: 16,
+      fontSize: textSizes[textSize],
+    },
+    successText: {
+      color: colors.success,
+      textAlign: 'center',
+      marginBottom: 16,
+      fontSize: textSizes[textSize],
+    },
+    registerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 32,
+    },
+  });
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      
+      <Text style={styles.title}>Welcome Back</Text>
+
       {message.text && (
-        <Text style={message.type === 'error' ? styles.error : styles.success}>
+        <Text style={message.type === 'error' ? styles.errorText : styles.successText}>
           {message.text}
         </Text>
       )}
@@ -78,124 +156,58 @@ export default function LoginScreen({ setIsAuth }) {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          placeholder="Email address"
+          placeholderTextColor={colors.text + '80'}
           value={formData.email}
           onChangeText={text => handleChange('email', text)}
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
-          testID="emailInput"
         />
       </View>
 
-      {/*<View style={styles.inputContainer}>*/}
-      {/*  <TextInput*/}
-      {/*    style={styles.input}*/}
-      {/*    placeholder="Password"*/}
-      {/*    value={formData.password}*/}
-      {/*    onChangeText={text => handleChange('password', text)}*/}
-      {/*    secureTextEntry={secureEntry}*/}
-      {/*    testID="passwordInput"*/}
-      {/*    editable={false}*/}
-      {/*  />*/}
-      {/*  <TouchableOpacity style={styles.eyeIcon} onPress={toggleSecureEntry}>*/}
-      {/*    <Text>{secureEntry ? '👁️' : '👁️‍🗨️'}</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*</View>*/}
-
-      {/*<TouchableOpacity onPress={() => Alert.alert('Forgot Password?', 'Feature coming soon!')}>*/}
-      {/*  <Text style={styles.forgotPassword}>Forgot Password?</Text>*/}
-      {/*</TouchableOpacity>*/}
-      <Text>The password are managed by app for security</Text>
+      <Text style={styles.footerText}>
+        Password is securely managed by the app
+      </Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+        <ActivityIndicator size="large" color={colors.primary}/>
       ) : (
         <>
-          <Button title="Login" onPress={handleSubmit} disabled={loading} />
-          <View style={styles.buttonSpacer} />
-          <Button title="Clear Form" onPress={resetForm} color="#999" />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSubmit}
+            disabled={!formData.email.trim()}
+          >
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[{
+              backgroundColor: '#007BFF',
+              borderRadius: 12,
+              height: 56,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 16,
+              marginTop: 16,
+            }, {
+              backgroundColor: 'transparent',
+              borderWidth: 1,
+              borderColor: '#ccc',
+            }]}
+            onPress={resetForm}
+          >
+            <Text style={styles.clearText}>Clear Form</Text>
+          </TouchableOpacity>
         </>
       )}
 
       <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Don't have an account? </Text>
+        <Text style={styles.footerText}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.registerLink}>Sign Up</Text>
+          <Text style={styles.linkText}>Create Account</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    textAlign: 'center',
-    color: '#333',
-  },
-  inputContainer: {
-    marginBottom: 20,
-    position: 'relative',
-  },
-  input: {
-    height: 50,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
-  },
-  error: {
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  success: {
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  loader: {
-    marginVertical: 20,
-  },
-  buttonSpacer: {
-    height: 15,
-  },
-  forgotPassword: {
-    color: '#007bff',
-    textAlign: 'right',
-    marginBottom: 25,
-    fontSize: 16,
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 30,
-  },
-  registerText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  registerLink: {
-    fontSize: 16,
-    color: '#007bff',
-    fontWeight: 'bold',
-  },
-});
