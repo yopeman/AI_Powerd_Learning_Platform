@@ -101,7 +101,7 @@ export default function GetAllFields() {
                   </td>
                   <td>
                     <Link 
-                      to={`/a-fields/get/${field.id}`} 
+                      to={`/fields/get/${field.id}`} 
                       className="action-btn view-btn"
                     >
                       View Details

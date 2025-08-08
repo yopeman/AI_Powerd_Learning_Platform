@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   FiHome, FiUsers, FiBook, FiAward, FiBarChart2,
-  FiDollarSign, FiMessageSquare, FiHelpCircle
+  FiDollarSign, FiMessageSquare, FiHelpCircle, FiUser
 } from 'react-icons/fi';
 
 export default function Sidebars() {
@@ -20,6 +20,7 @@ export default function Sidebars() {
     { path: '/feedbacks', label: 'Feedbacks', icon: <FiMessageSquare size={20} /> },
     { path: '/certificates', label: 'Certificates', icon: <FiAward size={20} /> },
     { path: '/analytics', label: 'Analytics', icon: <FiBarChart2 size={20} /> },
+    { path: '/profile', label: 'Profiles', icon: <FiUser size={20} /> },
   ];
 
   return (

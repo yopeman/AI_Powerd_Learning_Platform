@@ -10,7 +10,8 @@ export default function TopicsTab() {
 
   return (
     <div className="tabs">
-      <Link 
+      <Link className='tab active'>Topics</Link>
+      {/* <Link 
         to={`/topics/list/${location.pathname.split('/')[2] || ''}`} 
         className={`tab ${isActive('/topics/list') ? 'active' : ''}`}
       >
@@ -21,7 +22,7 @@ export default function TopicsTab() {
         className={`tab ${isActive('/topics/create') ? 'active' : ''}`}
       >
         Create Topics
-      </Link>
+      </Link> */}
     </div>
   );
 }

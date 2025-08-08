@@ -62,7 +62,7 @@ export default function GetFieldsById() {
             <span>{field.number_of_free_topics} free topics</span>
           </div>
         </div>
-        <Link to="/a-fields/me" className="primary-btn">
+        <Link to="/fields/me" className="primary-btn">
           &larr; Back to My Fields
         </Link>
       </div>

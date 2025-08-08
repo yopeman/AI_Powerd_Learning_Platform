@@ -10,7 +10,8 @@ export default function CoursesTab() {
 
   return (
     <div className="tabs">
-      <Link 
+      <Link className='tab active'>Courses</Link>
+      {/* <Link 
         to='/courses' 
         className={`tab ${isActive('/courses') && !isActive('/courses/create') ? 'active' : ''}`}
       >
@@ -21,7 +22,7 @@ export default function CoursesTab() {
         className={`tab ${isActive('/courses/create') ? 'active' : ''}`}
       >
         Create Course
-      </Link>
+      </Link> */}
     </div>
   );
 }

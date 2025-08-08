@@ -1,31 +1,41 @@
 import React from 'react';
-import {useLocation, useHistory, useNavigate} from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import store from "../../../Utilities/data-storage";
-import Token from "../../../Utilities/token";
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import './../../Components.css'; // Assuming you have a separate CSS file for styles
 
 export default function Headers() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleNextPage = () => {
-    navigate(1);
-  };
-  const handlePreviousPage = () => {
-    navigate(-1);
-  };
+  const handleNextPage = () => navigate(1);
+  const handlePreviousPage = () => navigate(-1);
 
   return (
-    <div>
-      <h1><center><Link to='/'>Admin Dashboard</Link></center></h1>
-      <Token/>
-      <div>
-        <button onClick={handlePreviousPage}>&lt;</button>
-        <button onClick={handleNextPage}>&gt;</button>
-        # {location.pathname}
-        <Link to='/profile' style={{float: 'right'}}>Profile</Link>
-      </div><br/>
-      <p><sub><sup><small>{store.get('token') || 'mmm'}</small></sup></sub></p>
-    </div>
-  )
+    <header className="header">
+      <center>
+      <nav className="navigation">
+        <button 
+          onClick={handlePreviousPage} 
+          className="nav-button"
+          aria-label="Go back"
+        >
+          <i className="fas fa-arrow-left"></i>
+        </button>
+        <button 
+          onClick={handleNextPage} 
+          className="nav-button"
+          aria-label="Go forward"
+        >
+          <i className="fas fa-arrow-right"></i>
+        </button>
+        <Link to="/" className="logo">
+          <h1>AI Powered Learning Platform</h1>
+          <p>(AiPLP)</p>
+        </Link>
+        <Link to="/profile" className="profile-link">
+            <i className="fas fa-user-circle"></i> Profile
+        </Link>
+      </nav>
+      </center>
+    </header>
+  );
 }

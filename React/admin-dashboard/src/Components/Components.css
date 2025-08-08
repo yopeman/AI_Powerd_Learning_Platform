@@ -3,7 +3,7 @@
   --primary: #4F46E5;
   --primary-dark: #4338CA;
   --secondary: #10B981;
-  --background: #F9FAFB;
+  --background: #f9f9f900;
   --surface: #FFFFFF;
   --text-primary: #1F2937;
   --text-secondary: #6B7280;
@@ -21,7 +21,7 @@
   background-color: var(--background);
 }
 
-.header {
+/* .header {
   flex: 0 0 70px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   box-shadow: var(--shadow-md);
@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   padding: 0 24px;
-}
+} */
 
 .main-container {
   flex: 1;
@@ -1361,3 +1361,222 @@
 
 /*  */
 
+/* Header Styles */
+.app-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: white;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.app-title {
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.app-subtitle {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.header-controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-button i {
+  font-size: 1rem;
+}
+
+.current-path {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  max-width: 50%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.profile-link {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+.profile-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-link i {
+  font-size: 1.2rem;
+}
+
+/* Footer Styles */
+.app-footer {
+  background: linear-gradient(90deg, #4a5568 0%, #2d3748 100%);
+  color: #e2e8f0;
+  padding: 1.5rem 2rem;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.copyright {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+}
+
+.footer-links a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .header-controls {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .current-path {
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .footer-content {
+    text-align: center;
+  }
+  
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Font Awesome Import (add this to your main CSS file or HTML head) */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
+/*  */
+
+.header {
+  /* display: flex; */
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #1c3149; 
+  color: white;
+}
+
+.logo {
+  text-decoration: none;
+  color: white;
+}
+
+.logo h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.logo p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.navigation {
+  display: inline-flex;
+  gap: 25px;
+  /* float: right; */
+}
+
+.nav-button {
+  background: none;
+  border: 2px solid white;
+  color: white;
+  font-size: 64px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.nav-button:hover {
+  transform: scale(1.1);
+}

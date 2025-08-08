@@ -17,9 +17,9 @@ export default function Components() {
           <Sidebars />
         </div>
         <div className='main-box'>
-          {/*<div className='top-tab'>*/}
-          {/*  <MenuTabs />*/}
-          {/*</div>*/}
+          <div className='top-tab'>
+           <MenuTabs />
+          </div>
           <div className='main-content'>
             <Layout />
           </div>

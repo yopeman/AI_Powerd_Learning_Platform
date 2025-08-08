@@ -7,11 +7,12 @@ export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -25,10 +26,10 @@ export default function Login() {
       if (success) {
         if (data.user.role === 'assistant') {
           store.set('token', data.token);
-          setMessage({ text: 'Login successful', type: 'success' });
-          navigate('/');
+          setMessage({ text: 'Login successful! Redirecting...', type: 'success' });
+          setTimeout(() => navigate('/'), 1000);
         } else {
-          setMessage({ text: 'You do not have assistant privileges to access the Assistant Dashboard', type: 'error' });
+          setMessage({ text: 'You need assistant privileges to access this dashboard', type: 'error' });
         }
       } else {
         setMessage({ text: responseMessage, type: 'error' });
@@ -40,49 +41,87 @@ export default function Login() {
     }
   };
 
+  const togglePassword = () => setShowPassword(!showPassword);
+
   return (
-    <div>
-      <h1>Login</h1>
-      {loading && <h2>Loading...</h2>}
-      <form onSubmit={handleSubmit}>
-        {message.text && (
-          <h3 className={message.type === 'error' ? 'error' : 'success'}>
-            {message.text}
-          </h3>
-        )}
-        <label>
-          <p>Email</p>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            required
-          />
-        </label>
-        <label>
-          <p>Password</p>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            required
-          />
-        </label>
-        <button type="submit" disabled={loading}>
-          Login
-        </button>
-        <button
-          type="button"
-          onClick={() => setFormData({ email: '', password: '' })}
-        >
-          Reset
-        </button>
-        <Link to="/register">Go to Register</Link>
-      </form>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your admin account</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          {message.text && (
+            <div className={`auth-message ${message.type}`}>
+              {message.text}
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="john@example.com"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <div className="password-input">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                required
+              />
+              <button 
+                type="button" 
+                className="password-toggle"
+                onClick={togglePassword}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
+          
+          <div className="form-options">
+            <div className="remember-me">
+              <input type="checkbox" id="remember" />
+              <label htmlFor="remember">Remember me</label>
+            </div>
+            <Link to="/forgot-password" className="forgot-password">
+              Forgot password?
+            </Link>
+          </div>
+          
+          <div className="form-actions">
+            <button 
+              type="submit" 
+              className="primary-btn"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner"></span> Signing In...
+                </>
+              ) : 'Sign In'}
+            </button>
+          </div>
+          
+          <div className="auth-footer">
+            <p>Don't have an account? <Link to="/register">Register</Link></p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

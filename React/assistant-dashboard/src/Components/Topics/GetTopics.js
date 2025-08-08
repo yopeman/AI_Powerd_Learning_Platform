@@ -138,7 +138,7 @@ export default function GetTopics() {
                       Edit
                     </Link>
                     <Link 
-                      to={`/topics/update/${topic.id}`} 
+                      to={`/topics/delete/${topic.id}`} 
                       className="action-btn delete-btn"
                     >
                       Delete
