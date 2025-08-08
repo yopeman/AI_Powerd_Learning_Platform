@@ -11,7 +11,7 @@ import CertificatesTab from "../../Certificates/CertificatesTab";
 
 export default function MenuTabs() {
   return (
-    <div>
+    <div className="top-tab">
       <Routes>
         <Route path='/' element={<HomesTab />} />
         <Route path='/home/*' element={<HomesTab />} />
@@ -24,5 +24,5 @@ export default function MenuTabs() {
         <Route path='/analytics/*' element={<AnalyticsTab />} />
       </Routes>
     </div>
-  )
+  );
 }

@@ -36,10 +36,10 @@ export default function Layouts() {
         <Route path='/Home/help' element={<Help />} />
         <Route path='/Home/about' element={<About />} />
 
-        <Route path='/fields' element={<Fields />} />
-        <Route path='/fields/get' element={<GetAllFields />} />
-        <Route path='/fields/me' element={<GetMyFields />} />
-        <Route path='/fields/get/:id' element={<GetFieldsById />} />
+        <Route path='/a-fields' element={<Fields />} />
+        <Route path='/a-fields/get' element={<GetAllFields />} />
+        <Route path='/a-fields/me' element={<GetMyFields />} />
+        <Route path='/a-fields/get/:id' element={<GetFieldsById />} />
 
         <Route path='/courses' element={<Courses />} />
         <Route path='/courses/create/:fieldId' element={<CreateCourses />} />

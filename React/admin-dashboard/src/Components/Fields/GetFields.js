@@ -1,25 +1,22 @@
-import React, {useEffect, useState} from 'react'
-import {api} from "../../Utilities/api";
-import {Link} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import { Link } from "react-router-dom";
 
 export default function GetFields() {
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [offset, setOffset] = useState(0);
-  const limit = 15;
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   useEffect(() => {
     const fetchFields = async () => {
       setLoading(true);
-      setError(null);
-
       try {
         const response = await api.get("/fields");
         setFields(response.data.data);
-        console.log(response.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load users');
+        setError(err.response?.data?.message || 'Failed to load fields');
       } finally {
         setLoading(false);
       }
@@ -27,54 +24,92 @@ export default function GetFields() {
     fetchFields();
   }, []);
 
-  const paginatedFields = () => fields.slice(offset, offset + limit);
+  const totalPages = Math.ceil(fields.length / limit);
+  const paginatedData = fields.slice((page - 1) * limit, page * limit);
+  
+  const nextPage = () => setPage(p => Math.min(p + 1, totalPages));
+  const prevPage = () => setPage(p => Math.max(p - 1, 1));
 
-  const handleNextPage = () => {
-    if (offset + limit < fields.length) {
-      setOffset((prevOffset) => prevOffset + limit);
-    }
+  const getAccessType = (isFree) => {
+    return isFree ? (
+      <span className="free-access">Free</span>
+    ) : (
+      <span className="premium-access">Premium</span>
+    );
   };
-
-  const handlePreviousPage = () => {
-    if (offset > 0) {
-      setOffset((prevOffset) => Math.max(prevOffset - limit, 0));
-    }
-  };
-
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
 
   return (
-    <div>
-      <h1>Get Fields</h1>
-      <table border={1}>
-        <thead>
-        <tr>
-          <th>Title</th>
-          <th>isFree</th>
-          <th>Subscription Status</th>
-          <th>Detail</th>
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        {paginatedFields().length && paginatedFields().map((field) => (
-          <tr key={field.id}>
-            <td>{field.title}</td>
-            <td>{`${field.isFree}`}</td>
-            <td><Link to={`/fields/subscription/${field.id}`}>Status</Link></td>
-            <td><Link to={`/fields/get/${field.id}`}>Detail</Link></td>
-            <td><Link to={`/fields/update/${field.id}`}>Update</Link></td>
-            <td><Link to={`/fields/delete/${field.id}`}>Delete</Link></td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-      <div>
-        <button onClick={handlePreviousPage} disabled={offset === 0}>&lt;</button>
-        <button onClick={handleNextPage} disabled={offset + limit >= fields.length}>&gt;</button>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-header-row">
+          <h2 className="card-title">Available Fields</h2>
+          <div className="pagination-controls">
+            <button onClick={prevPage} disabled={page === 1}>&lt;</button>
+            <span>Page {page} of {totalPages}</span>
+            <button onClick={nextPage} disabled={page === totalPages}>&gt;</button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="card-body">
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : (
+          <div className="table-container">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Access</th>
+                  <th>Duration</th>
+                  <th>Free Topics</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedData.map(field => (
+                  <tr key={field.id}>
+                    <td>{field.title}</td>
+                    <td>{getAccessType(field.isFree)}</td>
+                    <td>{field.years_length} years</td>
+                    <td>{field.number_of_free_topics}</td>
+                    <td className="actions-cell">
+                      <Link 
+                        to={`/fields/subscription/${field.id}`} 
+                        className="action-btn status-btn"
+                      >
+                        Subscriptions
+                      </Link>
+                      <Link 
+                        to={`/fields/get/${field.id}`} 
+                        className="action-btn view-btn"
+                      >
+                        View
+                      </Link>
+                      <Link 
+                        to={`/fields/update/${field.id}`} 
+                        className="action-btn edit-btn"
+                      >
+                        Edit
+                      </Link>
+                      <Link 
+                        to={`/fields/delete/${field.id}`} 
+                        className="action-btn delete-btn"
+                      >
+                        Delete
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }

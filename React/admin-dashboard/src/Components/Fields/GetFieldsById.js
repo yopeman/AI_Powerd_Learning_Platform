@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
-import {Link, useParams} from "react-router-dom";
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from "react-router-dom";
+import { api } from "../../Utilities/api";
 
 export default function GetFieldsById() {
   const [field, setField] = useState(null);
@@ -11,45 +11,94 @@ export default function GetFieldsById() {
   useEffect(() => {
     const fetchField = async () => {
       setLoading(true);
-      setError(null);
-
       try {
         const response = await api.get(`/fields/${id}`);
-        if (response.data.success) {
-          setField(response.data.data);
-        } else {
-          setError(response.data.message);
-        }
+        setField(response.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch fields');
+        setError(err.response?.data?.message || 'Failed to fetch field');
       } finally {
         setLoading(false);
       }
     };
-
     fetchField();
   }, [id]);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
-
-  if (!field) return <h1>Field not found</h1>;
+  const getAccessType = (isFree) => {
+    return isFree ? (
+      <span className="free-access">Free Access</span>
+    ) : (
+      <span className="premium-access">Premium Access</span>
+    );
+  };
 
   return (
-    <div>
-      <h1>Get Fields</h1>
-      <ul>
-        <li><b>Title</b>: {field.title}</li>
-        <li><b>Description</b>: {field.description}</li>
-        <li><b>Years Length</b>: {field.years_length}</li>
-        <li><b>Is Free</b>: {`${field.isFree}`}</li>
-        <li><b>Number Of Free Topics</b>: {field.number_of_free_topics}</li>
-        <li><strong>Created At</strong>: {new Date(field.createdAt).toLocaleString()}</li>
-        <li><strong>Updated At</strong>: {new Date(field.updatedAt).toLocaleString()}</li>
-        <li><Link to={`/fields/subscription/${field.id}`}>Subscription Status</Link></li>
-        <li><Link to={`/fields/update/${field.id}`}>Update Field</Link></li>
-        <li><Link to={`/fields/delete/${field.id}`}>Delete Field</Link></li>
-      </ul>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Field Details</h2>
+      </div>
+      
+      <div className="card-body">
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : field ? (
+          <div className="detail-view">
+            <div className="field-header">
+              <h3 className="field-title">{field.title}</h3>
+              <div className="field-access">
+                {getAccessType(field.isFree)}
+              </div>
+            </div>
+            
+            <div className="detail-section">
+              <div className="detail-label">Description</div>
+              <div className="detail-value description-text">{field.description}</div>
+            </div>
+            
+            <div className="detail-grid">
+              <DetailItem label="Duration" value={`${field.years_length} years`} />
+              <DetailItem label="Free Topics" value={field.number_of_free_topics} />
+              <DetailItem label="Created" value={new Date(field.createdAt).toLocaleDateString()} />
+              <DetailItem label="Last Updated" value={new Date(field.updatedAt).toLocaleDateString()} />
+            </div>
+            
+            <div className="action-group">
+              <Link 
+                to={`/fields/subscription/${field.id}`} 
+                className="action-btn status-btn"
+              >
+                View Subscriptions
+              </Link>
+              <Link 
+                to={`/fields/update/${field.id}`} 
+                className="action-btn edit-btn"
+              >
+                Edit Field
+              </Link>
+              <Link 
+                to={`/fields/delete/${field.id}`} 
+                className="action-btn delete-btn"
+              >
+                Delete Field
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="error-message">Field not found</div>
+        )}
+      </div>
     </div>
-  )
+  );
+}
+
+function DetailItem({ label, value }) {
+  return (
+    <div className="detail-item">
+      <div className="detail-label">{label}</div>
+      <div className="detail-value">{value || '-'}</div>
+    </div>
+  );
 }

@@ -1,18 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function AnalyticsTab() {
+  const location = useLocation();
+  const activeTab = location.pathname.split('/')[2] || 'fields';
+
+  const analyticsTabs = [
+    { id: 'fields', label: 'Field Analytics', path: '/analytics/fields' },
+    { id: 'topics', label: 'Topic Analytics', path: '/analytics/topics' },
+    { id: 'subscriptions', label: 'Subscription Analytics', path: '/analytics/subscriptions' },
+    { id: 'payments', label: 'Payment Analytics', path: '/analytics/payments' },
+    { id: 'users', label: 'User Analytics', path: '/analytics/users' },
+    { id: 'feedbacks', label: 'Feedback Analytics', path: '/analytics/feedbacks' },
+    { id: 'certifications', label: 'Certification Analytics', path: '/analytics/certifications' }
+  ];
+
   return (
-    <div>
-      <ul>
-        <li><Link to='/analytics/fields'>Field Analytics</Link></li>
-        <li><Link to='/analytics/topics'>Topic Analytics</Link></li>
-        <li><Link to='/analytics/subscriptions'>Subscription Analytics</Link></li>
-        <li><Link to='/analytics/payments'>Payments Analytics</Link></li>
-        <li><Link to='/analytics/users'>User Analytics</Link></li>
-        <li><Link to='/analytics/feedbacks'>Feedback Analytics</Link></li>
-        <li><Link to='/analytics/certifications'>Certification Analytics</Link></li>
-      </ul>
+    <div className="tabs-container">
+      <p className="tabs">
+        {analyticsTabs.map(tab => (
+          // <li key={tab.id}>
+            <Link 
+              to={tab.path} 
+              className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+            >
+              {tab.label}
+            </Link>
+          // </li>
+        ))}
+      </p>
     </div>
-  )
+  );
 }

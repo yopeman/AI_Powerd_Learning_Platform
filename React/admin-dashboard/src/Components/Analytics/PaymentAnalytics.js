@@ -1,5 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function PaymentAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -28,21 +30,18 @@ export default function PaymentAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  const analyticsItems = [
+    { label: 'Total Payments', value: analytic.totalPayments },
+    { label: 'Completed Payments', value: analytic.completedPayments },
+    { label: 'Pending Payments', value: analytic.pendingPayments },
+    { label: 'Failed Payments', value: analytic.failedPayments },
+    { label: 'Total Revenue', value: `$${analytic.totalRevenue}` },
+    { label: 'Avg Payment Value', value: `$${analytic.avgPaymentValue?.toFixed(2) || 'N/A'}` }
+  ];
 
-  return (
-    <div>
-      <h1>Payment Analytics</h1>
-      <ul>
-        <li><b>Total Payments</b>: {analytic.totalPayments}</li>
-        <li><b>Completed Payments</b>: {analytic.completedPayments}</li>
-        <li><b>Pending Payments</b>: {analytic.pendingPayments}</li>
-        <li><b>Failed Payments</b>: {analytic.failedPayments}</li>
-        <li><b>Total Revenue</b>: {analytic.totalRevenue}</li>
-      </ul>
-    </div>
-  )
+  return <AnalyticsCard title="Payment Analytics" items={analyticsItems} />;
 }

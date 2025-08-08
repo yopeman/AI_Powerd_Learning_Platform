@@ -1,9 +1,17 @@
-import React from 'react'
+import React from 'react';
+import HomesTab from './HomesTab';
+import About from "./About";
 
 export default function Homes() {
   return (
-    <div>
-      <h1>Homes</h1>
+    <div className="card">
+      <About />
+      {/*<div className="card-header">*/}
+      {/*  <h1 className="card-title">Home</h1>*/}
+      {/*</div>*/}
+      {/*<div className="card-body">*/}
+      {/*  <HomesTab />*/}
+      {/*</div>*/}
     </div>
-  )
+  );
 }

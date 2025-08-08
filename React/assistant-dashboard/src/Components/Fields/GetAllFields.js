@@ -8,6 +8,8 @@ export default function GetAllFields() {
   const [error, setError] = useState(null);
   const [offset, setOffset] = useState(0);
   const limit = 15;
+  const totalPages = Math.ceil(fields.length / limit);
+  const currentPage = Math.floor(offset / limit) + 1;
 
   useEffect(() => {
     const fetchFields = async () => {
@@ -17,9 +19,8 @@ export default function GetAllFields() {
       try {
         const response = await api.get("/fields");
         setFields(response.data.data);
-        console.log(response.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load users');
+        setError(err.response?.data?.message || 'Failed to load fields');
       } finally {
         setLoading(false);
       }
@@ -31,47 +32,92 @@ export default function GetAllFields() {
 
   const handleNextPage = () => {
     if (offset + limit < fields.length) {
-      setOffset((prevOffset) => prevOffset + limit);
+      setOffset(prev => prev + limit);
     }
   };
 
   const handlePreviousPage = () => {
     if (offset > 0) {
-      setOffset((prevOffset) => Math.max(prevOffset - limit, 0));
+      setOffset(prev => Math.max(prev - limit, 0));
     }
   };
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return (
+    <div className="loader-container">
+      <div className="loader"></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="error-message">{error}</div>
+  );
 
   return (
-    <div>
-      <h1>Get All Fields</h1>
-      <table border={1}>
-        <thead>
-        <tr>
-          <th>Title</th>
-          <th>Years Length</th>
-          <th>Number Of Free Topics</th>
-          <th>isFree</th>
-          <th>Detail</th>
-        </tr>
-        </thead>
-        <tbody>
-        {paginatedFields().length && paginatedFields().map((field) => (
-          <tr key={field.id}>
-            <td>{field.title}</td>
-            <td>{field.years_length}</td>
-            <td>{field.number_of_free_topics}</td>
-            <td>{`${field.isFree}`}</td>
-            <td><Link to={`/fields/get/${field.id}`}>Detail</Link></td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-      <div>
-        <button onClick={handlePreviousPage} disabled={offset === 0}>&lt;</button>
-        <button onClick={handleNextPage} disabled={offset + limit >= fields.length}>&gt;</button>
+    <div className="card">
+      <div className="card-header-row">
+        <h2 className="card-title">All Fields</h2>
+        <div className="pagination-controls">
+          <span>Page {currentPage} of {totalPages}</span>
+          <button 
+            onClick={handlePreviousPage} 
+            disabled={offset === 0}
+            className="secondary-btn"
+          >
+            &lt; Previous
+          </button>
+          <button 
+            onClick={handleNextPage} 
+            disabled={offset + limit >= fields.length}
+            className="secondary-btn"
+          >
+            Next &gt;
+          </button>
+        </div>
+      </div>
+      
+      <div className="card-body">
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Duration</th>
+                <th>Free Topics</th>
+                <th>Access</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedFields().map((field) => (
+                <tr key={field.id}>
+                  <td>{field.title}</td>
+                  <td>{field.years_length} year(s)</td>
+                  <td>{field.number_of_free_topics}</td>
+                  <td>
+                    {field.isFree ? 
+                      <span className="free-access">Free</span> : 
+                      <span className="premium-access">Premium</span>
+                    }
+                  </td>
+                  <td>
+                    <Link 
+                      to={`/a-fields/get/${field.id}`} 
+                      className="action-btn view-btn"
+                    >
+                      View Details
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {fields.length === 0 && (
+            <div className="empty-state">
+              <p>No fields available</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function SubscriptionAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -29,20 +30,18 @@ export default function SubscriptionAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  const analyticsItems = [
+    { label: 'Total Subscriptions', value: analytic.totalSubscriptions },
+    { label: 'Active Subscriptions', value: analytic.activeSubscriptions },
+    { label: 'Inactive Subscriptions', value: analytic.inactiveSubscriptions },
+    { label: 'Avg Learned Topics', value: analytic.avgLearnedTopics },
+    { label: 'Avg Subscription Duration', value: analytic.avgDuration || 'N/A' },
+    { label: 'Renewal Rate', value: analytic.renewalRate || 'N/A' }
+  ];
 
-  return (
-    <div>
-      <h1>Subscription Analytics</h1>
-      <ul>
-        <li><b>Total Subscriptions</b>: {analytic.totalSubscriptions}</li>
-        <li><b>Active Subscriptions</b>: {analytic.activeSubscriptions}</li>
-        <li><b>Inactive Subscriptions</b>: {analytic.inactiveSubscriptions}</li>
-        <li><b>Average Learned Topics</b>: {analytic.avgLearnedTopics}</li>
-      </ul>
-    </div>
-  )
+  return <AnalyticsCard title="Subscription Analytics" items={analyticsItems} />;
 }

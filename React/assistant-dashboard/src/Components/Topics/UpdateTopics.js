@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { api } from "../../Utilities/api";
-import { InputField } from "../Courses/CreateCourses";
 
 export default function UpdateTopics() {
   const { id } = useParams();
@@ -9,26 +8,24 @@ export default function UpdateTopics() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [initialValue, setInitialValue] = useState('');
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     const fetchTopic = async () => {
-      setLoading(true);
+      setInitialLoad(true);
       setError(null);
 
       try {
         const response = await api.get(`/topics/${id}`);
         if (response.data.success) {
-          const topic = response.data.data;
-          setFormData({ title: topic.title });
-          setInitialValue(topic.title);
+          setFormData({ title: response.data.data.title });
         } else {
           setError(response.data.message);
         }
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch topic');
       } finally {
-        setLoading(false);
+        setInitialLoad(false);
       }
     };
 
@@ -36,8 +33,7 @@ export default function UpdateTopics() {
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData({ title: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +45,7 @@ export default function UpdateTopics() {
     try {
       const response = await api.put(`/topics/${id}`, formData);
       if (response.data.success) {
-        setSuccess(response.data.message);
+        setSuccess('Topic updated successfully!');
       } else {
         setError(response.data.message);
       }
@@ -61,31 +57,71 @@ export default function UpdateTopics() {
   };
 
   const handleReset = () => {
-    setFormData({ title: initialValue });
-    setError(null);
-    setSuccess(null);
+    const fetchTopic = async () => {
+      try {
+        const response = await api.get(`/topics/${id}`);
+        if (response.data.success) {
+          setFormData({ title: response.data.data.title });
+          setError(null);
+          setSuccess(null);
+        }
+      } catch (err) {
+        setError('Failed to reset form');
+      }
+    };
+    
+    fetchTopic();
   };
 
-  if (loading) return <h1>Loading...</h1>;
+  if (initialLoad) return (
+    <div className="loader-container">
+      <div className="loader"></div>
+    </div>
+  );
 
   return (
-    <div>
-      <h1>Update Topic</h1>
-      {error && <h3 style={{ color: 'red' }}>{error}</h3>}
-      {success && <h3 style={{ color: 'green' }}>{success}</h3>}
-      <form onSubmit={handleSubmit}>
-        <InputField
-          label="Topic Title"
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <button type="submit" disabled={loading}>Update Topic</button>
-        <button type="button" onClick={handleReset} disabled={loading}>Reset</button>
-      </form>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Update Topic</h2>
+      </div>
+      
+      <div className="card-body">
+        <form onSubmit={handleSubmit} className="field-form">
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          
+          <div className="form-group">
+            <label>Topic Title *</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              className="amount-input"
+              placeholder="Enter topic title"
+            />
+          </div>
+          
+          <div className="button-group" style={{ marginTop: '24px' }}>
+            <button 
+              type="submit" 
+              className="primary-btn"
+              disabled={loading}
+            >
+              {loading ? 'Updating...' : 'Update Topic'}
+            </button>
+            <button 
+              type="button" 
+              className="secondary-btn"
+              onClick={handleReset}
+              disabled={loading}
+            >
+              Reset Changes
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

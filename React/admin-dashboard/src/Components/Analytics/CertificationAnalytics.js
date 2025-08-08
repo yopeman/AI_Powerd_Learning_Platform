@@ -1,5 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function CertificationAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -15,7 +17,6 @@ export default function CertificationAnalytics() {
         const response = await api.get(`/analytics/certifications`);
         if (response.data.success) {
           setAnalytic(response.data.data);
-          console.log(response.data);
         } else {
           setError(response.data.message);
         }
@@ -29,18 +30,23 @@ export default function CertificationAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  const analyticsItems = [
+    { label: 'Total Results', value: analytic.totalResults },
+    { 
+      label: 'Average Score', 
+      value: (
+        <div className="score-badge">
+          {analytic.averageScore.toFixed(1)}%
+        </div>
+      ) 
+    },
+    { label: 'Pass Rate', value: analytic.passRate || 'N/A' },
+    { label: 'Top Performing Field', value: analytic.topField || 'N/A' }
+  ];
 
-  return (
-    <div>
-      <h1>Certification Analytics</h1>
-      <ul>
-        <li><b>Total Results</b>: {analytic.totalResults}</li>
-        <li><b>Average Score</b>: {analytic.averageScore}</li>
-      </ul>
-    </div>
-  )
+  return <AnalyticsCard title="Certification Analytics" items={analyticsItems} />;
 }

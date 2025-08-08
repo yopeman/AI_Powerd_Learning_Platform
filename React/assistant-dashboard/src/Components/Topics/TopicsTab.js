@@ -1,15 +1,27 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function TopicsTab() {
+  const location = useLocation();
+  
+  const isActive = (path) => {
+    return location.pathname.includes(path);
+  };
+
   return (
-    <div>
-      <ul>
-        <li>Create Topics</li>
-        <li>Get Topics</li>
-        <li>Details</li>
-        <li>Update</li>
-        <li>Delete</li>
-      </ul>
+    <div className="tabs">
+      <Link 
+        to={`/topics/list/${location.pathname.split('/')[2] || ''}`} 
+        className={`tab ${isActive('/topics/list') ? 'active' : ''}`}
+      >
+        Topic List
+      </Link>
+      <Link 
+        to={`/topics/create/${location.pathname.split('/')[2] || ''}`} 
+        className={`tab ${isActive('/topics/create') ? 'active' : ''}`}
+      >
+        Create Topics
+      </Link>
     </div>
-  )
+  );
 }

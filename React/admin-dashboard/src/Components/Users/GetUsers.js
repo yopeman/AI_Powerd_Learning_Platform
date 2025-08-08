@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { api } from "../../Utilities/api";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import Loader from '../Loader';
 
 export default function GetUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [offset, setOffset] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
   const limit = 15;
 
   useEffect(() => {
@@ -16,8 +18,7 @@ export default function GetUsers() {
 
       try {
         const response = await api.get("/users");
-        setUsers(response.data.data);
-        console.log(response.data.data);
+        setUsers(response.data.data || []);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load users');
       } finally {
@@ -28,51 +29,101 @@ export default function GetUsers() {
     fetchUsers();
   }, []);
 
-  const paginatedUsers = () => users.slice(offset, offset + limit);
+  const filteredUsers = users.filter(user => 
+    `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const paginatedUsers = () => filteredUsers.slice(offset, offset + limit);
 
   const handleNextPage = () => {
-    if (offset + limit < users.length) {
-      setOffset((prevOffset) => prevOffset + limit);
+    if (offset + limit < filteredUsers.length) {
+      setOffset(prev => prev + limit);
     }
   };
 
   const handlePreviousPage = () => {
     if (offset > 0) {
-      setOffset((prevOffset) => Math.max(prevOffset - limit, 0));
+      setOffset(prev => Math.max(prev - limit, 0));
     }
   };
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
 
   return (
-    <div>
-      <h1>Get Users</h1>
-      <table border={1}>
-        <thead>
-        <tr>
-          <th>Full Name</th>
-          <th>Role</th>
-          <th>Detail</th>
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        {paginatedUsers().length && paginatedUsers().map((user) => (
-          <tr key={user.id}>
-            <td>{user.first_name} {user.last_name}</td>
-            <td>{user.role}</td>
-            <td><Link to={`/users/get/${user.id}`}>Detail</Link></td>
-            <td><Link to={`/users/update/${user.id}`}>Update</Link></td>
-            <td><Link to={`/users/delete/${user.id}`}>Delete</Link></td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-      <div>
-        <button onClick={handlePreviousPage} disabled={offset === 0}>&lt;</button>
-        <button onClick={handleNextPage} disabled={offset + limit >= users.length}>&gt;</button>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-header-row">
+          <h1 className="card-title">User List</h1>
+          <div className="pagination-controls">
+            <span>
+              Showing {Math.min(offset + 1, filteredUsers.length)}-
+              {Math.min(offset + limit, filteredUsers.length)} of {filteredUsers.length}
+            </span>
+            <button onClick={handlePreviousPage} disabled={offset === 0}>&lt;</button>
+            <button onClick={handleNextPage} disabled={offset + limit >= filteredUsers.length}>&gt;</button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="card-body">
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="amount-input"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setOffset(0);
+            }}
+          />
+        </div>
+        
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedUsers().length > 0 ? (
+                paginatedUsers().map((user) => (
+                  <tr key={user.id}>
+                    <td className="user-info">
+                      <div className="user-name">{user.first_name} {user.last_name}</div>
+                    </td>
+                    <td>{user.email}</td>
+                    <td>{user.role}</td>
+                    <td className="actions-cell">
+                      <Link to={`/users/get/${user.id}`} className="action-btn view-btn">
+                        View
+                      </Link>
+                      <Link to={`/users/update/${user.id}`} className="action-btn edit-btn">
+                        Edit
+                      </Link>
+                      <Link to={`/users/delete/${user.id}`} className="action-btn delete-btn">
+                        Delete
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>
+                    No users found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

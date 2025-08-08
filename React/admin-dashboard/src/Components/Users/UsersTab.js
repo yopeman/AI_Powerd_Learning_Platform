@@ -1,16 +1,26 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link, NavLink, useLocation} from 'react-router-dom';
 
 export default function UsersTab() {
+  const location = useLocation();
+  // const activeTab = location.pathname.split('/')[2] || 'create';
+
   return (
-    <div>
-      <ul>
-        <li><Link to='/users/create'>Create Users</Link></li>
-        <li><Link to='/users/get'>Get Users</Link></li>
-        {/*<li>Get Users By ID</li>*/}
-        {/*<li>Update Users</li>*/}
-        {/*<li>Delete Users</li>*/}
-      </ul>
+    <div className="tabs-container">
+      <p className="tabs">
+        <NavLink
+          to='/users/get'
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          View Users
+        </NavLink>
+        <NavLink
+          to='/users/create'
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          Create User
+        </NavLink>
+      </p>
     </div>
-  )
+  );
 }

@@ -10,6 +10,8 @@ export default function GetTopics() {
   const limit = 15;
   const { chapterId } = useParams();
   const [chapter, setChapter] = useState(null);
+  const totalPages = Math.ceil(topics.length / limit);
+  const currentPage = Math.floor(offset / limit) + 1;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,66 +44,124 @@ export default function GetTopics() {
 
   const handleNextPage = () => {
     if (offset + limit < topics.length) {
-      setOffset((prevOffset) => prevOffset + limit);
+      setOffset(prev => prev + limit);
     }
   };
 
   const handlePreviousPage = () => {
     if (offset > 0) {
-      setOffset((prevOffset) => Math.max(prevOffset - limit, 0));
+      setOffset(prev => Math.max(prev - limit, 0));
     }
   };
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return (
+    <div className="loader-container">
+      <div className="loader"></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="error-message">{error}</div>
+  );
 
   return (
-    <div>
-      <h1>Get Topics</h1>
-      {chapter && (
-        <ul>
-          <li><strong>Order</strong>: Chapter - {chapter.order}</li>
-          <li><strong>Title</strong>: {chapter.title}</li>
-          <li><strong>Description</strong>: {chapter.description}</li>
-          <li><strong>Created At</strong>: {new Date(chapter.createdAt).toLocaleString()}</li>
-          <li><strong>Updated At</strong>: {new Date(chapter.updatedAt).toLocaleString()}</li>
-          <li><Link to={`/courses/get/${chapter.courseId}`}>Course Details</Link></li>
-        </ul>
-      )}
-      <table border={1}>
-        <caption>
-          <span style={{ float: 'right' }}>
-            <Link to={`/topics/create/${chapterId}`}>Create New Topics</Link>
-          </span>
-        </caption>
-        <thead>
-        <tr>
-          <th>Title</th>
-          <th>Detail</th>
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        {paginatedTopics().length > 0 ? (
-          paginatedTopics().map((topic) => (
-            <tr key={topic.id}>
-              <td>{topic.title}</td>
-              <td><Link to={`/topics/get/${topic.id}`}>Detail</Link></td>
-              <td><Link to={`/topics/update/${topic.id}`}>Update</Link></td>
-              <td><Link to={`/topics/delete/${topic.id}`}>Delete</Link></td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan={4}>No topics available</td>
-          </tr>
-        )}
-        </tbody>
-      </table>
-      <div>
-        <button onClick={handlePreviousPage} disabled={offset === 0}>&lt;</button>
-        <button onClick={handleNextPage} disabled={offset + limit >= topics.length}>&gt;</button>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-header-row">
+          <h2 className="card-title">
+            Topics in Chapter {chapter?.order || ''}
+          </h2>
+          <div className="pagination-controls">
+            <span>Page {currentPage} of {totalPages}</span>
+            <button 
+              onClick={handlePreviousPage} 
+              disabled={offset === 0}
+              className="secondary-btn"
+            >
+              &lt; Previous
+            </button>
+            <button 
+              onClick={handleNextPage} 
+              disabled={offset + limit >= topics.length}
+              className="secondary-btn"
+            >
+              Next &gt;
+            </button>
+          </div>
+        </div>
+        
+        <div className="field-meta">
+          <span>Chapter: {chapter?.title || 'N/A'}</span>
+          <span>•</span>
+          <span>Course: {chapter?.courseId || 'N/A'}</span>
+        </div>
+      </div>
+      
+      <div className="card-body">
+        <div className="description-text" style={{ marginBottom: '20px' }}>
+          {chapter?.description || 'Chapter description not available'}
+        </div>
+        
+        <div className="table-container">
+          <div className="card-header-row" style={{ marginBottom: '16px' }}>
+            <h3 className="section-title">Topic List</h3>
+            <Link 
+              to={`/topics/create/${chapterId}`} 
+              className="primary-btn"
+            >
+              + Create New Topics
+            </Link>
+          </div>
+          
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedTopics().map((topic) => (
+                <tr key={topic.id}>
+                  <td>{topic.title}</td>
+                  <td className="actions-cell">
+                    <Link 
+                      to={`/topics/get/${topic.id}`} 
+                      className="action-btn view-btn"
+                    >
+                      Details
+                    </Link>
+                    <Link 
+                      to={`/topics/update/${topic.id}`} 
+                      className="action-btn edit-btn"
+                    >
+                      Edit
+                    </Link>
+                    <Link 
+                      to={`/topics/update/${topic.id}`} 
+                      className="action-btn delete-btn"
+                    >
+                      Delete
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {topics.length === 0 && (
+            <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+              <p>No topics found for this chapter</p>
+              <Link 
+                to={`/topics/create/${chapterId}`} 
+                className="primary-btn"
+                style={{ marginTop: '16px' }}
+              >
+                Create First Topic
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

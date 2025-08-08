@@ -21,7 +21,7 @@ export default function GetFieldsById() {
           setError(response.data.message);
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch fields');
+        setError(err.response?.data?.message || 'Failed to fetch field');
       } finally {
         setLoading(false);
       }
@@ -30,23 +30,70 @@ export default function GetFieldsById() {
     fetchField();
   }, [id]);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return (
+    <div className="loader-container">
+      <div className="loader"></div>
+    </div>
+  );
 
-  if (!field) return <h1>Field not found</h1>;
+  if (error) return (
+    <div className="error-message">{error}</div>
+  );
+
+  if (!field) return (
+    <div className="error-message">Field not found</div>
+  );
 
   return (
-    <div>
-      <h1>Get Fields</h1>
-      <ul>
-        <li><b>Title</b>: {field.title}</li>
-        <li><b>Description</b>: {field.description}</li>
-        <li><b>Years Length</b>: {field.years_length}</li>
-        <li><b>Is Free</b>: {`${field.isFree}`}</li>
-        <li><b>Number Of Free Topics</b>: {field.number_of_free_topics}</li>
-        <li><strong>Created At</strong>: {new Date(field.createdAt).toLocaleString()}</li>
-        <li><strong>Updated At</strong>: {new Date(field.updatedAt).toLocaleString()}</li>
-      </ul>
+    <div className="card">
+      <div className="field-header">
+        <div>
+          <h2 className="field-title">{field.title}</h2>
+          <div className="field-meta">
+            <span>{field.years_length} year(s)</span>
+            <span>•</span>
+            <span>
+              {field.isFree ? 
+                <span className="free-access">Free Access</span> : 
+                <span className="premium-access">Premium Access</span>
+              }
+            </span>
+            <span>•</span>
+            <span>{field.number_of_free_topics} free topics</span>
+          </div>
+        </div>
+        <Link to="/a-fields/me" className="primary-btn">
+          &larr; Back to My Fields
+        </Link>
+      </div>
+      
+      <div className="card-body">
+        <div className="field-summary">
+          <h3 className="section-title">Description</h3>
+          <p className="description-text">{field.description}</p>
+        </div>
+        
+        <div className="detail-grid">
+          <div className="detail-item">
+            <div className="detail-label">Created At</div>
+            <div className="detail-value">
+              {new Date(field.createdAt).toLocaleString()}
+            </div>
+          </div>
+          
+          <div className="detail-item">
+            <div className="detail-label">Updated At</div>
+            <div className="detail-value">
+              {new Date(field.updatedAt).toLocaleString()}
+            </div>
+          </div>
+          
+          <div className="detail-item">
+            <div className="detail-label">Field ID</div>
+            <div className="detail-value">{field.id}</div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

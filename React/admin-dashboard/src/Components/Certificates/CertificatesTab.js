@@ -1,14 +1,17 @@
-import React from 'react'
-import {Link} from "react-router-dom";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 export default function CertificatesTab() {
   return (
-    <div>
-      <ul>
-        <li><Link to='/certificates/get'>Get Certificates</Link></li>
-        {/*<li>Get Certificates By Id</li>*/}
-        {/*<li>Delete Certificates</li>*/}
-      </ul>
+    <div className="tabs-container">
+      <p className="tabs">
+        <NavLink 
+          to='/certificates/get' 
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          View Certificates
+        </NavLink>
+      </p>
     </div>
-  )
+  );
 }

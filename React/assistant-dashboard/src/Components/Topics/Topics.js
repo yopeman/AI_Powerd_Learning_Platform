@@ -1,9 +1,11 @@
-import React from 'react'
+import React from 'react';
+import TopicsTab from './TopicsTab';
 
 export default function Topics() {
   return (
     <div>
-      <h1>Topics</h1>
+      <h1 className="fields-title">Topics Management</h1>
+      <TopicsTab />
     </div>
-  )
+  );
 }

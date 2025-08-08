@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function FieldAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -29,19 +30,17 @@ export default function FieldAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  const analyticsItems = [
+    { label: 'Total Fields', value: analytic.totalFields },
+    { label: 'Free Fields', value: analytic.freeFields },
+    { label: 'Paid Fields', value: analytic.paidFields },
+    { label: 'Most Popular Field', value: analytic.mostPopularField || 'N/A' },
+    { label: 'Avg Topics per Field', value: analytic.avgTopicsPerField || 'N/A' }
+  ];
 
-  return (
-    <div>
-      <h1>Field Analytics</h1>
-      <ul>
-        <li><b>Total Fields</b>: {analytic.totalFields}</li>
-        <li><b>Free Fields</b>: {analytic.freeFields}</li>
-        <li><b>Paid Fields</b>: {analytic.paidFields}</li>
-      </ul>
-    </div>
-  )
+  return <AnalyticsCard title="Field Analytics" items={analyticsItems} />;
 }

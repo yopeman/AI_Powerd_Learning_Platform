@@ -4,14 +4,13 @@ import { api } from '../../Utilities/api';
 export default function GetAmounts() {
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Set loading to true initially
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAmount = async () => {
       try {
         const response = await api.get('/amounts');
         setAmount(response.data.data.amount);
-        console.log(response.data);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
       } finally {
@@ -22,20 +21,26 @@ export default function GetAmounts() {
     fetchAmount();
   }, []);
 
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
-
   return (
-    <div>
-      <h1>Get Amounts</h1>
-      {error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : (
-        <h3>
-          <b>Amount = </b> {amount}
-        </h3>
-      )}
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Current Amount</h2>
+      </div>
+      
+      <div className="card-body">
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : (
+          <div className="amount-display">
+            <div className="amount-value">${amount.toLocaleString()}</div>
+            <div className="amount-label">Available Balance</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

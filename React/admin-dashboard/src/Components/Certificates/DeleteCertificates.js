@@ -1,46 +1,86 @@
-import React, {useEffect, useState} from 'react'
-import {useParams} from "react-router-dom";
-import {api} from "../../Utilities/api";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../Utilities/api";
 
 export default function DeleteCertificates() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [certificate, setCertificate] = useState(null);
   const { id } = useParams();
-  let isOnes = false;
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (isOnes) return;
-    isOnes = true;
-
-    const deleteResult = async () => {
-      setLoading(true);
-      setError(null);
-
+    const fetchCertificate = async () => {
       try {
-        const response = await api.delete(`/certifications/${id}`);
-        if (response.data.success) {
-          setSuccess(response.data.message);
-        } else {
-          setError(response.data.message);
-        }
+        const response = await api.get(`/certifications/results/${id}`);
+        setCertificate(response.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to delete certificates');
-      } finally {
-        setLoading(false);
+        setError('Failed to load certificate details');
       }
     };
-
-    deleteResult();
+    fetchCertificate();
   }, [id]);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      const response = await api.delete(`/certifications/${id}`);
+      if (response.data.success) {
+        setSuccess('Certificate deleted successfully');
+        setTimeout(() => navigate('/certificates/get'), 1500);
+      } else {
+        setError(response.data.message);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Deletion failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <h1>Delete Certificates</h1>
-      {success && <h3>{success}</h3>}
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Delete Certificate</h2>
+      </div>
+      
+      <div className="card-body">
+        {error ? (
+          <div className="error-message">{error}</div>
+        ) : success ? (
+          <div className="success-message">{success}</div>
+        ) : certificate ? (
+          <div className="confirmation-dialog">
+            <div className="confirmation-text">
+              Are you sure you want to delete this certificate record?
+            </div>
+            <div className="certificate-info">
+              <p><strong>User ID:</strong> {certificate.userId}</p>
+              <p><strong>Score:</strong> {certificate.value}%</p>
+            </div>
+            <div className="button-group">
+              <button 
+                onClick={handleDelete} 
+                className="delete-btn"
+                disabled={loading}
+              >
+                {loading ? 'Deleting...' : 'Confirm Delete'}
+              </button>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="secondary-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

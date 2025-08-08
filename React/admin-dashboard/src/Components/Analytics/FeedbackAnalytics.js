@@ -1,5 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function FeedbackAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -15,7 +17,6 @@ export default function FeedbackAnalytics() {
         const response = await api.get(`/analytics/feedbacks`);
         if (response.data.success) {
           setAnalytic(response.data.data);
-          console.log(response.data.data);
         } else {
           setError(response.data.message);
         }
@@ -29,18 +30,37 @@ export default function FeedbackAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  // Function to render star rating
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} style={{ color: i <= rating ? '#f59e0b' : '#d1d5db' }}>
+          ★
+        </span>
+      );
+    }
+    return <div className="rating-stars">{stars}</div>;
+  };
 
-  return (
-    <div>
-      <h1>Feedback Analytics</h1>
-      <ul>
-        <li><b>Total Feedbacks</b>: {analytic.totalFeedbacks}</li>
-        <li><b>Average Rating</b>: {analytic.averageRating}</li>
-      </ul>
-    </div>
-  )
+  const analyticsItems = [
+    { label: 'Total Feedbacks', value: analytic.totalFeedbacks },
+    { 
+      label: 'Average Rating', 
+      value: (
+        <div className="rating-display">
+          {renderStars(Math.round(analytic.averageRating))}
+          <span className="rating-value">({analytic.averageRating.toFixed(1)})</span>
+        </div>
+      ) 
+    },
+    { label: 'Positive Feedbacks', value: analytic.positiveFeedbacks || 'N/A' },
+    { label: 'Feedback Response Rate', value: analytic.responseRate || 'N/A' }
+  ];
+
+  return <AnalyticsCard title="Feedback Analytics" items={analyticsItems} />;
 }

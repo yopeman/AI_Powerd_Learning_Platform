@@ -1,14 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function FieldsTab() {
+  const location = useLocation();
+  
+  const isActive = (path) => {
+    return location.pathname.includes(path);
+  };
+
   return (
-    <div>
-      <ul>
-        <li><Link to='/fields/me'>My Fields</Link></li>
-        <li><Link to='/fields/get'>All Fields</Link></li>
-        <li>Detail</li>
-      </ul>
+    <div className="tabs">
+      <Link 
+        to='/fields/me' 
+        className={`tab ${isActive('/fields/me') ? 'active' : ''}`}
+      >
+        My Fields
+      </Link>
+      <Link 
+        to='/fields/get' 
+        className={`tab ${isActive('/fields/get') ? 'active' : ''}`}
+      >
+        All Fields
+      </Link>
     </div>
-  )
+  );
 }

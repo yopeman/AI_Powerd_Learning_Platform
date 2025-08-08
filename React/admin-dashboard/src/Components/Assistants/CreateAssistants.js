@@ -13,102 +13,117 @@ export default function CreateAssistants() {
   const [success, setSuccess] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    const fetchUsers = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await api.get("/users");
-        setUsers(response.data.data);
+        const [usersResponse, fieldsResponse] = await Promise.all([
+          api.get("/users"),
+          api.get("/fields"),
+        ]);
+        setUsers(usersResponse.data.data);
+        setFields(fieldsResponse.data.data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load users');
+        setError(err.response?.data?.message || 'Failed to load data');
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchFields = async () => {
-      try {
-        const response = await api.get("/fields");
-        setFields(response.data.data);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load fields');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-    fetchFields();
+    fetchData();
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccess(null);
-
+    
     try {
       const response = await api.post('/assistants', formData);
       if (response.data.success) {
-        setSuccess('Assistant creation successful');
+        setSuccess('Assistant created successfully');
+        setFormData({ userId: '', fieldId: '' });
       } else {
         setError(response.data.message);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Assistant creation failed');
+      setError(err.response?.data?.message || 'Creation failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
-    setFormData({
-      userId: '',
-      fieldId: '',
-    });
-    setError(null);
-    setSuccess(null);
-  };
-
-  if (loading) return <h1>Loading...</h1>;
-
   return (
-    <div>
-      <h1>Create Assistants</h1>
-      {error && <h3 style={{ color: 'red' }}>{error}</h3>}
-      {success && <h3 style={{ color: 'green' }}>{success}</h3>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Users</p>
-          <select name="userId" value={formData.userId} onChange={handleChange} required>
-            <option value="">Select a user</option>
-            {users.map(user => (
-              <option key={user.id} value={user.id}>
-                {user.first_name} {user.last_name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <p>Fields</p>
-          <select name="fieldId" value={formData.fieldId} onChange={handleChange} required>
-            <option value="">Select a field</option>
-            {fields.map(field => (
-              <option key={field.id} value={field.id}>
-                {field.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div>
-          <button type="submit">Assign New Assistant</button>
-          <button type="button" onClick={handleReset}>Reset</button>
-        </div>
-      </form>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Create New Assistant</h2>
+      </div>
+      
+      <div className="card-body">
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : (
+          <form onSubmit={handleSubmit} className="assistant-form">
+            {success && <div className="success-message">{success}</div>}
+            
+            <div className="form-group">
+              <label htmlFor="user">Select User</label>
+              <select 
+                id="user"
+                name="userId" 
+                value={formData.userId} 
+                onChange={handleChange} 
+                required
+                className="form-select"
+              >
+                <option value="">Choose a user</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.first_name} {user.last_name} ({user.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="field">Assign to Field</label>
+              <select 
+                id="field"
+                name="fieldId" 
+                value={formData.fieldId} 
+                onChange={handleChange} 
+                required
+                className="form-select"
+              >
+                <option value="">Select a field</option>
+                {fields.map(field => (
+                  <option key={field.id} value={field.id}>
+                    {field.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="button-group">
+              <button 
+                type="submit" 
+                className="primary-btn"
+                disabled={loading}
+              >
+                {loading ? 'Creating...' : 'Create Assistant'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

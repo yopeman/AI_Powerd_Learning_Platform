@@ -3,13 +3,12 @@ import {useParams} from "react-router-dom";
 import {api} from "../../Utilities/api";
 
 export default function CreateTopics() {
-  const [topics, setTopics] = useState(['']); // Initialize with one input
+  const [topics, setTopics] = useState(['']); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const { chapterId } = useParams();
   const [chapter, setChapter] = useState(null);
-
 
   useEffect(() => {
     const fetchChapter = async () => {
@@ -24,7 +23,7 @@ export default function CreateTopics() {
           setError(response.data.message);
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch courses');
+        setError(err.response?.data?.message || 'Failed to fetch chapter');
       } finally {
         setLoading(false);
       }
@@ -33,7 +32,6 @@ export default function CreateTopics() {
     fetchChapter();
   }, [chapterId]);
 
-
   const handleInputChange = (index, value) => {
     const updatedTopics = [...topics];
     updatedTopics[index] = value;
@@ -41,19 +39,19 @@ export default function CreateTopics() {
   };
 
   const handleAddTopic = () => {
-    setTopics([...topics, '']); // Add an empty string for a new input
+    setTopics([...topics, '']);
   };
 
-  const handleRemoveTopic = () => {
+  const handleRemoveTopic = (index) => {
     if (topics.length > 1) {
-      const updatedTopics = topics.slice(0, -1); // Remove the last topic
+      const updatedTopics = [...topics];
+      updatedTopics.splice(index, 1);
       setTopics(updatedTopics);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitted Topics:', topics);
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -61,7 +59,10 @@ export default function CreateTopics() {
     try {
       const response = await api.post('/topics', { chapterId, titles: topics });
       if (response.data.success) {
-        setSuccess(response?.data?.message || 'Topics creation successful');
+        setSuccess('Topics created successfully!');
+        setTopics(['']);
+      } else {
+        setError(response.data.message);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Topics creation failed');
@@ -70,30 +71,96 @@ export default function CreateTopics() {
     }
   };
 
-  if (loading) return <h1>Loading...</h1>;
-  if (!chapter) return <h1>Chapter not found</h1>;
+  const handleReset = () => {
+    setTopics(['']);
+    setError(null);
+    setSuccess(null);
+  };
+
+  if (!chapter) return (
+    <div className="loader-container">
+      <div className="loader"></div>
+    </div>
+  );
 
   return (
-    <div>
-      <h1>Create Topics</h1>
-      <h3>{success}</h3>
-      <h3>{error}</h3>
-      <form onSubmit={handleSubmit}>
-        {topics.map((topic, index) => (
-          <div key={index} style={{ marginBottom: '10px' }}>
-            <input
-              type="text"
-              value={topic}
-              onChange={(e) => handleInputChange(index, e.target.value)}
-              placeholder={`Topic ${index + 1}`}
-              required
-            />
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Create New Topics</h2>
+        <div className="field-meta">
+          For Chapter {chapter?.order}: {chapter?.title}
+        </div>
+      </div>
+      
+      <div className="card-body">
+        {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
+        
+        <form onSubmit={handleSubmit} className="field-form">
+          <div className="form-section">
+            {topics.map((topic, index) => (
+              <div key={index} className="form-group" style={{ position: 'relative', marginBottom: '20px' }}>
+                <label>Topic {index + 1} *</label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    value={topic}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    placeholder={`Enter topic ${index + 1} title`}
+                    required
+                    className="amount-input"
+                  />
+                  {topics.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTopic(index)}
+                      className="delete-btn"
+                      style={{ 
+                        position: 'absolute', 
+                        right: '10px', 
+                        top: '35px', 
+                        padding: '4px 8px',
+                        fontSize: '12px'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            
+            <div className="button-group">
+              <button 
+                type="button" 
+                onClick={handleAddTopic}
+                className="secondary-btn"
+                style={{ marginRight: '10px' }}
+              >
+                + Add Another Topic
+              </button>
+            </div>
           </div>
-        ))}
-        <button type="button" onClick={handleAddTopic}>Add Topic</button>
-        <button type="button" onClick={handleRemoveTopic} disabled={topics.length <= 1}>Remove Topic</button>
-        <button type="submit">Save Topics</button>
-      </form>
+          
+          <div className="button-group" style={{ marginTop: '24px' }}>
+            <button 
+              type="submit" 
+              className="primary-btn"
+              disabled={loading}
+            >
+              {loading ? 'Creating...' : 'Create Topics'}
+            </button>
+            <button 
+              type="button" 
+              className="secondary-btn"
+              onClick={handleReset}
+              disabled={loading}
+            >
+              Reset Form
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

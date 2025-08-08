@@ -1,9 +1,17 @@
-import React from 'react'
+import React from 'react';
+import UsersTab from './UsersTab';
+import GetUsers from "./GetUsers";
 
 export default function Users() {
   return (
-    <div>
-      <h1>Users</h1>
+    <div className="card">
+      <GetUsers />
+      {/*<div className="card-header">*/}
+      {/*  <h1 className="card-title">User Management</h1>*/}
+      {/*</div>*/}
+      {/*<div className="card-body">*/}
+      {/*  <UsersTab />*/}
+      {/*</div>*/}
     </div>
-  )
+  );
 }

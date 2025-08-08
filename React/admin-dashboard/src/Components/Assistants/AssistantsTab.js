@@ -1,16 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export default function AssistantsTab() {
   return (
-    <div>
-      <ul>
-        <li><Link to='/assistants/create'>Create Assistants</Link></li>
-        <li><Link to='/assistants/get'>Get Assistants</Link></li>
-        {/*<li>Get Assistants By ID</li>*/}
-        {/*<li>Update Assistants</li>*/}
-        {/*<li>Delete Assistants</li>*/}
-      </ul>
+    <div className="tabs-container">
+      <p className="tabs">
+        <NavLink
+          to='/assistants/get'
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          View Assistants
+        </NavLink>
+        <NavLink 
+          to='/assistants/create' 
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          Create Assistant
+        </NavLink>
+      </p>
     </div>
-  )
+  );
 }

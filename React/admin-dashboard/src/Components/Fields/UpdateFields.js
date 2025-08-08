@@ -6,11 +6,11 @@ export default function UpdateFields() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    years_length: 0,
-    isFree: false,
-    number_of_free_topics: 0,
+    years_length: 1,
+    isFree: 'false',
+    number_of_free_topics: 0
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const { id } = useParams();
@@ -18,12 +18,15 @@ export default function UpdateFields() {
   useEffect(() => {
     const fetchField = async () => {
       setLoading(true);
-      setError(null);
-
       try {
         const response = await api.get(`/fields/${id}`);
         if (response.data.success) {
-          setFormData(response.data.data);
+          const fieldData = response.data.data;
+          // Convert boolean to string for select input
+          setFormData({
+            ...fieldData,
+            isFree: String(fieldData.isFree)
+          });
         } else {
           setError(response.data.message);
         }
@@ -33,15 +36,14 @@ export default function UpdateFields() {
         setLoading(false);
       }
     };
-
     fetchField();
   }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: name === 'isFree' ? value === 'true' : value,
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
     }));
   };
 
@@ -49,89 +51,123 @@ export default function UpdateFields() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccess(null);
-
+    
+    // Convert string booleans to actual booleans
+    const submitData = {
+      ...formData,
+      isFree: formData.isFree === 'true'
+    };
+    
     try {
-      const response = await api.put(`/fields/${id}`, formData);
+      const response = await api.put(`/fields/${id}`, submitData);
       if (response.data.success) {
         setSuccess('Field updated successfully');
       } else {
         setError(response.data.message);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Field update failed');
+      setError(err.response?.data?.message || 'Update failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
-    setFormData({
-      title: '',
-      description: '',
-      years_length: 0,
-      isFree: false,
-      number_of_free_topics: 0,
-    });
-    setError(null);
-    setSuccess(null);
-  };
-
   return (
-    <div>
-      <h1>Update Fields</h1>
-      {error && <h3 style={{ color: 'red' }}>{error}</h3>}
-      {success && <h3 style={{ color: 'green' }}>{success}</h3>}
-      <form onSubmit={handleSubmit}>
-        {[
-          { name: 'title', type: 'text', label: 'Title' },
-          { name: 'description', type: 'textarea', label: 'Description', rows: 7 },
-          { name: 'years_length', type: 'number', label: 'Years Length' },
-          { name: 'number_of_free_topics', type: 'number', label: 'Number Of Free Topics' },
-        ].map(({ name, type, label, rows }) => (
-          <label key={name}>
-            <p>{label}</p>
-            {type === 'textarea' ? (
-              <textarea
-                name={name}
-                value={formData[name]}
-                onChange={handleChange}
-                rows={rows}
-                style={{ width: '90%' }}
-                required
-              />
-            ) : (
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Update Field</h2>
+      </div>
+      
+      <div className="card-body">
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : (
+          <form onSubmit={handleSubmit} className="field-form">
+            {success && <div className="success-message">{success}</div>}
+            
+            <div className="form-group">
+              <label htmlFor="title">Field Title</label>
               <input
-                type={type}
-                name={name}
-                value={formData[name]}
+                id="title"
+                type="text"
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
                 required
               />
-            )}
-          </label>
-        ))}
-
-        <label>
-          <p>Is Free</p>
-          <select
-            name="isFree"
-            value={formData.isFree}
-            onChange={handleChange}
-            required
-          >
-            <option value="true">True</option>
-            <option value="false">False</option>
-          </select>
-        </label>
-
-        <div>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Updating...' : 'Update Fields'}
-          </button>
-          <button type="button" onClick={handleReset}>Reset</button>
-        </div>
-      </form>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="4"
+                required
+              />
+            </div>
+            
+            <div className="form-grid">
+              <div className="form-group">
+                <label htmlFor="years_length">Duration (Years)</label>
+                <input
+                  id="years_length"
+                  type="number"
+                  name="years_length"
+                  value={formData.years_length}
+                  onChange={handleChange}
+                  min="1"
+                  max="10"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="number_of_free_topics">Free Topics</label>
+                <input
+                  id="number_of_free_topics"
+                  type="number"
+                  name="number_of_free_topics"
+                  value={formData.number_of_free_topics}
+                  onChange={handleChange}
+                  min="0"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="isFree">Free Access</label>
+              <select
+                id="isFree"
+                name="isFree"
+                value={formData.isFree}
+                onChange={handleChange}
+                required
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            
+            <div className="button-group">
+              <button 
+                type="submit" 
+                className="primary-btn"
+                disabled={loading}
+              >
+                {loading ? 'Updating...' : 'Update Field'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

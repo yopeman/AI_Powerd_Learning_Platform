@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function UserAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -29,20 +30,18 @@ export default function UserAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  const analyticsItems = [
+    { label: 'Total Users', value: analytic.totalUsers },
+    { label: 'Assistants', value: analytic.assistant },
+    { label: 'Students', value: analytic.student },
+    { label: 'Admins', value: analytic.admin },
+    { label: 'Active Users', value: analytic.activeUsers || 'N/A' },
+    { label: 'New Users (7d)', value: analytic.newUsers7d || 'N/A' }
+  ];
 
-  return (
-    <div>
-      <h1>User Analytics</h1>
-      <ul>
-        <li><b>Total Users</b>: {analytic.totalUsers}</li>
-        <li><b>Assistant</b>: {analytic.assistant}</li>
-        <li><b>Student</b>: {analytic.student}</li>
-        <li><b>Admin</b>: {analytic.admin}</li>
-      </ul>
-    </div>
-  )
+  return <AnalyticsCard title="User Analytics" items={analyticsItems} />;
 }

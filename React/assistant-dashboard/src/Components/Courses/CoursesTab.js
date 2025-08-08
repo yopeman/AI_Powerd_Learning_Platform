@@ -1,16 +1,27 @@
-import React from 'react'
-import {Link} from "react-router-dom";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function CoursesTab() {
+  const location = useLocation();
+  
+  const isActive = (path) => {
+    return location.pathname.includes(path);
+  };
+
   return (
-    <div>
-      <ul>
-        <li>Create Courses</li>
-        <li>Get Courses</li>
-        <li>Details</li>
-        <li>Update</li>
-        <li>Delete</li>
-      </ul>
+    <div className="tabs">
+      <Link 
+        to='/courses' 
+        className={`tab ${isActive('/courses') && !isActive('/courses/create') ? 'active' : ''}`}
+      >
+        All Courses
+      </Link>
+      <Link 
+        to={`/courses/create/${location.pathname.split('/')[2] || ''}`} 
+        className={`tab ${isActive('/courses/create') ? 'active' : ''}`}
+      >
+        Create Course
+      </Link>
     </div>
-  )
+  );
 }

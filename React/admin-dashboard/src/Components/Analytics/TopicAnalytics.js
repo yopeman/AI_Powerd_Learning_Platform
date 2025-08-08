@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
-import {api} from "../../Utilities/api";
+import React, { useEffect, useState } from 'react';
+import { api } from "../../Utilities/api";
+import Loader from '../Loader';
+import AnalyticsCard from './AnalyticsCard';
 
 export default function TopicAnalytics() {
   const [analytic, setAnalytic] = useState(null);
@@ -29,19 +30,17 @@ export default function TopicAnalytics() {
     fetchAnalytic();
   }, []);
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return <Loader />;
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!analytic) return <div className="error-message">Analytic not found</div>;
 
-  if (!analytic) return <h1>Analytic not found</h1>;
+  const analyticsItems = [
+    { label: 'Total Topics', value: analytic.totalTopics },
+    { label: 'Topics With Content', value: analytic.topicsWithContent },
+    { label: 'Topics Without Content', value: analytic.topicsWithoutContent },
+    { label: 'Popular Topics', value: analytic.popularTopics || 'N/A' },
+    { label: 'Avg Topics per Field', value: analytic.avgTopicsPerField || 'N/A' }
+  ];
 
-  return (
-    <div>
-      <h1>Topic Analytics</h1>
-      <ul>
-        <li><b>Total Topics</b>: {analytic.totalTopics}</li>
-        <li><b>Topics With Content</b>: {analytic.topicsWithContent}</li>
-        <li><b>Topics Without Content</b>: {analytic.topicsWithoutContent}</li>
-      </ul>
-    </div>
-  )
+  return <AnalyticsCard title="Topic Analytics" items={analyticsItems} />;
 }

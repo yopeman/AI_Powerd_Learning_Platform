@@ -1,13 +1,26 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {NavLink, useLocation} from 'react-router-dom';
 
 export default function HomesTab() {
+  const location = useLocation();
+  // const activeTab = location.pathname.split('/')[2] || 'about';
+
   return (
-    <div>
-      <ul>
-        <li><Link to='/home/about'>About</Link></li>
-        <li><Link to='/home/help'>Help</Link></li>
-      </ul>
+    <div className="tabs-container">
+      <p className="tabs">
+          <NavLink
+            to="/home/about"
+            className={({isActive}) => isActive ? "tab active" : "tab"}
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/home/help"
+            className={({isActive}) => isActive ? "tab active" : "tab"}
+          >
+            Help
+          </NavLink>
+      </p>
     </div>
-  )
+  );
 }

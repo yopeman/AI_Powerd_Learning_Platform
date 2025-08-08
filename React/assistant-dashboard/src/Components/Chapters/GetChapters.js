@@ -9,7 +9,9 @@ export default function GetChapters() {
   const [offset, setOffset] = useState(0);
   const limit = 15;
   const { courseId } = useParams();
-  const [course, setCourse] = useState([]);
+  const [course, setCourse] = useState(null);
+  const totalPages = Math.ceil(chapters.length / limit);
+  const currentPage = Math.floor(offset / limit) + 1;
 
   useEffect(() => {
     const fetchChapters = async () => {
@@ -19,7 +21,6 @@ export default function GetChapters() {
       try {
         const response = await api.get(`/courses/${courseId}/chapters`);
         setChapters(response.data.data);
-        console.log(response.data.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load chapters');
       } finally {
@@ -28,21 +29,15 @@ export default function GetChapters() {
     };
 
     const fetchCourse = async () => {
-      setLoading(true);
-      setError(null);
-
       try {
         const response = await api.get(`/courses/${courseId}`);
         if (response.data.success) {
           setCourse(response.data.data);
-          console.log(response.data.data);
         } else {
           setError(response.data.message);
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch courses');
-      } finally {
-        setLoading(false);
+        setError(err.response?.data?.message || 'Failed to fetch course');
       }
     };
 
@@ -54,64 +49,140 @@ export default function GetChapters() {
 
   const handleNextPage = () => {
     if (offset + limit < chapters.length) {
-      setOffset((prevOffset) => prevOffset + limit);
+      setOffset(prev => prev + limit);
     }
   };
 
   const handlePreviousPage = () => {
     if (offset > 0) {
-      setOffset((prevOffset) => Math.max(prevOffset - limit, 0));
+      setOffset(prev => Math.max(prev - limit, 0));
     }
   };
 
-  if (loading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error: {error}</h1>;
+  if (loading) return (
+    <div className="loader-container">
+      <div className="loader"></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="error-message">{error}</div>
+  );
 
   return (
-    <div>
-      <h1>Get Chapters</h1>
-      <ul>
-        <li><b>Title</b>: {course.title}</li>
-        <li><b>Description</b>: {course.description}</li>
-        <li><b>Year</b>: {course.year}</li>
-        <li><b>Semester</b>: {course.semester}</li>
-        <li><b>Chapters Length</b>: {course.chapters_length}</li>
-        <li><strong>Created At</strong>: {new Date(course.createdAt).toLocaleString()}</li>
-        <li><strong>Updated At</strong>: {new Date(course.updatedAt).toLocaleString()}</li>
-        <li><Link to={`/fields/get/${course.fieldId}`}>Field Details</Link></li>
-      </ul>
-      <table border={1}>
-        <caption>
-          {/*<span style={{ float: 'right' }}><Link to={`/chapters/create/${courseId}`}>Create New Chapters</Link></span>*/}
-        </caption>
-        <thead>
-        <tr>
-          <th>Order</th>
-          <th>Title</th>
-          <th>Detail</th>
-          <th>Update</th>
-          <th>Delete</th>
-          <th>Topics</th>
-          <th>New Topics</th>
-        </tr>
-        </thead>
-        <tbody>
-        {paginatedChapters().length && paginatedChapters().map((chapter) => (
-          <tr key={chapter.id}>
-            <td>Chapter - {chapter.order}</td>
-            <td>{chapter.title}</td>
-            <td><Link to={`/chapters/get/${chapter.id}`}>Detail</Link></td>
-            <td><Link to={`/chapters/update/${chapter.id}`}>Update</Link></td>
-            <td><Link to={`/chapters/delete/${chapter.id}`}>Delete</Link></td>
-            <td><Link to={`/topics/list/${chapter.id}`}>Topics</Link></td>
-            <td><Link to={`/topics/create/${chapter.id}`}>Create Topics</Link></td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-      <div>
-        <button onClick={handlePreviousPage} disabled={offset === 0}>&lt;</button>
-        <button onClick={handleNextPage} disabled={offset + limit >= chapters.length}>&gt;</button>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-header-row">
+          <h2 className="card-title">
+            Chapters in {course?.title || 'Course'}
+          </h2>
+          <div className="pagination-controls">
+            <span>Page {currentPage} of {totalPages}</span>
+            <button 
+              onClick={handlePreviousPage} 
+              disabled={offset === 0}
+              className="secondary-btn"
+            >
+              &lt; Previous
+            </button>
+            <button 
+              onClick={handleNextPage} 
+              disabled={offset + limit >= chapters.length}
+              className="secondary-btn"
+            >
+              Next &gt;
+            </button>
+          </div>
+        </div>
+        
+        <div className="field-meta">
+          <span>Year {course?.year}</span>
+          <span>•</span>
+          <span>Semester {course?.semester}</span>
+          <span>•</span>
+          <span>{course?.chapters_length} chapters total</span>
+        </div>
+      </div>
+      
+      <div className="card-body">
+        <div className="description-text" style={{ marginBottom: '20px' }}>
+          {course?.description || 'Course description not available'}
+        </div>
+        
+        <div className="table-container">
+          <div className="card-header-row" style={{ marginBottom: '16px' }}>
+            <h3 className="section-title">Chapter List</h3>
+            <Link 
+              to={`/chapters/create/${courseId}`} 
+              className="primary-btn"
+            >
+              + Create New Chapters
+            </Link>
+          </div>
+          
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Title</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedChapters().map((chapter) => (
+                <tr key={chapter.id}>
+                  <td>Chapter {chapter.order}</td>
+                  <td>{chapter.title}</td>
+                  <td className="actions-cell">
+                    <Link 
+                      to={`/chapters/get/${chapter.id}`} 
+                      className="action-btn view-btn"
+                    >
+                      Details
+                    </Link>
+                    <Link 
+                      to={`/chapters/update/${chapter.id}`} 
+                      className="action-btn edit-btn"
+                    >
+                      Edit
+                    </Link>
+                    <Link 
+                      to={`/chapters/delete/${chapter.id}`} 
+                      className="action-btn delete-btn"
+                    >
+                      Delete
+                    </Link>
+                    <Link 
+                      to={`/topics/list/${chapter.id}`} 
+                      className="action-btn secondary-btn"
+                    >
+                      Topics
+                    </Link>
+                    <Link 
+                      to={`/topics/create/${chapter.id}`} 
+                      className="action-btn view-btn"
+                    >
+                      Create New Topic
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {chapters.length === 0 && (
+            <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+              <p>No chapters found for this course</p>
+              <Link 
+                to={`/chapters/create/${courseId}`} 
+                className="primary-btn"
+                style={{ marginTop: '16px' }}
+              >
+                Create First Chapter
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

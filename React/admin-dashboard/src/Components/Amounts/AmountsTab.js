@@ -1,13 +1,23 @@
 import React from 'react'
-import {Link} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function AmountsTab() {
   return (
-    <div>
-      <ul>
-        <li><Link to='/amounts/get'>Get Amounts</Link></li>
-        <li><Link to='/amounts/update'>Update Amounts</Link></li>
-      </ul>
+    <div className="tabs-container">
+      <p className="tabs">
+        <NavLink 
+          to='/amounts/get' 
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          View Amount
+        </NavLink>
+        <NavLink 
+          to='/amounts/update' 
+          className={({isActive}) => isActive ? "tab active" : "tab"}
+        >
+          Update Amount
+        </NavLink>
+      </p>
     </div>
   )
 }
