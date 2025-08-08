@@ -76,6 +76,7 @@ export default function Certificates() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
 
             {/* Results Table */}
             <div className="table-container">

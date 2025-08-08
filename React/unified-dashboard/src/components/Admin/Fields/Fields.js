@@ -85,6 +85,7 @@ export default function Fields() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
 
             {/* Search */}
             <div className="mb-6">

@@ -103,6 +103,7 @@ export default function Courses() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
 
             {courses.length > 0 ? (
               <>

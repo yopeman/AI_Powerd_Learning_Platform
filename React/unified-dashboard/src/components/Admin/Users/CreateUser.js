@@ -94,7 +94,9 @@ export default function CreateUser() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
             {success && <Message type="success">{success}</Message>}
+            }
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}

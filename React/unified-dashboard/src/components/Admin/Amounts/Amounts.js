@@ -87,7 +87,9 @@ export default function Amounts() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
             {success && <Message type="success">{success}</Message>}
+            }
 
             {/* Current Amount Display */}
             <div 

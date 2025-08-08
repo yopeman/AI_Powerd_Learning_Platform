@@ -79,7 +79,9 @@ export default function DeleteUser() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
             {success && <Message type="success">{success}</Message>}
+            }
 
             {user && !success && (
               <div>

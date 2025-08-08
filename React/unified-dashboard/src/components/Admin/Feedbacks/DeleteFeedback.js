@@ -103,7 +103,9 @@ export default function DeleteFeedback() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
             {success && <Message type="success">{success}</Message>}
+            }
 
             {feedback && user && !success && (
               <div>

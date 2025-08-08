@@ -88,6 +88,7 @@ export default function Feedbacks() {
 
           <div className="card-body">
             {error && <Message type="error">{error}</Message>}
+            }
 
             {/* Feedbacks Table */}
             <div className="table-container">
