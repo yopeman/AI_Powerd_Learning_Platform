@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { useTheme } from './Utilities/ThemeContext';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthProvider, AuthContext } from './Utilities/AuthContext';
 
@@ -21,7 +20,7 @@ import PaymentScreen from './Screens/PaymentScreen';
 import SettingScreen from './Screens/SettingScreen';
 import AboutScreen from './Screens/AboutScreen';
 import CertificateScreen from './Screens/CertificateScreen';
-import { ThemeProvider } from "./Utilities/ThemeContext";
+import {ThemeProvider, useTheme} from "./Utilities/ThemeContext";
 
 // Create navigators
 const Stack = createNativeStackNavigator();
@@ -29,7 +28,7 @@ const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function LearningNavigator() {
-  const { colors } = useTheme();
+  const {colors, textSize} = useTheme();
 
   return (
     <Stack.Navigator
@@ -73,7 +72,7 @@ function LearningNavigator() {
 }
 
 function TabNavigator() {
-  const { colors, darkMode } = useTheme();
+  const {colors, textSize} = useTheme();
 
   return (
     <Tab.Navigator
@@ -140,7 +139,7 @@ function TabNavigator() {
 }
 
 function MainDrawer() {
-  const { colors, textSizes, textSize } = useTheme();
+  const {colors, textSize} = useTheme();
 
   return (
     <Drawer.Navigator
@@ -154,19 +153,36 @@ function MainDrawer() {
         drawerInactiveTintColor: colors.text,
         drawerActiveBackgroundColor: colors.primary + '20',
         drawerLabelStyle: {
-          fontSize: textSizes[textSize],
+          fontSize: textSize,
           // marginLeft: -16,
         }
       }}
     >
       <Drawer.Screen
-        name="Main"
+        name="AiPLP"
         component={TabNavigator}
         options={{
           drawerLabel: 'Home',
           drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
-          )
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.text + '80',
+          tabBarStyle: {
+            backgroundColor: colors.card,
+            borderTopWidth: 0,
+            paddingBottom: 4,
+            paddingTop: 4,
+            height: 60,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 4,
+          },
+          headerStyle: {
+            backgroundColor: colors.card,
+          },
+          headerTintColor: colors.text,
         }}
       />
       <Drawer.Screen
@@ -176,7 +192,24 @@ function MainDrawer() {
           drawerLabel: 'Learning',
           drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="book-open-page-variant" size={size} color={color} />
-          )
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.text + '80',
+          tabBarStyle: {
+            backgroundColor: colors.card,
+            borderTopWidth: 0,
+            paddingBottom: 4,
+            paddingTop: 4,
+            height: 60,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 4,
+          },
+          headerStyle: {
+            backgroundColor: colors.card,
+          },
+          headerTintColor: colors.text,
         }}
       />
       <Drawer.Screen
@@ -186,7 +219,24 @@ function MainDrawer() {
           drawerLabel: 'Settings',
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="settings" size={size} color={color} />
-          )
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.text + '80',
+          tabBarStyle: {
+            backgroundColor: colors.card,
+            borderTopWidth: 0,
+            paddingBottom: 4,
+            paddingTop: 4,
+            height: 60,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 4,
+          },
+          headerStyle: {
+            backgroundColor: colors.card,
+          },
+          headerTintColor: colors.text,
         }}
       />
       <Drawer.Screen
@@ -196,7 +246,24 @@ function MainDrawer() {
           drawerLabel: 'Payment',
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="payments" size={size} color={color} />
-          )
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.text + '80',
+          tabBarStyle: {
+            backgroundColor: colors.card,
+            borderTopWidth: 0,
+            paddingBottom: 4,
+            paddingTop: 4,
+            height: 60,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 4,
+          },
+          headerStyle: {
+            backgroundColor: colors.card,
+          },
+          headerTintColor: colors.text,
         }}
       />
       <Drawer.Screen
@@ -206,7 +273,24 @@ function MainDrawer() {
           drawerLabel: 'About Us',
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="info" size={size} color={color} />
-          )
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.text + '80',
+          tabBarStyle: {
+            backgroundColor: colors.card,
+            borderTopWidth: 0,
+            paddingBottom: 4,
+            paddingTop: 4,
+            height: 60,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 4,
+          },
+          headerStyle: {
+            backgroundColor: colors.card,
+          },
+          headerTintColor: colors.text,
         }}
       />
     </Drawer.Navigator>
@@ -215,7 +299,7 @@ function MainDrawer() {
 
 function RootNavigator() {
   const { isAuthenticated, signIn } = useContext(AuthContext);
-  const { colors } = useTheme();
+  const {colors, textSize} = useTheme();
 
   return (
     <Stack.Navigator
@@ -233,11 +317,6 @@ function RootNavigator() {
             component={MainDrawer}
             options={{ headerShown: false }}
           />
-          {/*<Stack.Screen*/}
-          {/*  name="Payment"*/}
-          {/*  component={PaymentScreen}*/}
-          {/*  options={{ title: 'Payment' }}*/}
-          {/*/>*/}
         </>
       ) : (
         <>

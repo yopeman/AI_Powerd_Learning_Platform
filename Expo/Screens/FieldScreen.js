@@ -3,9 +3,10 @@ import {
   View, Text, TouchableOpacity, 
   ActivityIndicator, ScrollView, StyleSheet 
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { get_courses, get_field_by_id } from '../Utilities/operations';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/FieldStyle";
 
 const FieldScreen = ({ navigation, route }) => {
   if (!route.params) {
@@ -14,12 +15,17 @@ const FieldScreen = ({ navigation, route }) => {
 
 
   const { fieldId } = route.params;
-  const { colors, textSizes, textSize } = useTheme();
   
   const [field, setField] = useState(null);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,7 +71,7 @@ const FieldScreen = ({ navigation, route }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{field.title}</Text>
         <Text style={styles.description}>{field.description}</Text>
@@ -148,131 +154,5 @@ const FieldScreen = ({ navigation, route }) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'red',
-  },
-  header: {
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 16,
-    color: '#666',
-    opacity: 0.8,
-    marginBottom: 12,
-  },
-  metaContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 12,
-  },
-  metaPill: {
-    backgroundColor: '#e0e0e0',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginRight: 8,
-    marginBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  metaText: {
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 4,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
-  },
-  yearContainer: {
-    marginBottom: 32,
-  },
-  yearHeader: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-  },
-  semesterContainer: {
-    marginBottom: 24,
-  },
-  semesterHeader: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#666',
-    marginBottom: 12,
-  },
-  courseCard: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  courseText: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  courseTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  courseDesc: {
-    fontSize: 14,
-    color: '#666',
-    opacity: 0.7,
-    marginTop: 4,
-  },
-  certificateCard: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  certificateText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  certificateButton: {
-    backgroundColor: '#007BFF',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-  certificateButtonText: {
-    color: '#FFF',
-    fontWeight: '600',
-  },
-});
 
 export default FieldScreen;

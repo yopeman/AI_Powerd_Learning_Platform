@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { 
   View, Text, TextInput, TouchableOpacity, 
   StyleSheet, ActivityIndicator, Keyboard, 
   Alert, ScrollView 
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { authApi } from '../Utilities/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { APP_ID } from "../Utilities/operations";
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/LoginStyle";
 
 export default function LoginScreen({ setIsAuth }) {
   const navigation = useNavigation();
-  const {darkMode, colors, textSizes, textSize} = useTheme();
   const [formData, setFormData] = useState({email: '', password: APP_ID()});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({text: '', type: ''});
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   const handleChange = (name, value) => {
     setFormData(prev => ({...prev, [name]: value}));
@@ -44,6 +50,7 @@ export default function LoginScreen({ setIsAuth }) {
         setMessage({text: responseMessage, type: 'error'});
       }
     } catch (err) {
+      console.log(err);
       const errorMessage = err.response?.data?.message || err.message || 'Login failed';
       setMessage({text: errorMessage, type: 'error'});
     } finally {
@@ -55,93 +62,6 @@ export default function LoginScreen({ setIsAuth }) {
     setFormData({email: '', password: APP_ID()});
     setMessage({text: '', type: ''});
   };
-
-//}
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 24,
-      justifyContent: 'center',
-      backgroundColor: colors.background,
-    },
-    title: {
-      fontSize: textSizes[textSize] + 8,
-      fontWeight: 'bold',
-      marginBottom: 24,
-      color: colors.primary,
-      textAlign: 'center',
-    },
-    inputContainer: {
-      marginBottom: 20,
-    },
-    input: {
-      height: 56,
-      borderColor: colors.border,
-      borderWidth: 1,
-      borderRadius: 12,
-      paddingHorizontal: 16,
-      fontSize: textSizes[textSize],
-      backgroundColor: colors.card,
-      color: colors.text,
-    },
-    button: {
-      backgroundColor: colors.primary,
-      borderRadius: 12,
-      height: 56,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 16,
-    },
-    buttonText: {
-      color: '#FFF',
-      fontSize: textSizes[textSize] + 2,
-      fontWeight: '600',
-    },
-    clearText: {
-      color: colors.secondary,
-      textAlign: 'center',
-      marginTop: 8,
-    },
-    footerText: {
-      // fontSize: textSizes[textSize],
-      // color: colors.text,
-      // textAlign: 'center',
-      // marginTop: 24,
-      // opacity: 0.8,
-
-      fontSize: 16,
-      color: '#666',
-      opacity: 0.8,
-    },
-    linkText: {
-      color: colors.primary,
-      // fontWeight: '600',
-
-      fontSize: 16,
-      // color: '#007BFF',
-      fontWeight: '600',
-      marginLeft: 8,
-    },
-    errorText: {
-      color: colors.error,
-      textAlign: 'center',
-      marginBottom: 16,
-      fontSize: textSizes[textSize],
-    },
-    successText: {
-      color: colors.success,
-      textAlign: 'center',
-      marginBottom: 16,
-      fontSize: textSizes[textSize],
-    },
-    registerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginTop: 32,
-    },
-  });
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -183,7 +103,6 @@ export default function LoginScreen({ setIsAuth }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[{
-              backgroundColor: '#007BFF',
               borderRadius: 12,
               height: 56,
               justifyContent: 'center',
@@ -193,11 +112,11 @@ export default function LoginScreen({ setIsAuth }) {
             }, {
               backgroundColor: 'transparent',
               borderWidth: 1,
-              borderColor: '#ccc',
+              borderColor: colors.border,
             }]}
             onPress={resetForm}
           >
-            <Text style={styles.clearText}>Clear Form</Text>
+            <Text style={styles.secondaryButtonText}>Clear Form</Text>
           </TouchableOpacity>
         </>
       )}

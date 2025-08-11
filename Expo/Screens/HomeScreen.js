@@ -4,16 +4,22 @@ import {
   ActivityIndicator, ScrollView, StyleSheet 
 } from 'react-native';
 import { get_my_fields, unsubscribe_fields } from "../Utilities/operations";
-import { useTheme } from '../Utilities/ThemeContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/HomeStyle";
 
 const HomeScreen = ({ navigation }) => {
-  const { colors, textSizes, textSize } = useTheme();
   const [fields, setFields] = useState([]);
   const [subscriptions, setSubscriptions] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [progressData, setProgressData] = useState({});
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   useEffect(() => {
     const fetchFields = async () => {
@@ -60,119 +66,6 @@ const HomeScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 24,
-      backgroundColor: colors.background,
-    },
-    header: {
-      marginBottom: 24,
-    },
-    title: {
-      fontSize: textSizes[textSize] + 10,
-      fontWeight: 'bold',
-      color: colors.text,
-      marginBottom: 8,
-    },
-    subtitle: {
-      fontSize: textSizes[textSize],
-      color: colors.text,
-      opacity: 0.8,
-    },
-    card: {
-      backgroundColor: colors.card,
-      borderRadius: 16,
-      padding: 20,
-      marginBottom: 20,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 5,
-    },
-    fieldHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 16,
-    },
-    fieldIcon: {
-      backgroundColor: colors.primary + '20',
-      borderRadius: 12,
-      padding: 8,
-      marginRight: 16,
-    },
-    fieldTitle: {
-      fontSize: textSizes[textSize] + 4,
-      fontWeight: '600',
-      color: colors.text,
-      flex: 1,
-    },
-    progressContainer: {
-      marginBottom: 16,
-    },
-    progressText: {
-      fontSize: textSizes[textSize] - 2,
-      color: colors.text,
-      opacity: 0.8,
-    },
-    progressBar: {
-      height: 8,
-      backgroundColor: colors.background,
-      borderRadius: 4,
-      overflow: 'hidden',
-    },
-    progressFill: {
-      height: '100%',
-      backgroundColor: colors.primary,
-      borderRadius: 4,
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    button: {
-      flex: 1,
-      padding: 12,
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 4,
-    },
-    primaryButton: {
-      backgroundColor: colors.primary,
-    },
-    secondaryButton: {
-      backgroundColor: colors.card,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    buttonText: {
-      fontSize: textSizes[textSize],
-      fontWeight: '500',
-    },
-    primaryButtonText: {
-      color: '#FFF',
-    },
-    secondaryButtonText: {
-      color: colors.text,
-    },
-    emptyState: {
-      alignItems: 'center',
-      padding: 40,
-    },
-    emptyIcon: {
-      marginBottom: 24,
-    },
-    emptyText: {
-      fontSize: textSizes[textSize],
-      color: colors.text,
-      opacity: 0.7,
-      textAlign: 'center',
-      marginBottom: 24,
-    },
-  });
 
   if (loading) {
     return (

@@ -1,34 +1,53 @@
-import React, { useContext } from 'react';
-import { View, Text, Switch, ScrollView, StyleSheet } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Switch, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/SettingStyle";
 
-export default function SettingScreen({ navigation }) {
-  const { darkMode, toggleTheme, textSize, setTextSize, colors } = useTheme();
+export default function SettingScreen() {
+  const [darkMode, setDarkModeState] = useState(false);
+  const [currentSize, setCurrentSize] = useState('small');
+  const {colors, textSize, darkMode: mode, size, toggleTheme, setSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+
+    setDarkModeState(mode);
+    setCurrentSize(size);
+  }, [colors, textSize, mode, size]);
+
 
   const textSizeOptions = [
-    { label: 'Small', value: 'small' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'Large', value: 'large' },
-    { label: 'X-Large', value: 'xlarge' }
+    { label: 'Small', value: 'small', v: 14 },
+    { label: 'Medium', value: 'medium', v: 16 },
+    { label: 'Large', value: 'large', v: 18 },
+    { label: 'X-Large', value: 'xlarge', v: 20 },
+    { label: 'XX-Large', value: 'xxlarge', v: 22 },
+    { label: 'XXX-Large', value: 'xxxlarge', v: 24 }
   ];
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.text }]}>Settings</Text>
-      
+
       <View style={[styles.card, { backgroundColor: colors.card }]}>
+        {/* Dark Mode */}
         <View style={styles.settingRow}>
           <MaterialIcons name="dark-mode" size={24} color={colors.primary} />
           <Text style={[styles.settingText, { color: colors.text }]}>Dark Mode</Text>
-          <Switch 
-            value={darkMode} 
-            onValueChange={toggleTheme}
-            thumbColor={darkMode ? colors.primary : '#f5f5f5'}
-            trackColor={{ false: '#767577', true: colors.primary + '80' }}
+          <Switch
+            value={darkMode}
+            onValueChange={async (value) => {
+              setDarkModeState(value);
+              await toggleTheme();
+            }}
+            thumbColor={darkMode ? colors.primary : colors.background}
+            trackColor={{ false: colors.text, true: colors.primary + '80' }}
           />
         </View>
-        
+
+        {/* Text Size */}
         <View style={styles.settingRow}>
           <MaterialIcons name="text-fields" size={24} color={colors.primary} />
           <Text style={[styles.settingText, { color: colors.text }]}>Text Size</Text>
@@ -38,10 +57,13 @@ export default function SettingScreen({ navigation }) {
                 key={option.value}
                 style={[
                   styles.sizeOption,
-                  textSize === option.value && styles.selectedSize,
-                  { color: colors.text }
+                  currentSize === option.value && styles.selectedSize,
+                  { color: colors.text, fontSize: option.v }
                 ]}
-                onPress={() => setTextSize(option.value)}
+                onPress={async () => {
+                  setCurrentSize(option.value);
+                  await setSize(option.value);
+                }}
               >
                 {option.label}
               </Text>
@@ -49,70 +71,6 @@ export default function SettingScreen({ navigation }) {
           </View>
         </View>
       </View>
-
-      <View style={[styles.card, { backgroundColor: colors.card }]}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          <MaterialIcons name="security" size={20} color={colors.primary} /> Security
-        </Text>
-        <Text style={[styles.description, { color: colors.text }]}>
-          Enable screenshot protection for sensitive content
-        </Text>
-      </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20
-  },
-  card: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)'
-  },
-  settingText: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 16
-  },
-  sizeOptions: {
-    flexDirection: 'row',
-    gap: 10
-  },
-  sizeOption: {
-    padding: 6,
-    borderRadius: 6
-  },
-  selectedSize: {
-    fontWeight: 'bold',
-    backgroundColor: 'rgba(98, 0, 238, 0.1)'
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8
-  },
-  description: {
-    fontSize: 14,
-    opacity: 0.8
-  }
-});

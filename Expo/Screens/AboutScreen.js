@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { 
   View, Text, TextInput, TouchableOpacity, 
   ActivityIndicator, ScrollView, StyleSheet 
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from '../Utilities/api';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/AboutStyle";
 
 export default function About() {
-  const { colors, textSizes, textSize } = useTheme();
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(3); // Default rating
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -110,95 +116,3 @@ export default function About() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#007BFF20',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    maxWidth: '80%',
-    lineHeight: 24,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
-  },
-  feedbackInput: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 16,
-    minHeight: 120,
-    fontSize: 16,
-    color: '#333',
-    textAlignVertical: 'top',
-    marginBottom: 16,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  starButton: {
-    padding: 8,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  resetButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  resetText: {
-    color: '#333',
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-  successText: {
-    color: '#4CAF50',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-});

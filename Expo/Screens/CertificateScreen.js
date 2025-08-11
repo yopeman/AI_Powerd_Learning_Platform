@@ -3,7 +3,6 @@ import {
   View, Text, ScrollView, ActivityIndicator,
   StyleSheet, Button, Linking, TouchableOpacity, Alert
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { /* preventScreenCapture, */ allowScreenCaptureAsync } from 'expo-screen-capture';
 import {
   get_certification_document,
@@ -12,11 +11,11 @@ import {
 } from "../Utilities/operations";
 import CustomAlert from "../Components/CustomAlert";
 import { RadioButton, Provider as PaperProvider } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/CertificateStyle";
 
 const CertificateScreen = ({ navigation, route }) => {
   const { fieldId } = route.params;
-  const { colors, textSizes, textSize } = useTheme();
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,6 +25,12 @@ const CertificateScreen = ({ navigation, route }) => {
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +54,7 @@ const CertificateScreen = ({ navigation, route }) => {
 
     fetchData();
     // preventScreenCapture();
-    return () => allowScreenCaptureAsync();
+    // return () => allowScreenCaptureAsync();
   }, [fieldId, submitted]);
 
   const handleRetry = () => {
@@ -122,12 +127,12 @@ const CertificateScreen = ({ navigation, route }) => {
 
   return (
     <PaperProvider>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.title}>Quiz</Text>
           {questions.map((question, index) => (
             <View key={index} style={styles.questionContainer}>
-              <Text>{question.question}</Text>
+              <Text style={{ color: colors.text, fontWeight: 'bold' }}>{question.question}</Text>
               <RadioButton.Group
                 onValueChange={value => handleAnswerChange(index, value)}
                 value={answers[index]}
@@ -142,7 +147,7 @@ const CertificateScreen = ({ navigation, route }) => {
               </RadioButton.Group>
             </View>
           ))}
-          <Button title="Submit" style={styles.button} onPress={handleSubmit} />
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>Submit</TouchableOpacity>
           {submitted && (
             <Text style={styles.result}>Your Score: {score}%</Text>
           )}
@@ -151,53 +156,5 @@ const CertificateScreen = ({ navigation, route }) => {
     </PaperProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  card: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 24,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  questionContainer: {
-    marginBottom: 15,
-    backgroundColor: 'gray',
-    padding: 20,
-    borderRadius: 12,
-  },
-  result: {
-    marginTop: 20,
-    fontSize: 18,
-  },
-  errorContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-  },
-  button: {
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 16,
-  },
-});
 
 export default CertificateScreen;

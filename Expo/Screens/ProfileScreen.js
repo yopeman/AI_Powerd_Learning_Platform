@@ -14,13 +14,11 @@ import {
 import { AuthContext } from '../Utilities/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '../Utilities/api';
-import { useTheme } from '../Utilities/ThemeContext';
-import { MaterialIcons } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/ProfileStyle";
 
 export default function ProfileScreen() {
   const { signOut } = useContext(AuthContext);
-  const { colors, textSizes, textSize } = useTheme();
   
   const [formData, setFormData] = useState({
     first_name: '',
@@ -32,7 +30,12 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [initialValue, setInitialValue] = useState(null);
   const [token, setToken] = useState(null);
-  // const [biometricsEnabled, setBiometricsEnabled] = useState(false);
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -101,7 +104,7 @@ export default function ProfileScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView contentContainerStyle={[styles.scrollContainer, styles.container]}>
         <Text style={styles.title}>Update Account</Text>
         
         {message.text && (
@@ -133,11 +136,11 @@ export default function ProfileScreen() {
               <Text style={styles.buttonText}>Update Profile</Text>
             </TouchableOpacity>
             <View style={styles.buttonSpacer} />
-            <TouchableOpacity style={styles.button} onPress={resetForm} color="#999">
-              <Text style={styles.buttonText}>Reset Form</Text>
+            <TouchableOpacity style={[styles.button, { backgroundColor: 'transparent', colors: colors.title, borderColor: colors.border, borderWidth: 2 }]} onPress={resetForm} color={`${colors.subBgTitle}`} >
+              <Text style={[styles.buttonText, { color: colors.subtitle }]}>Reset Form</Text>
             </TouchableOpacity>
             <View style={styles.buttonSpacer} />
-            <TouchableOpacity style={styles.button} onPress={handleLogout}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: colors.logoutBgColor }]} onPress={handleLogout}>
               <Text style={styles.buttonText}>Sign Out</Text>
             </TouchableOpacity>
           </>
@@ -161,83 +164,3 @@ export default function ProfileScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
-  },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 16,
-  },
-  error: {
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 15,
-  },
-  success: {
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 15,
-  },
-  buttonSpacer: {
-    height: 15,
-  },
-  button: {
-    backgroundColor: '#007bff',
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  section: {
-    marginVertical: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 16,
-    color: '#333',
-  },
-  securityCard: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  securityText: {
-    fontSize: 16,
-    color: '#333',
-  },
-});

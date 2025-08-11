@@ -4,20 +4,26 @@ import {
   ScrollView, StyleSheet, Picker, TouchableOpacity, 
   Alert, Linking 
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { get_my_fields, payment_init } from '../Utilities/operations';
 import CustomAlert from "../Components/CustomAlert";
 import { MaterialIcons } from '@expo/vector-icons';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/PaymentStyle";
 
 export default function PaymentScreen({ navigation }) {
-  const { colors, textSizes, textSize } = useTheme();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fields, setFields] = useState([]);
   const [formData, setFormData] = useState({ fieldId: '', year: 1, semester: 1 });
   const [modalVisible, setModalVisible] = useState(false);
   const [payment, setPayment] = useState({});
-  
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
+
   useEffect(() => {
     const fetchMyFields = async () => {
       setLoading(true);
@@ -142,7 +148,7 @@ export default function PaymentScreen({ navigation }) {
           onPress={handleSubmit}
           disabled={loading}
         >
-          <MaterialIcons name="lock" size={24} color="#FFF" />
+          <MaterialIcons name="lock" size={24} color={`${colors.btnText}`} />
           <Text style={styles.buttonText}>Pay Securely</Text>
         </TouchableOpacity>
       </View>
@@ -158,79 +164,3 @@ export default function PaymentScreen({ navigation }) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'red',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 24,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 8,
-  },
-  picker: {
-    height: 50,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  half: {
-    flex: 1,
-    marginRight: 12,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 12,
-  },
-});

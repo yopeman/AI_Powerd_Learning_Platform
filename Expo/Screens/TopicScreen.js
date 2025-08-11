@@ -1,30 +1,42 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  View, Text, TextInput, TouchableOpacity, 
-  ActivityIndicator, ScrollView, StyleSheet, Keyboard 
+import {
+  View, Text, TextInput, TouchableOpacity,
+  ActivityIndicator, ScrollView, StyleSheet, Keyboard
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { /* preventScreenCapture, */ allowScreenCaptureAsync } from 'expo-screen-capture';
 import { get_topic_content, get_topic_interactions, ask_about_topic } from '../Utilities/operations';
 import Markdown from 'react-native-markdown-display';
+import * as Speech from 'expo-speech';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/TopicStyle";
 
 const TopicScreen = ({ navigation, route }) => {
   const { topicId } = route.params;
-  const { colors, textSizes, textSize } = useTheme();
-  
+
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [interactions, setInteractions] = useState([]);
   const [ask, setAsk] = useState('');
   const [sending, setSending] = useState(false);
+  const [playingIndex, setPlayingIndex] = useState(null);
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   // Prevent screenshots for educational content
   // useEffect(() => {
   //   // preventScreenCapture();
   //   return () => allowScreenCaptureAsync();
   // }, []);
+
+  // useEffect(() => {
+  //   Speech.speak(text);
+  // }, [text])
 
   // Fetch topic content
   useEffect(() => {
@@ -59,7 +71,7 @@ const TopicScreen = ({ navigation, route }) => {
       try {
         setSending(true);
         Keyboard.dismiss();
-        
+
         await ask_about_topic(topicId, ask);
         setAsk(''); // Clear the input after sending
         fetchInteractions(); // Refresh interactions
@@ -91,6 +103,21 @@ const TopicScreen = ({ navigation, route }) => {
     <ScrollView style={styles.container}>
       <View style={styles.contentCard}>
         {content && <Markdown>{content}</Markdown>}
+        {playingIndex !== 'content' ? (
+          <TouchableOpacity onPress={() => {
+            Speech.speak(content, { onDone: () => setPlayingIndex(null) });
+            setPlayingIndex('content');
+          }}>
+            <MaterialIcons name="play-circle" size={36} color={colors.primary} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={async () => {
+            await Speech.stop();
+            setPlayingIndex(null);
+          }}>
+            <MaterialIcons name="pause" size={36} color={colors.primary} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <Text style={styles.sectionHeader}>Topic Discussion</Text>
@@ -98,14 +125,32 @@ const TopicScreen = ({ navigation, route }) => {
       {interactions && interactions.length > 0 ? (
         interactions.map((interaction, index) => (
           <View key={index} style={styles.interactionCard}>
+            {/*| Person |*/}
             <View style={styles.interactionHeader}>
               <MaterialIcons name="person" size={20} color={colors.primary} />
               <Text style={styles.questionText}> {interaction.questions}</Text>
             </View>
+            {/*| Bot |*/}
             <View style={styles.interactionResponse}>
               <MaterialIcons name="smart-toy" size={20} color={colors.primary} />
               <Text style={styles.responseText}> {interaction.response}</Text>
             </View>
+            {/*| Speech |*/}
+            {playingIndex !== index ? (
+              <TouchableOpacity onPress={() => {
+                Speech.speak(interaction.response, { onDone: () => setPlayingIndex(null) });
+                setPlayingIndex(index);
+              }}>
+                <MaterialIcons name="play-circle" size={36} color={colors.primary} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={async () => {
+                await Speech.stop();
+                setPlayingIndex(null);
+              }}>
+                <MaterialIcons name="pause" size={36} color={colors.primary} />
+              </TouchableOpacity>
+            )}
           </View>
         ))
       ) : (
@@ -124,104 +169,20 @@ const TopicScreen = ({ navigation, route }) => {
           onChangeText={setAsk}
           multiline
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.sendButton}
           onPress={handleSend}
           disabled={!ask.trim() || sending}
         >
-          <MaterialIcons 
-            name={sending ? "hourglass-top" : "send"} 
-            size={24} 
-            color={ask.trim() ? colors.primary : colors.text + '50'} 
+          <MaterialIcons
+            name={sending ? "hourglass-top" : "send"}
+            size={24}
+            color={ask.trim() ? colors.primary : colors.text + '50'}
           />
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'red',
-  },
-  contentCard: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
-  },
-  interactionCard: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  interactionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  questionText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginLeft: 8,
-  },
-  interactionResponse: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginTop: 8,
-  },
-  responseText: {
-    fontSize: 14,
-    color: '#666',
-    fontStyle: 'italic',
-    marginLeft: 8,
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f1f1f1',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    marginTop: 24,
-  },
-  input: {
-    flex: 1,
-    height: 56,
-    fontSize: 16,
-    color: '#333',
-  },
-  sendButton: {
-    padding: 10,
-  },
-});
 
 export default TopicScreen;

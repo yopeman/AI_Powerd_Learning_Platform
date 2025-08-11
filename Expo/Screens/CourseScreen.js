@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { 
   View, Text, TouchableOpacity, 
   ActivityIndicator, ScrollView, StyleSheet 
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { get_chapters, get_course_by_id } from '../Utilities/operations';
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/CourseStyle";
 
 export default function CourseScreen({ navigation, route }) {
   const { courseId } = route.params;
@@ -13,7 +14,12 @@ export default function CourseScreen({ navigation, route }) {
   const [chapters, setChapters] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-  const { colors, textSizes, textSize } = useTheme();
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   useEffect(() => {
     const fetchCourseAndChapters = async () => {
@@ -36,93 +42,6 @@ export default function CourseScreen({ navigation, route }) {
 
     fetchCourseAndChapters();
   }, [courseId]);
-
-
-
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: colors.background,
-    },
-    loadingContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    errorContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-    },
-    errorText: {
-      color: 'red',
-      textAlign: 'center',
-    },
-    header: {
-      padding: 16,
-      borderRadius: 16,
-      backgroundColor: colors.card,
-      marginBottom: 24,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
-      elevation: 3,
-    },
-    title: {
-      fontSize: textSizes[textSize] + 6,
-      fontWeight: 'bold',
-      marginBottom: 8,
-      color: colors.text,
-    },
-    subtitle: {
-      fontSize: textSizes[textSize],
-      color: colors.text,
-      opacity: 0.8,
-      marginBottom: 4,
-    },
-    courseInfo: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 12,
-    },
-    sectionTitle: {
-      fontSize: textSizes[textSize] + 4,
-      fontWeight: '600',
-      marginBottom: 16,
-      color: colors.text,
-    },
-    chapterCard: {
-      backgroundColor: colors.card,
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 16,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    chapterText: {
-      flex: 1,
-      marginLeft: 16,
-    },
-    chapterTitle: {
-      fontSize: textSizes[textSize] + 2,
-      fontWeight: '600',
-      color: colors.text,
-    },
-    chapterDesc: {
-      fontSize: textSizes[textSize] - 2,
-      color: colors.text,
-      opacity: 0.7,
-      marginTop: 4,
-    },
-  });
-
-
-
-
 
   if (loading) {
     return (

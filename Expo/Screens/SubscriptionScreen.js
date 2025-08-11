@@ -3,15 +3,21 @@ import {
   View, Text, TouchableOpacity, 
   ActivityIndicator, ScrollView, StyleSheet 
 } from 'react-native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { get_all_fields, subscribe_field } from "../Utilities/operations";
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/SubscriptionStyle";
 
 const SubscriptionScreen = ({ navigation }) => {
-  const { colors, textSizes, textSize } = useTheme();
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   useEffect(() => {
     const fetchFields = async () => {
@@ -96,94 +102,5 @@ const SubscriptionScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    opacity: 0.8,
-  },
-  card: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  fieldTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-  },
-  fieldDescription: {
-    fontSize: 16,
-    color: '#666',
-    opacity: 0.8,
-    marginBottom: 12,
-  },
-  metaContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  metaItem: {
-    flex: 1,
-  },
-  metaLabel: {
-    fontSize: 14,
-    color: '#666',
-    opacity: 0.6,
-  },
-  metaValue: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-  successText: {
-    color: '#4CAF50',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-});
 
 export default SubscriptionScreen;

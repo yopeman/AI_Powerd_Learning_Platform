@@ -1,8 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api, authApi} from './api';
-import * as Application from 'expo-application';
 import * as Device from 'expo-device';
-import DeviceInfo from 'react-native-device-info';
 
 // Function to retrieve the token from AsyncStorage
 const getToken = async () => {
@@ -21,8 +19,8 @@ export const APP_ID = () => {
   const app_id = `
     ${Device.brand},
     ${Device.deviceName},
-    ${DeviceInfo.getDeviceId()},
-    ${DeviceInfo.getUniqueIdSync()},
+    ${Device.osBuildId},
+    ${Device.osInternalBuildId},
     My Secret Here => {ksuygsuyfsegfisufgsfusgfsDIUFDHUFDFYSUDFDYUFodiufhdgfudfghyud67842645423642856364723546$#^#&%##$#$%$%*&^(&*&^*%$#$%^$&}
   `;
   return btoa(app_id);
@@ -63,12 +61,6 @@ export const get_field_by_id = async (id) => {
 export const subscribe_field = async (fieldId) => {
   const token = await getToken();
   return handleApiResponse(() => api(token).post('/subscriptions', { fieldId }), `/subscriptions/${fieldId}`);
-};
-
-// Function to cancel a subscription
-export const cancel_subscription = async (subscriptionId) => {
-  const token = await getToken();
-  return handleApiResponse(() => api(token).get(`/subscriptions/${subscriptionId}/cancel`), `/subscriptions/${subscriptionId}/cancel`);
 };
 
 // Function to get courses for a field
@@ -150,7 +142,7 @@ export const get_certification_document = async (fieldId) => {
 // Function to submit certification answer results
 export const submit_certification_answer_results = async (fieldId, value) => {
   const token = await getToken();
-  return handleApiResponse(() => api(token).post(`/certifications/results`, {value, fieldId}), `/certifications/results/${fieldId}`);
+  return handleApiResponse(() => api(token).post(`/certifications/results`, {value, fieldId}), `/certifications/results/${fieldId}/${value}`);
 };
 
 // Function to unsubscribe the fields

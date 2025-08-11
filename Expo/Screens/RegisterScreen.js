@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,15 +11,15 @@ import {
   Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../Utilities/ThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { authApi } from '../Utilities/api';
 import { APP_ID } from "../Utilities/operations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useTheme} from "../Utilities/ThemeContext";
+import {createStyles} from "../Style/RegisterStyle";
 
 export default function RegisterScreen({ setIsAuth }) {
   const navigation = useNavigation();
-  const { colors, textSizes, textSize } = useTheme();
   
   const [formData, setFormData] = useState({
     first_name: '',
@@ -32,6 +32,12 @@ export default function RegisterScreen({ setIsAuth }) {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const {colors, textSize} = useTheme();
+  const [styles, setStyles] = useState({});
+
+  useEffect(() => {
+    setStyles(createStyles(colors, textSize));
+  }, [colors, textSize, ]);
 
   const handleChange = (name, value) => {
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -111,8 +117,8 @@ export default function RegisterScreen({ setIsAuth }) {
         </View>
 
         {message.text && (
-          <View style={[styles.messageContainer, { backgroundColor: message.type === 'error' ? colors.error + '20' : '#4CAF50' + '20' }]}>
-            <Text style={[styles.messageText, { color: message.type === 'error' ? colors.error : '#4CAF50' }]}>{message.text}</Text>
+          <View style={[styles.messageContainer, { backgroundColor: message.type === 'error' ? colors.error + '20' : colors.success + '20' }]}>
+            <Text style={[styles.messageText, { color: message.type === 'error' ? colors.error : colors.success }]}>{message.text}</Text>
           </View>
         )}
 
@@ -188,116 +194,3 @@ export default function RegisterScreen({ setIsAuth }) {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    opacity: 0.8,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 16,
-  },
-  input: {
-    flex: 1,
-    height: 56,
-    fontSize: 16,
-    color: '#333',
-    paddingVertical: 16,
-  },
-  icon: {
-    marginRight: 12,
-  },
-  passwordToggle: {
-    padding: 8,
-  },
-  messageContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  messageText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  securityNote: {
-    fontSize: 14,
-    color: '#666',
-    opacity: 0.7,
-    textAlign: 'center',
-    marginBottom: 24,
-    marginTop: 8,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  secondaryButtonText: {
-    color: '#333',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 24,
-  },
-  footerText: {
-    fontSize: 16,
-    color: '#666',
-    opacity: 0.8,
-  },
-  footerLink: {
-    fontSize: 16,
-    color: '#007BFF',
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-});
