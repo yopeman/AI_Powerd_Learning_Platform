@@ -320,21 +320,23 @@ function RootNavigator() {
         </>
       ) : (
         <>
-          <Stack.Screen
-            name="Login"
-            options={{ headerShown: false }}
-          >
-            {props => <LoginScreen {...props} setIsAuth={signIn} />}
-          </Stack.Screen>
-          <Stack.Screen
-            name="Register"
-            options={{
-              title: 'Create Account',
-              headerShown: false
-            }}
-          >
-            {props => <RegisterScreen {...props} setIsAuth={signIn} />}
-          </Stack.Screen>
+          {/*<Stack.Screen*/}
+          {/*  name="Login"*/}
+          {/*  options={{ headerShown: false }}*/}
+          {/*>*/}
+          {/*  {props => <LoginScreen {...props} setIsAuth={signIn} />}*/}
+          {/*</Stack.Screen>*/}
+          <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
+          {/*<Stack.Screen*/}
+          {/*  name="Register"*/}
+          {/*  options={{*/}
+          {/*    title: 'Create Account',*/}
+          {/*    headerShown: false*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  {props => <RegisterScreen {...props} setIsAuth={signIn} />}*/}
+          {/*</Stack.Screen>*/}
+          <Stack.Screen name="Register" options={{ headerShown: false }} component={RegisterScreen} />
         </>
       )}
     </Stack.Navigator>

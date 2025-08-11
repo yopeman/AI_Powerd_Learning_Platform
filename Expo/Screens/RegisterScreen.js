@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { authApi } from '../Utilities/api';
 import { APP_ID } from "../Utilities/operations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useTheme} from "../Utilities/ThemeContext";
 import {createStyles} from "../Style/RegisterStyle";
+import {AuthContext} from "../Utilities/AuthContext";
 
 export default function RegisterScreen({ setIsAuth }) {
   const navigation = useNavigation();
@@ -34,6 +35,7 @@ export default function RegisterScreen({ setIsAuth }) {
   const [showPassword, setShowPassword] = useState(false);
   const {colors, textSize} = useTheme();
   const [styles, setStyles] = useState({});
+  const { isAuthenticated, signIn } = useContext(AuthContext);
 
   useEffect(() => {
     setStyles(createStyles(colors, textSize));
@@ -61,11 +63,14 @@ export default function RegisterScreen({ setIsAuth }) {
       if (success) {
         if (data.user.role === 'student') {
           await AsyncStorage.setItem('response', JSON.stringify(data));
-          setIsAuth(true);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          });
+          // setIsAuth(true);
+          signIn(data.token);
+          // navigation.dispatch(
+          //   CommonActions.reset({
+          //     index: 0,
+          //     routes: [{name: 'MainApp'}],
+          //   })
+          // );
         } else {
           setMessage({ text: 'You need student privileges to access this app', type: 'error' });
         }

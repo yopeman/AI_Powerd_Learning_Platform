@@ -41,13 +41,12 @@ const SubscriptionScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const result = await subscribe_field(fieldId);
-      console.log(result);
       setSuccess(result.message);
       setError(null);
+      navigation.navigate('Home', { fId: result.data.id });
     } catch (err) {
       setError(err.response?.data?.message || err.message);
       setSuccess(null);
-      console.log(err);
     } finally {
       setLoading(false);
     }

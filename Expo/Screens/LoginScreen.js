@@ -1,23 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { 
   View, Text, TextInput, TouchableOpacity, 
   StyleSheet, ActivityIndicator, Keyboard, 
   Alert, ScrollView 
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import { authApi } from '../Utilities/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { APP_ID } from "../Utilities/operations";
 import {useTheme} from "../Utilities/ThemeContext";
 import {createStyles} from "../Style/LoginStyle";
+import {AuthContext} from "../Utilities/AuthContext";
 
-export default function LoginScreen({ setIsAuth }) {
+export default function LoginScreen() {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({email: '', password: APP_ID()});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({text: '', type: ''});
   const {colors, textSize} = useTheme();
   const [styles, setStyles] = useState({});
+  const { isAuthenticated, signIn } = useContext(AuthContext);
 
   useEffect(() => {
     setStyles(createStyles(colors, textSize));
@@ -38,11 +40,14 @@ export default function LoginScreen({ setIsAuth }) {
       if (success) {
         if (data.user.role === 'student') {
           await AsyncStorage.setItem('response', JSON.stringify(data));
-          setIsAuth(true);
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'MainApp'}],
-          });
+          // setIsAuth(true);
+          signIn(data.token);
+          // navigation.dispatch(
+          //   CommonActions.reset({
+          //     index: 0,
+          //     routes: [{ name: 'MainApp' }],
+          //   })
+          // );
         } else {
           setMessage({text: 'You need student privileges to access this app', type: 'error'});
         }
@@ -50,7 +55,6 @@ export default function LoginScreen({ setIsAuth }) {
         setMessage({text: responseMessage, type: 'error'});
       }
     } catch (err) {
-      console.log(err);
       const errorMessage = err.response?.data?.message || err.message || 'Login failed';
       setMessage({text: errorMessage, type: 'error'});
     } finally {

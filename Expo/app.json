@@ -1,11 +1,35 @@
 {
   "expo": {
-    "name": "Expo",
-    "slug": "Expo",
+    "name": "AiPLP",
+    "slug": "AI-Powered-Learning-Platform",
     "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.yopeai.aiplp",
+      "versionCode": 1
+    },
+    "ios": {
+      "bundleIdentifier": "com.yopeai.aiplp",
+      "buildNumber": "1.0.0"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
     "extra": {
       "eas": {
-        "projectId": "51fa5260-f459-405f-8b63-7998324b0dfa"
+        "projectId": "a8458dc9-4cba-4046-91e6-ac1f74a747f9"
       }
     }
   }

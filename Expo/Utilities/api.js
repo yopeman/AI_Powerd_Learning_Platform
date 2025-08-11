@@ -3,7 +3,7 @@ import axios from 'axios';
 // dotenv.config();
 // const BASE_URL = process.env.BASE_URL;
 
-const BASE_URL = 'http://192.168.1.5:3000'
+const BASE_URL = 'http://10.240.129.58:7000'
 
 const api = (bearer) => axios.create({
     baseURL: `${BASE_URL}/api/v1`,
@@ -36,21 +36,21 @@ const authApi = axios.create({
 //   }
 // );
 
-authApi.interceptors.request.use(config => {
-    console.log('Auth API Request: ', config);
-    return config;
-});
+// authApi.interceptors.request.use(config => {
+//     console.log('Auth API Request: ', config);
+//     return config;
+// });
 
-authApi.interceptors.response.use(
-  response => {
-    console.log('Auth API Response:', response);
-    return response;
-  },
-  error => {
-    console.error('API Error:', error);
-    return Promise.reject(error);
-  }
-);
+// authApi.interceptors.response.use(
+//   response => {
+//     console.log('Auth API Response:', response);
+//     return response;
+//   },
+//   error => {
+//     console.error('API Error:', error);
+//     return Promise.reject(error);
+//   }
+// );
 
 export {
     api,

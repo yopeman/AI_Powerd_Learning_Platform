@@ -8,7 +8,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {useTheme} from "../Utilities/ThemeContext";
 import {createStyles} from "../Style/HomeStyle";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
+
+  const { fId } = route.params || { fId: 'Some Field ID' };
+
+
   const [fields, setFields] = useState([]);
   const [subscriptions, setSubscriptions] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +33,6 @@ const HomeScreen = ({ navigation }) => {
         const response = await get_my_fields();
         setFields(response.data.fields);
         setSubscriptions(response.data.subscriptions);
-        console.log(response.data);
         
         // Simulate progress data - in a real app, this would come from the API
         const progress = {};
@@ -47,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
       }
     };
     fetchFields();
-  }, []);
+  }, [fId]);
 
   const handleLearn = (fieldId) => {
     navigation.navigate('Learn', { screen: 'Field', params: { fieldId } });

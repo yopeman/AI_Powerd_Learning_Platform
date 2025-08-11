@@ -2,7 +2,6 @@ import React from 'react'
 import {View} from "react-native";
 
 export default function ViewFields({fields}) {
-  console.log(fields);
   return (
     <View>
       {fields && fields.map((field) => (
