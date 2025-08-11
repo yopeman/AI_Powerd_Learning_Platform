@@ -50,6 +50,16 @@ A React web application for teaching assistants to:
 - **Field Management**: Access and organize content for assigned fields.
 - **Educational Content**: Structure curriculum by year, semester, and chapters.
 
+### 5. Landing Page (`React/landing-page`)
+- Hero section with compelling messaging and clear value proposition
+- Interactive features showcase with hover effects and animations
+- Multi-role system presentation (student, assistant, admin)
+- Technology stack display with modern icons
+- Responsive design optimized for all devices
+- Call-to-action sections strategically placed throughout
+- Professional footer with contact information
+- Smooth scrolling and micro-interactions
+
 ## Key Features
 
 - **Multi-Role System**: Three distinct user roles with varying permissions and interfaces.

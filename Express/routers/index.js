@@ -12,6 +12,7 @@ import users from './users.js';
 import amounts from './amounts.js';
 import feedbacks from './feedbacks.js';
 import certifications from './certifications.js';
+import uploads from './uploads.js';
 const routes = Router();
 
 routes.use('/auths', auths); // verified
@@ -27,5 +28,6 @@ routes.use('/amounts', amounts);
 routes.use('/feedbacks', feedbacks);
 routes.use('/certifications', certifications);
 routes.use('/analytics', analytics); // verified
+routes.use('/uploads', uploads);
 
 export default routes;

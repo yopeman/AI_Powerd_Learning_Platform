@@ -58,41 +58,6 @@ async function subscription_current_fields(req, res, next) {
     }
 }
 
-async function subscription_cancel(req, res, next) {
-    const { id } = req.params;
-    const userId = req.user.id;
-
-    if (!id) {
-        return next(createError(400, 'Subscription ID is required.'));
-    }
-
-    try {
-        const [updated] = await Subscriptions.update(
-            { status: 'inactive' },
-            {
-                where: {
-                    [Op.and]: [
-                        { id },
-                        { userId }
-                    ]
-                }
-            }
-        );
-
-        if (!updated) {
-            return next(createError(404, 'Subscription not found.'));
-        }
-
-        res.status(200).json({
-            message: 'Subscription canceled successfully.',
-            success: true
-        });
-    } catch (error) {
-        next(createError(500, 'Error canceling subscription.'));
-    }
-}
-
-
 async function subscription_delete(req, res, next) {
     const { id } = req.params;
 
@@ -128,6 +93,5 @@ async function subscription_delete(req, res, next) {
 export {
     subscription_create,
     subscription_current_fields,
-    subscription_cancel,
     subscription_delete
 }
