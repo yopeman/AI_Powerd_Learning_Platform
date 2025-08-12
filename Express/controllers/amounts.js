@@ -1,12 +1,5 @@
 import {Amounts} from "../models/index.js";
 
-// Helper function to create standardized errors
-const createError = (status, message) => {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-};
-
 async function amount_get(req, res, next) {
     try {
         const amount = await Amounts.findOne();
@@ -20,8 +13,7 @@ async function amount_get(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error fetching amount:', err);
-        return next(createError(500, 'An error occurred while fetching the payment amount.'));
+        return next(err);
     }
 }
 
@@ -46,8 +38,7 @@ async function amount_update(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error updating amount:', err);
-        return next(createError(500, 'An error occurred while updating the payment amount.'));
+        return next(err);
     }
 }
 

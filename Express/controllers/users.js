@@ -42,8 +42,8 @@ async function user_current_update(req, res, next) {
             data: updates,
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error updating user: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -60,8 +60,8 @@ async function user_get(req, res, next) {
             data: users,
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error fetching users: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -84,8 +84,8 @@ async function user_get_by_id(req, res, next) {
             data: user,
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error fetching user: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -120,8 +120,8 @@ async function user_update(req, res, next) {
             message: 'User updated successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error updating user: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -143,8 +143,8 @@ async function user_delete(req, res, next) {
             message: 'User deleted successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error deleting user: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -171,15 +171,9 @@ async function user_create(req, res, next) {
             data: newUser,
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error creating user: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
-}
-
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
 }
 
 export {

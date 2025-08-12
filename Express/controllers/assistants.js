@@ -1,13 +1,6 @@
 import { Op } from "sequelize";
 import { Assistants, Fields, Users } from "../models/index.js";
 
-// Helper function to create standardized errors
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-}
-
 async function assistant_create(req, res, next) {
     const { userId, fieldId } = req.body;
 
@@ -24,10 +17,8 @@ async function assistant_create(req, res, next) {
             data: new_assistant,
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        
-        next(createError(500, 'Error creating assistant.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -44,8 +35,8 @@ async function assistant_get(req, res, next) {
             data: assistants,
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error fetching assistants. ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -68,8 +59,8 @@ async function assistant_get_by_id(req, res, next) {
             data: assistant,
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching assistant.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -92,8 +83,8 @@ async function assistant_update(req, res, next) {
             message: 'Assistant updated successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error updating assistant.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -115,8 +106,8 @@ async function assistant_delete(req, res, next) {
             message: 'Assistant deleted successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error deleting assistant.'));
+    } catch (err) {
+        return next(err);
     }
 }
 async function assistant_current_fields(req, res, next) {
@@ -146,8 +137,8 @@ async function assistant_current_fields(req, res, next) {
             data: { assistants, fields },
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error fetching assistant fields for current user. ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 

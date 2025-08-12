@@ -19,9 +19,14 @@ function error_handler(err, req, res, next) {
 }
 
 const createError = (status, message) => {
-    const error = new Error(message);
-    error.status = status;
-    return error;
+    if (typeof message === 'string') {
+        const error = new Error(message);
+        error.status = status;
+        return error;
+    } else {
+        message.status = status;
+        return message;
+    }
 };
 
 export {

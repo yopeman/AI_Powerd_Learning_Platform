@@ -1,13 +1,6 @@
 import { Fields, Subscriptions } from '../models/index.js';
 import { Op } from 'sequelize';
 
-// Helper function to create standardized errors
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-}
-
 async function subscription_create(req, res, next) {
     const { fieldId } = req.body;
     const userId = req.user.id;
@@ -24,10 +17,8 @@ async function subscription_create(req, res, next) {
             data: new_subscription,
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error creating subscription.'));
-        console.log(error);
-        
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -51,10 +42,8 @@ async function subscription_current_fields(req, res, next) {
             data: { subscriptions, fields },
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        
-        next(createError(500, 'Error fetching subscriptions.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -84,9 +73,7 @@ async function subscription_delete(req, res, next) {
             success: true
         });
     } catch (err) {
-        // Handle unexpected errors
-        console.error('Error deleting subscription:', err);
-        return next(createError(500, 'An error occurred while deleting the subscription.'));
+        return next(err);
     }
 }
 

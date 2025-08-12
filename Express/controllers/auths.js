@@ -42,9 +42,8 @@ async function auth_register(req, res, next) {
             },
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        next(createError(500, `Error creating user: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -82,15 +81,9 @@ async function auth_login(req, res, next) {
             },
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error logging in: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
-}
-
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
 }
 
 export {

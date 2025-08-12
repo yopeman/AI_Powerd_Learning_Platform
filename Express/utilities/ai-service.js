@@ -146,7 +146,6 @@ const generateContent_By_GoogleGenAI = async (topicTitle, context) => await gene
 const generateAnswer_By_OpenAI = async (question, history) => await generateAnswer('OpenAI', question, history);
 const generateAnswer_By_GoogleGenAI = async (question, history) => await generateAnswer('GoogleGenAI', question, history);
 // ---
-
 const generateQuestion_By_OpenAI = async (question, history) => await generateQuestion('OpenAI', question, history);
 const generateQuestion_By_GoogleGenAI = async (question, history) => await generateQuestion('GoogleGenAI', question, history);
 

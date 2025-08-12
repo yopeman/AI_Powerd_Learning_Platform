@@ -5,7 +5,7 @@ import { createError } from '../utilities/error-handlers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const dir_path = path.join(__dirname, 'uploads'); // Set directory path once
+const dir_path = path.join(__dirname, 'public', 'uploads'); // Set directory path once
 
 async function upload_get(req, res, next) {
     try {
@@ -16,7 +16,7 @@ async function upload_get(req, res, next) {
             success: true
         });
     } catch (err) {
-        next(createError(500, `Unable to scan directory: ${err.message}`));
+        return next(err);
     }
 }
 
@@ -27,7 +27,7 @@ async function upload_download(req, res, next) {
     try {
         await res.sendFile(filePath);
     } catch (err) {
-        next(createError(404, `File not found: ${name}`));
+        return next(err);
     }
 }
 
@@ -57,7 +57,7 @@ async function upload_delete(req, res, next) {
         if (err.code === 'ENOENT') {
             return next(createError(404, 'File not found or already deleted'));
         }
-        next(createError(500, `Error in file deletion: ${err.message}`));
+        return next(err);
     }
 }
 

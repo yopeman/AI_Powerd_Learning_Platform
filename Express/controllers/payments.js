@@ -90,9 +90,8 @@ async function payment_create(req, res, next) {
             data: newPayment,
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        next(createError(500, `Error creating payment: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -131,8 +130,8 @@ async function payment_webhook(req, res, next) {
 
         await payment.save();
         res.status(200).json();
-    } catch (error) {
-        next(createError(500, `Error processing webhook: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -154,15 +153,9 @@ async function payment_get_by_id(req, res, next) {
             data: payment,
             success: true
         });
-    } catch (error) {
-        next(createError(500, `Error fetching payment: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
-}
-
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
 }
 
 export {

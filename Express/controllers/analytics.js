@@ -16,7 +16,7 @@ async function analytic_fields(req, res, next) {
             success: true
         });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 }
 
@@ -41,7 +41,7 @@ async function analytic_topics(req, res, next) {
             success: true
         });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 }
 
@@ -68,7 +68,7 @@ async function analytic_subscriptions(req, res, next) {
             success: true
         });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 }
 
@@ -95,7 +95,7 @@ async function analytic_users(req, res, next) {
             success: true
         });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 }
 
@@ -126,49 +126,49 @@ async function analytic_payments(req, res, next) {
             success: true
         });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 }
 
 async function analytic_feedbacks(req, res, next) {
     try {
-    const totalFeedbacks = await Feedbacks.count();
-    const averageRating = await Feedbacks.findOne({
-      attributes: [[sequelize.fn('AVG', sequelize.col('rating')), 'average']],
-    });
-  
+        const totalFeedbacks = await Feedbacks.count();
+        const averageRating = await Feedbacks.findOne({
+        attributes: [[sequelize.fn('AVG', sequelize.col('rating')), 'average']],
+        });
+    
 
-    res.status(200).json({
-        message: 'Feedback analytic are fetched successfully',
-        data: {
-            totalFeedbacks,
-            averageRating: averageRating ? parseFloat(averageRating.dataValues.average) : 0,
-        },
-        success: true
-    });
-  } catch (err) {
-    return next(err);
-  }
+        res.status(200).json({
+            message: 'Feedback analytic are fetched successfully',
+            data: {
+                totalFeedbacks,
+                averageRating: averageRating ? parseFloat(averageRating.dataValues.average) : 0,
+            },
+            success: true
+        });
+    } catch (err) {
+        return next(err);
+    }
 }
 
 async function analytic_certifications(req, res, next) {
     try {
-    const totalResults = await Results.count();
-    const averageScore = await Results.findOne({
-      attributes: [[sequelize.fn('AVG', sequelize.col('value')), 'average']],
-    });
+        const totalResults = await Results.count();
+        const averageScore = await Results.findOne({
+        attributes: [[sequelize.fn('AVG', sequelize.col('value')), 'average']],
+        });
 
-    res.status(200).json({
-        message: 'Certification Result analytic are fetched successfully',
-        data: {
-            totalResults,
-            averageScore: averageScore ? parseFloat(averageScore.dataValues.average) : 0,
-        },
-        success: true
-    });
-  } catch (err) {
-    return next(err);
-  }
+        res.status(200).json({
+            message: 'Certification Result analytic are fetched successfully',
+            data: {
+                totalResults,
+                averageScore: averageScore ? parseFloat(averageScore.dataValues.average) : 0,
+            },
+            success: true
+        });
+    } catch (err) {
+        return next(err);
+    }
 }
 
 export {

@@ -1,12 +1,6 @@
 import { Chapters, Courses } from '../models/index.js';
 import { hasAssistantCoursePermission, hasAssistantFieldPermission } from '../utilities/assistant-permissions.js';
 
-// Helper function to create standardized errors
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-}
 async function course_get(req, res, next) {
     const { id } = req.params;
     if (!id) {
@@ -24,8 +18,8 @@ async function course_get(req, res, next) {
             data: course,
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching course.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -48,8 +42,8 @@ async function course_chapter(req, res, next) {
             data: chapters,
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching chapters.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -80,10 +74,8 @@ async function course_create(req, res, next) {
             data: new_course,
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        
-        next(createError(500, 'Error creating course.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -110,8 +102,8 @@ async function course_update(req, res, next) {
             message: 'Course updated successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error updating course.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -138,8 +130,8 @@ async function course_delete(req, res, next) {
             message: 'Course deleted successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error deleting course.'));
+    } catch (err) {
+        return next(err);
     }
 }
 

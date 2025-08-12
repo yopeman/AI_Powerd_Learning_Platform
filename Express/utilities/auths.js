@@ -52,13 +52,6 @@ function hasRole(role) {
     };
 }
 
-// Helper function to create standardized errors
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-}
-
 const isAdmin = hasRole('admin');
 const isStudent = hasRole('student');
 const isAssistant = hasRole('assistant');

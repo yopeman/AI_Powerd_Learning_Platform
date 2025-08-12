@@ -1,12 +1,5 @@
 import {Feedbacks} from '../models/index.js';
 
-// Helper function to create standardized errors
-const createError = (status, message) => {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-};
-
 async function feedback_get(req, res, next) {
     try {
         const feedbacks = await Feedbacks.findAll();
@@ -20,8 +13,7 @@ async function feedback_get(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error fetching feedbacks:', err);
-        return next(createError(500, 'An error occurred while fetching feedbacks.'));
+        return next(err);
     }
 }
 
@@ -43,8 +35,7 @@ async function feedback_get_by_id(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error fetching feedback by ID:', err);
-        return next(createError(500, 'An error occurred while fetching feedback.'));
+        return next(err);
     }
 }
 
@@ -69,8 +60,7 @@ async function feedback_create(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error creating feedback:', err);
-        return next(createError(500, 'An error occurred while creating feedback.'));
+        return next(err);
     }
 }
 
@@ -92,8 +82,7 @@ async function feedback_delete(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error deleting feedback:', err);
-        return next(createError(500, 'An error occurred while deleting feedback.'));
+        return next(err);
     }
 }
 

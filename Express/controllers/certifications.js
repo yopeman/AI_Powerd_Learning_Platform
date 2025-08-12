@@ -8,13 +8,6 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Helper function to create standardized errors
-const createError = (status, message) => {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-};
-
 async function certification_questions(req, res, next) {
     const { fieldId } = req.params;
     if (!fieldId) {
@@ -56,8 +49,7 @@ async function certification_questions(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error in certification_questions:', err);
-        return next(createError(500, 'An error occurred while processing certification questions.'));
+        return next(err);
     }
 }
 
@@ -85,8 +77,7 @@ async function certification_result(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error in certification_result:', err);
-        return next(createError(500, 'An error occurred while processing certification results.'));
+        return next(err);
     }
 }
 
@@ -104,8 +95,7 @@ async function certification_get_results(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error fetching certification results:', err);
-        return next(createError(500, 'An error occurred while fetching certification results.'));
+        return next(err);
     }
 }
 async function certification_delete(req, res, next) {
@@ -126,8 +116,7 @@ async function certification_delete(req, res, next) {
             success: true,
         });
     } catch (err) {
-        console.error('Error in certification_delete:', err);
-        return next(createError(500, 'An error occurred while deleting the result.'));
+        return next(err);
     }
 }
 
@@ -168,8 +157,7 @@ async function get_my_certificate_doc(req, res, next) {
 
         res.status(200).send(generate_certificate(field, result, user));
     } catch (err) {
-        console.error('Error in get_my_certificate_doc:', err);
-        return next(createError(500, 'An error occurred while retrieving the certificate.'));
+        return next(err);
     }
 }
 

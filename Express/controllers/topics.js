@@ -13,13 +13,6 @@ import { hasAssistantChapterPermission, hasAssistantTopicPermission } from '../u
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Helper function to create standardized errors
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
-}
-
 async function topic_get_by_id(req, res, next) {
     const { id } = req.params;
     if (!id) {
@@ -42,8 +35,8 @@ async function topic_get_by_id(req, res, next) {
             data: topic,
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching topic.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -76,10 +69,8 @@ async function topic_create(req, res, next) {
             message: 'Topics created successfully.',
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        
-        next(createError(500, 'Error creating topics.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -105,8 +96,8 @@ async function topic_update(req, res, next) {
             message: 'Topic updated successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error updating topic.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -132,8 +123,8 @@ async function topic_delete(req, res, next) {
             message: 'Topic deleted successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error deleting topic.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -196,10 +187,8 @@ async function topic_content(req, res, next) {
             data: generatedContent,
             success: true,
         });
-    } catch (error) {
-        console.log(error);
-        
-        next(createError(500, 'Error generating or fetching topic content.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -265,9 +254,8 @@ async function topic_ask(req, res, next) {
             data: generatedContent,
             success: true,
         });
-    } catch (error) {
-        console.log(error);
-        next(createError(500, 'Error asking topic question.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -301,8 +289,8 @@ async function topic_current_interactions(req, res, next) {
             data: fullInteractions,
             success: true,
         });
-    } catch (error) {
-        next(createError(500, `Error fetching topic interactions: ${error.message}`));
+    } catch (err) {
+        return next(err);
     }
 }
 

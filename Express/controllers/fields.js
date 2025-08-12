@@ -12,8 +12,8 @@ async function field_get(req, res, next) {
             success: true,
             data: all_fields
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching fields.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -34,8 +34,8 @@ async function field_get_by_id(req, res, next) {
             success: true,
             data: field
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching field.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -60,8 +60,8 @@ async function field_create(req, res, next) {
             success: true,
             data: new_field
         });
-    } catch (error) {
-        next(createError(500, 'Error creating field.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -81,8 +81,8 @@ async function field_update(req, res, next) {
             message: 'Field updated successfully.',
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error updating field.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -102,10 +102,8 @@ async function field_delete(req, res, next) {
             message: 'Field deleted successfully.',
             success: true
         });
-    } catch (error) {
-        console.log(error);
-        
-        next(createError(500, 'Error deleting field.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -126,8 +124,8 @@ async function field_course(req, res, next) {
             data: courses,
             success: true
         });
-    } catch (error) {
-        next(createError(500, 'Error fetching courses.'));
+    } catch (err) {
+        return next(err);
     }
 }
 
@@ -155,18 +153,9 @@ async function field_subscriptions(req, res, next) {
             success: true,
             data: { subscriptions, users, field }
         });
-    } catch (error) {
-        console.log(error.message);
-        
-        next(createError(500, 'Error fetching subscription status.'));
+    } catch (err) {
+        return next(err);
     }
-}
-
-// Helper function to create standardized errors
-function createError(status, message) {
-    const error = new Error(message);
-    error.status = status;
-    return error;
 }
 
 export {
