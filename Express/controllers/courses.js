@@ -1,4 +1,5 @@
 import { Chapters, Courses } from '../models/index.js';
+import { hasAssistantCoursePermission, hasAssistantFieldPermission } from '../utilities/assistant-permissions.js';
 
 // Helper function to create standardized errors
 function createError(status, message) {
@@ -59,6 +60,11 @@ async function course_create(req, res, next) {
         return next(createError(400, 'All fields are required.'));
     }
 
+    const permissionMsg = await hasAssistantFieldPermission(req.user.id, fieldId);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
+    }
+
     try {
         const new_course = await Courses.create({
             title,
@@ -88,6 +94,11 @@ async function course_update(req, res, next) {
         return next(createError(400, 'Course ID is required.'));
     }
 
+    const permissionMsg = await hasAssistantCoursePermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
+    }
+
     try {
         const [updated] = await Courses.update(req.body, { where: { id } });
 
@@ -109,6 +120,11 @@ async function course_delete(req, res, next) {
     
     if (!id) {
         return next(createError(400, 'Course ID is required.'));
+    }
+
+    const permissionMsg = await hasAssistantCoursePermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
     }
 
     try {

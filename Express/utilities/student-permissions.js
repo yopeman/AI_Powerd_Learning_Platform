@@ -2,7 +2,7 @@ import { Payments, Subscriptions, Users } from "../models/index.js";
 import { Op } from "sequelize";
 import { find_topics } from "./finds.js";
 
-export default async function hasPermission(userId, topicId) {
+export default async function hasStudentPermission(userId, topicId) {
     try {
         const topicInfo = await find_topics(topicId);
         const subscription = await Subscriptions.findOne({

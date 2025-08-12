@@ -4,11 +4,12 @@ import { generateAnswer_By_OpenAI, generateAnswer_By_GoogleGenAI } from '../util
 import fs from 'fs';
 import { Op } from 'sequelize';
 import { find_topics } from '../utilities/finds.js';
-import hasPermission from '../utilities/permissions.js';
+import hasStudentPermission from '../utilities/student-permissions.js';
 import { uuidv7 } from '../models/config.js';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import sanitize from 'sanitize-filename';
+import { hasAssistantChapterPermission, hasAssistantTopicPermission } from '../utilities/assistant-permissions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,6 +25,11 @@ async function topic_get_by_id(req, res, next) {
     const { id } = req.params;
     if (!id) {
         return next(createError(400, 'Topic ID is required.'));
+    }
+
+    const permissionMsg = await hasAssistantTopicPermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
     }
 
     try {
@@ -47,6 +53,11 @@ async function topic_create(req, res, next) {
 
     if (!chapterId || !titles || !Array.isArray(titles) || titles.length === 0) {
         return next(createError(400, 'Chapter ID and titles are required.'));
+    }
+
+    const permissionMsg = await hasAssistantChapterPermission(req.user.id, chapterId);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
     }
 
     try {
@@ -80,6 +91,11 @@ async function topic_update(req, res, next) {
         return next(createError(400, 'Topic ID is required.'));
     }
 
+    const permissionMsg = await hasAssistantTopicPermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
+    }
+
     try {
         const [updated] = await Topics.update(req.body, { where: { id } });
 
@@ -100,6 +116,11 @@ async function topic_delete(req, res, next) {
     const { id } = req.params;
     if (!id) {
         return next(createError(400, 'Topic ID is required.'));
+    }
+
+    const permissionMsg = await hasAssistantTopicPermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
     }
 
     try {
@@ -124,7 +145,7 @@ async function topic_content(req, res, next) {
         return next(createError(400, 'Topic ID is required.'));
     }
 
-    const permissionMsg = await hasPermission(req.user.id, id);
+    const permissionMsg = await hasStudentPermission(req.user.id, id);
     if (permissionMsg !== true) {
         return next(createError(400, permissionMsg));
     }
@@ -190,7 +211,7 @@ async function topic_ask(req, res, next) {
         return next(createError(400, 'Topic ID is required.'));
     }
 
-    const permissionMsg = await hasPermission(req.user.id, id);
+    const permissionMsg = await hasStudentPermission(req.user.id, id);
     if (permissionMsg !== true) {
         return next(createError(400, permissionMsg));
     }

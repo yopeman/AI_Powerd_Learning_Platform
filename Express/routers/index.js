@@ -15,19 +15,19 @@ import certifications from './certifications.js';
 import uploads from './uploads.js';
 const routes = Router();
 
-routes.use('/auths', auths); // verified
-routes.use('/fields', fields); // verified
-routes.use('/assistants', assistants); // verified
-routes.use('/courses', courses); // verified
-routes.use('/chapters', chapters); // verified
-routes.use('/topics', topics); // verified
-routes.use('/subscriptions', subscriptions); // verified
-routes.use('/payments', payments); // verified
-routes.use('/users', users); // verified
+routes.use('/auths', auths);
+routes.use('/fields', fields);
+routes.use('/assistants', assistants);
+routes.use('/courses', courses);
+routes.use('/chapters', chapters);
+routes.use('/topics', topics);
+routes.use('/subscriptions', subscriptions);
+routes.use('/payments', payments);
+routes.use('/users', users);
 routes.use('/amounts', amounts);
 routes.use('/feedbacks', feedbacks);
 routes.use('/certifications', certifications);
-routes.use('/analytics', analytics); // verified
+routes.use('/analytics', analytics);
 routes.use('/uploads', uploads);
 
 export default routes;

@@ -4,9 +4,9 @@ import { isAdmin, isAssistant, isStudent } from '../utilities/auths.js';
 const routes = Router();
 
 routes.get('/:id', controllers.chapter_get);
-routes.get('/:chapterId/topics', controllers.chapter_topics); // verified
-routes.post('/', isAssistant, controllers.chapter_create); // verified
-routes.put('/:id', isAssistant, controllers.chapter_update); // verified
-routes.delete('/:id', isAssistant, controllers.chapter_delete); // verified
+routes.get('/:chapterId/topics', controllers.chapter_topics);
+routes.post('/', isAssistant, controllers.chapter_create);
+routes.put('/:id', isAssistant, controllers.chapter_update);
+routes.delete('/:id', isAssistant, controllers.chapter_delete);
 
 export default routes;

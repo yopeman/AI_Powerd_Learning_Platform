@@ -1,5 +1,6 @@
 import { uuidv7 } from '../models/config.js';
 import { Chapters, Courses, Topics } from '../models/index.js';
+import {hasAssistantChapterPermission, hasAssistantCoursePermission} from "../utilities/assistant-permissions.js";
 
 // Helper function to create standardized errors
 function createError(status, message) {
@@ -63,6 +64,11 @@ async function chapter_create(req, res, next) {
             return next(createError(404, 'Course not found.'));
         }
 
+        const permissionMsg = await hasAssistantCoursePermission(req.user.id, courseId);
+        if (permissionMsg !== true) {
+            return next(createError(400, permissionMsg));
+        }
+
         if (course.chapters_length !== chapters.length) {
             return next(createError(400, 'Chapters length does not match.'));
         }
@@ -100,6 +106,11 @@ async function chapter_update(req, res, next) {
         return next(createError(400, 'Chapter ID is required.'));
     }
 
+    const permissionMsg = await hasAssistantChapterPermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
+    }
+
     try {
         const [updated] = await Chapters.update(req.body, { where: { id } });
 
@@ -121,6 +132,11 @@ async function chapter_delete(req, res, next) {
     
     if (!id) {
         return next(createError(400, 'Chapter ID is required.'));
+    }
+
+    const permissionMsg = await hasAssistantChapterPermission(req.user.id, id);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
     }
 
     try {

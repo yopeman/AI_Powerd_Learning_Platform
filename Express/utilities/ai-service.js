@@ -93,9 +93,9 @@ const generateAnswer = async (source, question, history) => {
 
 const generateQuestion = async (field, courses, source) => {
     const count = 50;
-    // if (typeof courses !== 'string') {
-    //     courses = JSON.stringify(courses);
-    // }
+    if (typeof courses !== 'string') {
+        courses = JSON.stringify(courses);
+    }
 
     const prompt = `
         Generate ${count} quiz questions about "${field.title}". The field includes the following courses: ${courses}. 
@@ -103,7 +103,7 @@ const generateQuestion = async (field, courses, source) => {
         [
             {
                 "question": "Question text",
-                "options": ["A", "B", "C", "D"],
+                "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
                 "correct": "A"
             }
         ]

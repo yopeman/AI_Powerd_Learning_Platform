@@ -166,7 +166,7 @@ async function get_my_certificate_doc(req, res, next) {
             return next(createError(404, 'Certification result not found.'));
         }
 
-        res.status(200).send(generate_certificate(field, result.value, user));
+        res.status(200).send(generate_certificate(field, result, user));
     } catch (err) {
         console.error('Error in get_my_certificate_doc:', err);
         return next(createError(500, 'An error occurred while retrieving the certificate.'));
@@ -187,37 +187,36 @@ async function generateQuestion(field, courses) {
     // return await generateQuestion_By_OpenAI(field, courses);
     // return await generateQuestion_By_GoogleGenAI(field, courses);
     return `
-        [
-            {
-                "question": "Question text",
-                "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
-                "correct": "A"
-            },
-            {
-                "question": "Question text",
-                "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
-                "correct": "A"
-            },
-            {
-                "question": "Question text",
-                "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
-                "correct": "A"
-            },
-            {
-                "question": "Question text",
-                "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
-                "correct": "A"
-            },
-            {
-                "question": "Question text",
-                "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
-                "correct": "A"
-            }
-        ]
-    `;
+[
+    {
+        "question": "Question text",
+        "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
+        "correct": "A"
+    },
+    {
+        "question": "Question text",
+        "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
+        "correct": "A"
+    },
+    {
+        "question": "Question text",
+        "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
+        "correct": "A"
+    },
+    {
+        "question": "Question text",
+        "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
+        "correct": "A"
+    },
+    {
+        "question": "Question text",
+        "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],
+        "correct": "A"
+    }
+]`;
 }
 
-function generate_certificate(field, value, user) {
+function generate_certificate(field, result, user) {
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -229,14 +228,21 @@ function generate_certificate(field, value, user) {
 <body>
     <h1>AiPLP Certificate</h1>
     <ul>
+        <h3>Field detail</h3>
         <li>Field Title: ${field.title}</li>
         <li>Field Description: ${field.description}</li>
         <li>Field Years Length: ${field.years_length}</li>
-        <li>Score: ${value}%</li>
+        
+        <h3>User detail</h3>
         <li>Full Name: ${user.first_name} ${user.last_name}</li>
         <li>Email: ${user.email}</li>
         <li>Phone Number: ${user.phone}</li>
+
+        <h3>Certificate result detail</h3>
+        <li>Score: ${result.value}%</li>
+        <li>Exam date: ${result.createdAt}%</li>
     </ul>
+    <button onclick="window.print()">Download the certificate!</button>
 </body>
 </html>
     `;
