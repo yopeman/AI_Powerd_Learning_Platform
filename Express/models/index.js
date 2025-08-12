@@ -12,9 +12,42 @@ import Amounts from './amounts.js';
 import Feedbacks from './feedbacks.js';
 import Certifications from './certifications.js';
 import Results from './results.js';
+import bcrypt from 'bcrypt';
 
 (async () => {
-    await sequelize.sync( {force: true} );
+    await sequelize.sync();
+    await Users.sync();
+    await Fields.sync();
+    await Courses.sync();
+    await Chapters.sync();
+    await Topics.sync();
+    await Subscriptions.sync();
+    await Interactions.sync();
+    await Assistants.sync();
+    await Certifications.sync();
+    await Results.sync();
+    await Feedbacks.sync();
+    await Amounts.sync();
+    await Payments.sync();
+    
+    const adminUser = await Users.findOne({ where: { role: 'admin' } });
+    if (!adminUser) {
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash('0000', salt);
+        await Users.create({
+            first_name: 'Admin',
+            last_name: 'Admin',
+            email: 'admin@aiplp.com',
+            phone: '0987654321',
+            password: hashedPassword,
+            role: 'admin',
+        });
+    }
+
+    const amount = await Amounts.findOne();
+    if (!amount) {
+        await Amounts.create({ amount: 200.0 });
+    }
 })();
 
 export {

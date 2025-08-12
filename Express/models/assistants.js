@@ -27,12 +27,7 @@ const Assistants = sequelize.define('Assistants', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Assistants'
 });
-
-(async () => {
-    await Assistants.sync();
-})();
 
 export default Assistants;

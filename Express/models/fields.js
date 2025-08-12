@@ -12,7 +12,7 @@ const Fields = sequelize.define('Fields', {
         unique: true,
     },
     description: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
     },
     years_length: {
         type: DataTypes.INTEGER,
@@ -26,12 +26,7 @@ const Fields = sequelize.define('Fields', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Fields'
 });
-
-(async () => {
-    await Fields.sync();
-})();
 
 export default Fields;

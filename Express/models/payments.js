@@ -50,12 +50,7 @@ const Payments = sequelize.define('Payments', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Payments'
 });
-
-(async () => {
-    await Payments.sync();
-})();
 
 export default Payments;

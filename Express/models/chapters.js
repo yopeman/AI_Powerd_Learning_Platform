@@ -27,7 +27,6 @@ const Chapters = sequelize.define('Chapters', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Chapters',
     uniqueKeys: {
         unq: {
@@ -35,9 +34,5 @@ const Chapters = sequelize.define('Chapters', {
         }
     }
 });
-
-(async () => {
-    await Chapters.sync();
-})();
 
 export default Chapters;

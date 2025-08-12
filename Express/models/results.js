@@ -30,7 +30,6 @@ const Results = sequelize.define('Results', {
     },
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Results',
     uniqueKeys: {
         unq: {
@@ -38,9 +37,5 @@ const Results = sequelize.define('Results', {
         }
     }
 });
-
-(async () => {
-    await Results.sync();
-})();
 
 export default Results;

@@ -14,16 +14,7 @@ const Amounts = sequelize.define('Amounts', {
     },
 }, {
     timestamps: true,
-    underscored: true,
     tableName: 'Amounts',
 });
-
-(async () => {
-    await Amounts.sync();
-    const amount = await Amounts.findOne();
-    if (!amount) {
-        await Amounts.create({ amount: 200.0 });
-    }
-})();
 
 export default Amounts;

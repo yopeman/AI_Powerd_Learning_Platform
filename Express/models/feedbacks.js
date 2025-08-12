@@ -30,12 +30,7 @@ const Feedbacks = sequelize.define('Feedbacks', {
     }
 }, {
     timestamps: true,
-    underscored: true,
     tableName: 'Feedbacks'
 });
-
-(async () => {
-    await Feedbacks.sync();
-})();
 
 export default Feedbacks;

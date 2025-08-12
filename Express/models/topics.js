@@ -11,8 +11,7 @@ const Topics = sequelize.define('Topics', {
         allowNull: false
     },
     content_file_path: {
-        type: DataTypes.TEXT,
-        unique: true
+        type: DataTypes.TEXT
     },
     chapterId: {
         type: DataTypes.UUID,
@@ -25,7 +24,6 @@ const Topics = sequelize.define('Topics', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Topics',
     uniqueKeys: {
         unq: {
@@ -33,9 +31,5 @@ const Topics = sequelize.define('Topics', {
         }
     }
 });
-
-(async () => {
-    await Topics.sync();
-})();
 
 export default Topics;

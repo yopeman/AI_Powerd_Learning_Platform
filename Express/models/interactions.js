@@ -25,25 +25,14 @@ const Interactions = sequelize.define('Interactions', {
         onUpdate: 'CASCADE'
     },
     question: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
     },
     response_file_path: {
-        type: DataTypes.TEXT,
-        unique: true
+        type: DataTypes.TEXT
     }
 }, { 
     timestamps: true,
-    underscored: true,
-    tableName: 'Interactions',
-    uniqueKeys: {
-        unq: {
-            fields: ['userId', 'topicId', 'question']
-        }
-    }
+    tableName: 'Interactions'
 });
-
-(async () => {
-    await Interactions.sync();
-})();
 
 export default Interactions;

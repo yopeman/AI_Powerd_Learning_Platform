@@ -17,17 +17,11 @@ const Certifications = sequelize.define('Certifications', {
         onUpdate: 'CASCADE'
     },
     questions_file_path: {
-        type: DataTypes.TEXT,
-        unique: true
+        type: DataTypes.TEXT
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Certifications'
 });
-
-(async () => {
-    await Certifications.sync();
-})();
 
 export default Certifications;

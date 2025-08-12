@@ -11,7 +11,7 @@ const Courses = sequelize.define('Courses', {
         allowNull: false,
     },
     description: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
     },
     fieldId: {
         type: DataTypes.UUID,
@@ -41,7 +41,6 @@ const Courses = sequelize.define('Courses', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Courses',
     uniqueKeys: {
         unq: {
@@ -52,9 +51,5 @@ const Courses = sequelize.define('Courses', {
         }
     }
 });
-
-(async () => {
-    await Courses.sync();
-})();
 
 export default Courses;

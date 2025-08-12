@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import { sequelize, DataTypes } from './config.js';
 
 const Users = sequelize.define('Users', {
@@ -66,25 +65,7 @@ const Users = sequelize.define('Users', {
     },
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Users',
 });
-
-(async () => {
-    await Users.sync();
-    const adminUser = await Users.findOne({ where: { role: 'admin' } });
-    if (!adminUser) {
-        const salt = await bcrypt.genSalt(12);
-        const hashedPassword = await bcrypt.hash('0000', salt);
-        await Users.create({
-            first_name: 'Admin',
-            last_name: 'Admin',
-            email: 'admin@aiplp.com',
-            phone: '0987654321',
-            password: hashedPassword,
-            role: 'admin',
-        });
-    }
-})();
 
 export default Users;

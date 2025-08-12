@@ -35,7 +35,6 @@ const Subscriptions = sequelize.define('Subscriptions', {
     }
 }, { 
     timestamps: true,
-    underscored: true,
     tableName: 'Subscriptions',
     uniqueKeys: {
         unq: {
@@ -43,9 +42,5 @@ const Subscriptions = sequelize.define('Subscriptions', {
         }
     }
 });
-
-(async () => {
-    await Subscriptions.sync();
-})();
 
 export default Subscriptions;
