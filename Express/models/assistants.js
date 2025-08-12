@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Assistants = sequelize.define('Assistants', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     userId: {
@@ -31,5 +31,8 @@ const Assistants = sequelize.define('Assistants', {
     tableName: 'Assistants'
 });
 
-Assistants.sync().then().catch();
+(async () => {
+    await Assistants.sync();
+})();
+
 export default Assistants;

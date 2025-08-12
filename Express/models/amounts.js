@@ -1,15 +1,16 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Amounts = sequelize.define('Amounts', {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: uuidv7(), // Use a function to ensure a new UUID on instance creation
-        primaryKey: true,
+        type: DataTypes.INTEGER,
+        defaultValue: 1,
+        primaryKey: true
     },
     amount: {
         type: DataTypes.FLOAT,
         defaultValue: 200.0,
         allowNull: false,
+        unique: true
     },
 }, {
     timestamps: true,
@@ -17,24 +18,12 @@ const Amounts = sequelize.define('Amounts', {
     tableName: 'Amounts',
 });
 
-// Sync the model with the database
-const syncAmounts = async () => {
+(async () => {
     await Amounts.sync();
-};
-
-// Check if any records exist and create a default one if not
-const initializeAmounts = async () => {
     const amount = await Amounts.findOne();
     if (!amount) {
         await Amounts.create({ amount: 200.0 });
     }
-};
-
-// Initialize the model
-const initialize = async () => {
-    await syncAmounts();
-    await initializeAmounts();
-};
-initialize();
+})();
 
 export default Amounts;

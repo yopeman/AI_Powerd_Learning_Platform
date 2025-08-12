@@ -13,13 +13,9 @@ import Feedbacks from './feedbacks.js';
 import Certifications from './certifications.js';
 import Results from './results.js';
 
-sequelize.sync({ force: false })
-    .then(() => {
-        // console.log('Database & tables created!');
-    })
-    .catch((error) => {
-        console.error('Error creating database tables:', error);
-    });
+(async () => {
+    await sequelize.sync( {force: true} );
+})();
 
 export {
     sequelize,

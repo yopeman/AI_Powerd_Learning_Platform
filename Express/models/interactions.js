@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Interactions = sequelize.define('Interactions', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     userId: {
@@ -24,17 +24,26 @@ const Interactions = sequelize.define('Interactions', {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
     },
-    questions: {
+    question: {
         type: DataTypes.TEXT,
     },
     response_file_path: {
-        type: DataTypes.STRING(5000),
+        type: DataTypes.TEXT,
+        unique: true
     }
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'Interactions'
+    tableName: 'Interactions',
+    uniqueKeys: {
+        unq: {
+            fields: ['userId', 'topicId', 'question']
+        }
+    }
 });
 
-Interactions.sync().then().catch();
+(async () => {
+    await Interactions.sync();
+})();
+
 export default Interactions;

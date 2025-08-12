@@ -1,4 +1,3 @@
-import { uuidv7 } from '../models/config.js';
 import { Chapters, Courses, Topics } from '../models/index.js';
 import {hasAssistantChapterPermission, hasAssistantCoursePermission} from "../utilities/assistant-permissions.js";
 
@@ -80,7 +79,6 @@ async function chapter_create(req, res, next) {
             }
 
             await Chapters.create({
-                id: uuidv7(),
                 courseId,
                 title,
                 description,

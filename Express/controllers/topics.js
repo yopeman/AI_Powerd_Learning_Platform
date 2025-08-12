@@ -5,7 +5,6 @@ import fs from 'fs';
 import { Op } from 'sequelize';
 import { find_topics } from '../utilities/finds.js';
 import hasStudentPermission from '../utilities/student-permissions.js';
-import { uuidv7 } from '../models/config.js';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import sanitize from 'sanitize-filename';
@@ -66,7 +65,6 @@ async function topic_create(req, res, next) {
                 return Promise.reject(createError(400, 'All titles are required.'));
             }
             return Topics.create({
-                id: uuidv7(),
                 chapterId, 
                 title 
             });
@@ -225,7 +223,7 @@ async function topic_ask(req, res, next) {
         let interaction = await Interactions.findOne({
             where: {
                 topicId: id,
-                questions: question,
+                question,
             },
         });
 
@@ -233,7 +231,7 @@ async function topic_ask(req, res, next) {
             interaction = await Interactions.create({
                 userId: req.user.id,
                 topicId: id,
-                questions: question,
+                question,
             });
         }
 

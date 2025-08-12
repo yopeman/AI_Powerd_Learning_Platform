@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Feedbacks = sequelize.define('Feedbacks', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(), // Use a function to ensure a new UUID on instance creation
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     userId: {
@@ -34,5 +34,8 @@ const Feedbacks = sequelize.define('Feedbacks', {
     tableName: 'Feedbacks'
 });
 
-Feedbacks.sync().then().catch();
+(async () => {
+    await Feedbacks.sync();
+})();
+
 export default Feedbacks;

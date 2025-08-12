@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { v4 as uuidv7 } from 'uuid';
+import { uuidv1 } from '../models/config.js';
 import { Users, Payments, Fields, Subscriptions, Amounts } from '../models/index.js';
 import { Op } from 'sequelize';
 
@@ -39,7 +39,21 @@ async function payment_create(req, res, next) {
             return next(createError(404, 'No payment amount found.'));
         }
 
-        const paymentId = uuidv7();
+        const oldPayment = await Payments.findOne({
+            where: {
+                [Op.and]: [
+                    { subscriptionId: subscription.id },
+                    { year },
+                    { semester },
+                    { status: 'completed' }
+                ]
+            }
+        });
+        if (oldPayment) {
+            return next(createError(400, 'For this year and semester alrady payed.'));
+        }
+
+        const paymentId = uuidv1();
         const user = await Users.findByPk(req.user.id);
 
         const paymentInit = await axios.post('https://api.chapa.co/v1/transaction/initialize', {
@@ -104,7 +118,7 @@ async function payment_webhook(req, res, next) {
             });
 
             if (response.data.status === 'success') {
-                payment.recipt_url = `https://checkout.chapa.co/checkout/test-payment-receipt/${response.data.data.reference}`;
+                payment.receipt_url = `https://checkout.chapa.co/checkout/test-payment-receipt/${response.data.data.reference}`;
                 payment.status = 'completed';
                 payment.transactionId = response.data.data.reference;
                 payment.method = response.data.data.method;

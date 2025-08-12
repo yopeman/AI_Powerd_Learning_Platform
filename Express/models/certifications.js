@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Certifications = sequelize.define('Certifications', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     fieldId: {
@@ -17,7 +17,8 @@ const Certifications = sequelize.define('Certifications', {
         onUpdate: 'CASCADE'
     },
     questions_file_path: {
-        type: DataTypes.STRING(5000),
+        type: DataTypes.TEXT,
+        unique: true
     }
 }, { 
     timestamps: true,
@@ -25,5 +26,8 @@ const Certifications = sequelize.define('Certifications', {
     tableName: 'Certifications'
 });
 
-Certifications.sync().then().catch();
+(async () => {
+    await Certifications.sync();
+})();
+
 export default Certifications;

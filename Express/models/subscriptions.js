@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Subscriptions = sequelize.define('Subscriptions', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     userId: {
@@ -36,8 +36,16 @@ const Subscriptions = sequelize.define('Subscriptions', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'Subscriptions'
+    tableName: 'Subscriptions',
+    uniqueKeys: {
+        unq: {
+            fields: ['userId', 'fieldId']
+        }
+    }
 });
 
-Subscriptions.sync().then().catch();
+(async () => {
+    await Subscriptions.sync();
+})();
+
 export default Subscriptions;

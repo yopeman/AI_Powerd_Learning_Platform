@@ -128,7 +128,7 @@ const TopicScreen = ({ navigation, route }) => {
             {/*| Person |*/}
             <View style={styles.interactionHeader}>
               <MaterialIcons name="person" size={20} color={colors.primary} />
-              <Text style={styles.questionText}> {interaction.questions}</Text>
+              <Text style={styles.questionText}> {interaction.question}</Text>
             </View>
             {/*| Bot |*/}
             <View style={styles.interactionResponse}>

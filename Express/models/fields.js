@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Fields = sequelize.define('Fields', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     title: {
@@ -30,5 +30,8 @@ const Fields = sequelize.define('Fields', {
     tableName: 'Fields'
 });
 
-Fields.sync().then().catch();
+(async () => {
+    await Fields.sync();
+})();
+
 export default Fields;

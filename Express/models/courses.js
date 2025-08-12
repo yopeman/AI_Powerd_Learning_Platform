@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Courses = sequelize.define('Courses', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     title: {
@@ -24,9 +24,17 @@ const Courses = sequelize.define('Courses', {
     },
     year: {
         type: DataTypes.INTEGER,
+        validate: {
+            min: 1,
+            max: 10
+        }
     },
     semester: {
         type: DataTypes.INTEGER,
+        validate: {
+            min: 1,
+            max: 5
+        }
     },
     chapters_length: {
         type: DataTypes.INTEGER,
@@ -34,8 +42,19 @@ const Courses = sequelize.define('Courses', {
 }, { 
     timestamps: true,
     underscored: true,
-    tableName: 'Courses'
+    tableName: 'Courses',
+    uniqueKeys: {
+        unq: {
+            fields: ['title', 'fieldId']
+        },
+        unq2: {
+            fields: ['fieldId', 'year', 'semester']
+        }
+    }
 });
 
-Courses.sync().then().catch();
+(async () => {
+    await Courses.sync();
+})();
+
 export default Courses;

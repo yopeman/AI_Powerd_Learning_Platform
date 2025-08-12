@@ -1,9 +1,9 @@
-import { sequelize, DataTypes, uuidv7 } from './config.js';
+import { sequelize, DataTypes } from './config.js';
 
 const Payments = sequelize.define('Payments', {
     id: {
         type: DataTypes.UUID,
-        defaultValue: uuidv7(),
+        defaultValue: DataTypes.UUIDV1,
         primaryKey: true,
     },
     subscriptionId: {
@@ -39,7 +39,7 @@ const Payments = sequelize.define('Payments', {
             isUrl: true
         }
     },
-    recipt_url: {
+    receipt_url: {
         type: DataTypes.STRING(),
         validate: {
             isUrl: true
@@ -54,5 +54,8 @@ const Payments = sequelize.define('Payments', {
     tableName: 'Payments'
 });
 
-Payments.sync().then().catch();
+(async () => {
+    await Payments.sync();
+})();
+
 export default Payments;
