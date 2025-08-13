@@ -38,7 +38,7 @@ import bcrypt from 'bcrypt';
             first_name: 'Admin',
             last_name: 'Admin',
             email: 'admin@aiplp.com',
-            phone: '0987654321',
+            phone: '0000000000',
             password: hashedPassword,
             role: 'admin',
         });

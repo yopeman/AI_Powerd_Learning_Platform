@@ -3,7 +3,7 @@ import axios from 'axios';
 // dotenv.config();
 // const BASE_URL = process.env.BASE_URL;
 
-const BASE_URL = 'http://10.240.129.58:7000'
+const BASE_URL =  'http://127.0.0.1:7000'; // 'http://10.240.129.58:7000'
 
 const api = (bearer) => axios.create({
     baseURL: `${BASE_URL}/api/v1`,

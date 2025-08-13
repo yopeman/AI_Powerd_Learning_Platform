@@ -40,27 +40,15 @@ app.use('/results/:resultId/link', redirect_certification_doc);
 // API routes with authentication
 app.use('/api/v1/', isAuth, routes);
 
-// Serve static files for the admin panel
-app.use('/admin', express.static(path.join(__dirname, 'static', 'admin-dashboard')));
-app.use('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'static', 'admin-dashboard', 'index.html'));
-});
-
-// Serve static files for the assistant panel
-app.use('/assistant', express.static(path.join(__dirname, 'static', 'assistant-dashboard')));
-app.use('/assistant', (req, res) => {
-    res.sendFile(path.join(__dirname, 'static', 'assistant-dashboard', 'index.html'));
-});
-
-// // Serve static files for the landing page
-app.use(express.static(path.join(__dirname, 'static', 'landing-page')));
+// Serve static files
+app.use(express.static(path.join(__dirname, 'static')));
 app.use((req, res) => {
-    res.sendFile(path.join(__dirname, 'static', 'landing-page', 'index.html'));
+    res.sendFile(path.join(__dirname, 'static', 'index.html'));
 });
 
 // Error handling middleware
-// app.use(handler);
-// app.use(error_handler);
+app.use(handler);
+app.use(error_handler);
 
 // Sync the database and start the server
 sequelize.sync().then(() => {
