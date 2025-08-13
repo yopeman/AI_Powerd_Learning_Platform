@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Users } from '../models/index.js';
+import { createError } from './error-handlers.js';
 
 const SECRET_KEY = process.env.JWT_SECRET;
 

@@ -4,6 +4,7 @@ import { Courses, Fields, Users, Certifications, Results } from "../models/index
 import { Op } from "sequelize";
 import { generateQuestion_By_OpenAI, generateQuestion_By_GoogleGenAI } from '../utilities/ai-service.js';
 import fs from 'fs';
+import { createError } from '../utilities/error-handlers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

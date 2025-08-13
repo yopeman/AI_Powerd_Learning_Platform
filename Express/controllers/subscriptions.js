@@ -1,5 +1,6 @@
 import { Fields, Subscriptions } from '../models/index.js';
 import { Op } from 'sequelize';
+import { createError } from '../utilities/error-handlers.js';
 
 async function subscription_create(req, res, next) {
     const { fieldId } = req.body;

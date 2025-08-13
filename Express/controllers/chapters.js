@@ -1,5 +1,6 @@
 import { Chapters, Courses, Topics } from '../models/index.js';
 import {hasAssistantChapterPermission, hasAssistantCoursePermission} from "../utilities/assistant-permissions.js";
+import { createError } from '../utilities/error-handlers.js';
 
 async function chapter_get(req, res, next) {
     const { id } = req.params;

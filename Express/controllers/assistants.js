@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import { Assistants, Fields, Users } from "../models/index.js";
+import { createError } from '../utilities/error-handlers.js';
 
 async function assistant_create(req, res, next) {
     const { userId, fieldId } = req.body;

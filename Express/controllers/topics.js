@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import sanitize from 'sanitize-filename';
 import { hasAssistantChapterPermission, hasAssistantTopicPermission } from '../utilities/assistant-permissions.js';
+import { createError } from '../utilities/error-handlers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

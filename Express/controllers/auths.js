@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Users } from '../models/index.js';
+import { createError } from '../utilities/error-handlers.js';
 
 async function auth_register(req, res, next) {
     const {

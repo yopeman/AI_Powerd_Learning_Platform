@@ -1,6 +1,5 @@
 import { Assistants } from "../models/index.js";
 import { find_chapters, find_courses, find_topics } from "./finds.js";
-import { Op } from "sequelize"; // Ensure you have Op imported
 
 async function checkPermission(userId, fieldId) {
     try {
