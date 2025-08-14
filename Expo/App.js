@@ -21,6 +21,8 @@ import SettingScreen from './Screens/SettingScreen';
 import AboutScreen from './Screens/AboutScreen';
 import CertificateScreen from './Screens/CertificateScreen';
 import {ThemeProvider, useTheme} from "./Utilities/ThemeContext";
+import {Text, View, StyleSheet} from "react-native";
+import {usePreventScreenCapture} from "expo-screen-capture";
 
 // Create navigators
 const Stack = createNativeStackNavigator();
@@ -154,7 +156,6 @@ function MainDrawer() {
         drawerActiveBackgroundColor: colors.primary + '20',
         drawerLabelStyle: {
           fontSize: textSize,
-          // marginLeft: -16,
         }
       }}
     >
@@ -320,22 +321,7 @@ function RootNavigator() {
         </>
       ) : (
         <>
-          {/*<Stack.Screen*/}
-          {/*  name="Login"*/}
-          {/*  options={{ headerShown: false }}*/}
-          {/*>*/}
-          {/*  {props => <LoginScreen {...props} setIsAuth={signIn} />}*/}
-          {/*</Stack.Screen>*/}
           <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
-          {/*<Stack.Screen*/}
-          {/*  name="Register"*/}
-          {/*  options={{*/}
-          {/*    title: 'Create Account',*/}
-          {/*    headerShown: false*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  {props => <RegisterScreen {...props} setIsAuth={signIn} />}*/}
-          {/*</Stack.Screen>*/}
           <Stack.Screen name="Register" options={{ headerShown: false }} component={RegisterScreen} />
         </>
       )}
@@ -344,13 +330,17 @@ function RootNavigator() {
 }
 
 export default function App() {
+  usePreventScreenCapture();
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </AuthProvider>
-    </ThemeProvider>
+    <View style={{ flex: 1, padding: 0, margin: 0, backgroundColor: '#000' }}>
+      <ThemeProvider>
+        <AuthProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </AuthProvider>
+      </ThemeProvider>
+      <Text></Text>
+    </View>
   );
 }

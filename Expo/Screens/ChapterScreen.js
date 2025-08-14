@@ -31,6 +31,10 @@ const ChapterScreen = ({ navigation, route }) => {
           get_chapter_by_id(chapterId),
           get_topics(chapterId),
         ]);
+        if (!chapterResponse || !topicsResponse) {
+          setError('Failed to fetch chapter and its topics');
+          return;
+        }
         setChapter(chapterResponse.data);
         setTopics(topicsResponse.data);
       } catch (err) {
@@ -90,6 +94,7 @@ const ChapterScreen = ({ navigation, route }) => {
           />
         </TouchableOpacity>
       ))}
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 };

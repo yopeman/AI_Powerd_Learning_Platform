@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { 
   View, Text, Button, ActivityIndicator, 
-  ScrollView, StyleSheet, Picker, TouchableOpacity, 
+  ScrollView, StyleSheet, TouchableOpacity,
   Alert, Linking 
 } from 'react-native';
+import {Picker} from "@react-native-picker/picker";
 import { get_my_fields, payment_init } from '../Utilities/operations';
 import CustomAlert from "../Components/CustomAlert";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -29,6 +30,10 @@ export default function PaymentScreen({ navigation }) {
       setLoading(true);
       try {
         const response = await get_my_fields();
+        if (!response) {
+          setError('Failed to fetch subscribed fields');
+          return;
+        }
         const fetchedFields = response.data.fields;
         setFields(fetchedFields);
 
@@ -161,6 +166,7 @@ export default function PaymentScreen({ navigation }) {
         }}
         onCancel={() => setModalVisible(false)}
       />
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 }

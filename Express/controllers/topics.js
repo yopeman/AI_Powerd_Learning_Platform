@@ -7,7 +7,6 @@ import { find_topics } from '../utilities/finds.js';
 import hasStudentPermission from '../utilities/student-permissions.js';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
-import sanitize from 'sanitize-filename';
 import { hasAssistantChapterPermission, hasAssistantTopicPermission } from '../utilities/assistant-permissions.js';
 import { createError } from '../utilities/error-handlers.js';
 
@@ -165,7 +164,7 @@ async function topic_content(req, res, next) {
 
         const generatedContent = await generateContent(topicDetail.topics.title, context);
         const dirPath = path.join(__dirname, `../public/Fields_${topicDetail.fields.id}/Courses_${topicDetail.courses.id}/Chapters_${topicDetail.chapters.id}/Topics_${topicDetail.topics.id}/Contents`);
-        const filePath = path.join(dirPath, `${sanitize(topicDetail.topics.title)}_${topicDetail.topics.id}.md`);
+        const filePath = path.join(dirPath, `Contents_${topicDetail.topics.id}.md`);
 
         await fs.promises.mkdir(dirPath, { recursive: true });
         await fs.promises.writeFile(filePath, generatedContent);
@@ -243,7 +242,7 @@ async function topic_ask(req, res, next) {
 
         const generatedContent = await generateAnswer(question, context);
         const dirPath = path.join(__dirname, `../public/Fields_${topicDetail.fields.id}/Courses_${topicDetail.courses.id}/Chapters_${topicDetail.chapters.id}/Topics_${topicDetail.topics.id}/Interactions`);
-        const filePath = path.join(dirPath, `${sanitize(question)}_${topicDetail.topics.id}.md`);
+        const filePath = path.join(dirPath, `Interactions_${interaction.id}.md`);
 
         await fs.promises.mkdir(dirPath, { recursive: true });
         await fs.promises.writeFile(filePath, generatedContent);
@@ -266,6 +265,11 @@ async function topic_current_interactions(req, res, next) {
 
     if (!topicId) {
         return next(createError(400, 'Topic ID is required.'));
+    }
+
+    const permissionMsg = await hasStudentPermission(req.user.id, topicId);
+    if (permissionMsg !== true) {
+        return next(createError(400, permissionMsg));
     }
 
     try {const interactions = await Interactions.findAll({

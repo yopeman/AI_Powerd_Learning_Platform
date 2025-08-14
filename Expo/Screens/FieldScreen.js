@@ -1,34 +1,41 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  View, Text, TouchableOpacity, 
-  ActivityIndicator, ScrollView, StyleSheet 
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, TouchableOpacity,
+  ActivityIndicator, ScrollView
 } from 'react-native';
 import { get_courses, get_field_by_id } from '../Utilities/operations';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {useTheme} from "../Utilities/ThemeContext";
-import {createStyles} from "../Style/FieldStyle";
+import { useTheme } from "../Utilities/ThemeContext";
+import { createStyles } from "../Style/FieldStyle";
+import { useNavigation } from "@react-navigation/native";
 
-const FieldScreen = ({ navigation, route }) => {
-  if (!route.params) {
-    navigation.goBack();
-  }
+const FieldScreen = ({ route }) => {
+  const navigation = useNavigation();
 
+  const { fieldId } = route?.params || {};
 
-  const { fieldId } = route.params;
-  
+  // Check for missing fieldId and navigate if necessary
+  useEffect(() => {
+    if (!fieldId) {
+      navigation.goBack();
+    }
+  }, [fieldId, navigation]);
+
   const [field, setField] = useState(null);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const {colors, textSize} = useTheme();
+  const { colors, textSize } = useTheme();
   const [styles, setStyles] = useState({});
 
   useEffect(() => {
     setStyles(createStyles(colors, textSize));
-  }, [colors, textSize, ]);
+  }, [colors, textSize]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!fieldId) return; // Prevent fetching if fieldId is not available
+
       setLoading(true);
       setError(null);
       try {
@@ -36,6 +43,10 @@ const FieldScreen = ({ navigation, route }) => {
           get_field_by_id(fieldId),
           get_courses(fieldId),
         ]);
+        if (!fieldResponse || !coursesResponse) {
+          setError('Failed to fetch field and its courses');
+          return;
+        }
         setField(fieldResponse.data);
         setCourses(coursesResponse.data);
       } catch (err) {
@@ -45,7 +56,7 @@ const FieldScreen = ({ navigation, route }) => {
       }
     };
     fetchData();
-  }, [fieldId]);
+  }, [fieldId]); // Add fieldId as a dependency
 
   const maxYearLength = Math.max(...courses.map(c => c.year), 0);
   const maxSemesterLength = Math.max(...courses.map(c => c.semester), 0);
@@ -75,17 +86,17 @@ const FieldScreen = ({ navigation, route }) => {
       <View style={styles.header}>
         <Text style={styles.title}>{field.title}</Text>
         <Text style={styles.description}>{field.description}</Text>
-        
+
         <View style={styles.metaContainer}>
           <View style={styles.metaPill}>
             <MaterialCommunityIcons name="clock" size={16} color={colors.primary} />
             <Text style={styles.metaText}>{field.years_length} years</Text>
           </View>
           <View style={styles.metaPill}>
-            <MaterialCommunityIcons 
-              name={field.isFree ? "lock-open" : "lock"} 
-              size={16} 
-              color={colors.primary} 
+            <MaterialCommunityIcons
+              name={field.isFree ? "lock-open" : "lock"}
+              size={16}
+              color={colors.primary}
             />
             <Text style={styles.metaText}>
               {field.isFree ? 'Free' : `${field.number_of_free_topics} free topics`}
@@ -110,19 +121,19 @@ const FieldScreen = ({ navigation, route }) => {
                     style={styles.courseCard}
                     onPress={() => navigation.navigate('Course', { courseId: course.id })}
                   >
-                    <MaterialCommunityIcons 
-                      name="book-open-page-variant" 
-                      size={24} 
-                      color={colors.primary} 
+                    <MaterialCommunityIcons
+                      name="book-open-page-variant"
+                      size={24}
+                      color={colors.primary}
                     />
                     <View style={styles.courseText}>
                       <Text style={styles.courseTitle}>{course.title}</Text>
                       <Text style={styles.courseDesc}>{course.description}</Text>
                     </View>
-                    <MaterialCommunityIcons 
-                      name="chevron-right" 
-                      size={24} 
-                      color={colors.text + '80'} 
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={24}
+                      color={colors.text + '80'}
                     />
                   </TouchableOpacity>
                 ))}
@@ -133,16 +144,16 @@ const FieldScreen = ({ navigation, route }) => {
       ))}
 
       <View style={styles.certificateCard}>
-        <MaterialCommunityIcons 
-          name="certificate" 
-          size={48} 
-          color={colors.primary} 
+        <MaterialCommunityIcons
+          name="certificate"
+          size={48}
+          color={colors.primary}
           style={{ marginBottom: 16 }}
         />
         <Text style={styles.certificateText}>
           Complete this field to earn a certificate
         </Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.certificateButton}
           onPress={() => navigation.navigate('Certificate', { fieldId: field.id })}
         >
@@ -151,6 +162,7 @@ const FieldScreen = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
       </View>
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 };

@@ -4,7 +4,6 @@ import {
   ActivityIndicator, ScrollView, StyleSheet, Keyboard
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { /* preventScreenCapture, */ allowScreenCaptureAsync } from 'expo-screen-capture';
 import { get_topic_content, get_topic_interactions, ask_about_topic } from '../Utilities/operations';
 import Markdown from 'react-native-markdown-display';
 import * as Speech from 'expo-speech';
@@ -28,22 +27,16 @@ const TopicScreen = ({ navigation, route }) => {
     setStyles(createStyles(colors, textSize));
   }, [colors, textSize, ]);
 
-  // Prevent screenshots for educational content
-  // useEffect(() => {
-  //   // preventScreenCapture();
-  //   return () => allowScreenCaptureAsync();
-  // }, []);
-
-  // useEffect(() => {
-  //   Speech.speak(text);
-  // }, [text])
-
   // Fetch topic content
   useEffect(() => {
     const fetchContent = async () => {
       setLoading(true);
       try {
         const response = await get_topic_content(topicId);
+        if (!response) {
+          setError('Failed to fetch topic contents');
+          return;
+        }
         setContent(response.data);
         fetchInteractions();
       } catch (err) {
@@ -133,7 +126,10 @@ const TopicScreen = ({ navigation, route }) => {
             {/*| Bot |*/}
             <View style={styles.interactionResponse}>
               <MaterialIcons name="smart-toy" size={20} color={colors.primary} />
-              <Text style={styles.responseText}> {interaction.response}</Text>
+              {/*<Text style={styles.responseText}> {interaction.response}</Text>*/}
+              <View style={styles.contentCard}>
+                <Markdown>{interaction.response}</Markdown>
+              </View>
             </View>
             {/*| Speech |*/}
             {playingIndex !== index ? (
@@ -162,7 +158,7 @@ const TopicScreen = ({ navigation, route }) => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { height: Math.max(64, 64 + ask.length * 0.5) }]}
           placeholder="Ask something about this topic..."
           placeholderTextColor={colors.text + '80'}
           value={ask}
@@ -181,6 +177,7 @@ const TopicScreen = ({ navigation, route }) => {
           />
         </TouchableOpacity>
       </View>
+      <Text style={{ height: 500 }}></Text>
     </ScrollView>
   );
 };

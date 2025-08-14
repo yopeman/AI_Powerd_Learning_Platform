@@ -27,6 +27,10 @@ export default function About() {
     try {
       const rsp = await AsyncStorage.getItem('response');
       const response = await api(JSON.parse(rsp).token).post('/feedbacks', { content, rating });
+      if (!response.data) {
+        setError('Feedback submission failed');
+        return;
+      }
       setSuccess(response.data.message);
       setContent('');
       setRating(3); // Reset to default rating
@@ -113,6 +117,7 @@ export default function About() {
           <Text style={[styles.buttonText, styles.resetText]}>Reset Form</Text>
         </TouchableOpacity>
       </View>
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 }

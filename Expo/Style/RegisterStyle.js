@@ -10,7 +10,6 @@ export const createStyles = (colors, textSize) => {
     scrollContainer: {
       flexGrow: 1,
       padding: 24,
-      justifyContent: 'center',
     },
     header: {
       alignItems: 'center',

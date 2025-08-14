@@ -29,7 +29,10 @@ export default function CourseScreen({ navigation, route }) {
           get_course_by_id(courseId),
           get_chapters(courseId)
         ]);
-
+        if (!courseResponse || !chapterResponse) {
+          setError('Failed to fetch Courses and its Chapters');
+          return;
+        }
         setCourse(courseResponse.data);
         const sortedChapters = chapterResponse.data.sort((a, b) => a.order - b.order);
         setChapters(sortedChapters);
@@ -100,6 +103,7 @@ export default function CourseScreen({ navigation, route }) {
           />
         </TouchableOpacity>
       ))}
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 }

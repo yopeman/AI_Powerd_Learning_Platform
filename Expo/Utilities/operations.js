@@ -5,6 +5,7 @@ import * as Device from 'expo-device';
 // Function to retrieve the token from AsyncStorage
 const getToken = async () => {
   const response = await AsyncStorage.getItem('response');
+  // console.log('getToken', response);
   return response ? JSON.parse(response).token : null;
 };
 
@@ -146,5 +147,7 @@ export const submit_certification_answer_results = async (fieldId, value) => {
 // Function to unsubscribe the fields
 export const unsubscribe_fields = async (subscriptionId) => {
   const token = await getToken();
-  return handleApiResponse(() => api(token).delete(`/subscriptions/${subscriptionId}`), `/subscriptions/${subscriptionId}`);
+  const response = handleApiResponse(() => api(token).delete(`/subscriptions/${subscriptionId}`), `/subscriptions/${subscriptionId}`);
+  await get_my_fields();
+  return response;
 };

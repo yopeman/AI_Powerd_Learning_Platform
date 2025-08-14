@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { 
   View, Text, TouchableOpacity, 
   ActivityIndicator, ScrollView, StyleSheet 
@@ -7,23 +7,31 @@ import { get_my_fields, unsubscribe_fields } from "../Utilities/operations";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {useTheme} from "../Utilities/ThemeContext";
 import {createStyles} from "../Style/HomeStyle";
+import {StatusBar} from "expo-status-bar";
+import {useFocusEffect} from "@react-navigation/native";
 
-const HomeScreen = ({ navigation, route }) => {
-
-  const { fId } = route.params || { fId: 'Some Field ID' };
-
-
+const HomeScreen = ({ navigation }) => {
   const [fields, setFields] = useState([]);
   const [subscriptions, setSubscriptions] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [progressData, setProgressData] = useState({});
-  const {colors, textSize} = useTheme();
+  const {colors, textSize, darkMode} = useTheme();
   const [styles, setStyles] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     setStyles(createStyles(colors, textSize));
   }, [colors, textSize, ]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshing(true);
+      return () => {
+        setRefreshing(false);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     const fetchFields = async () => {
@@ -31,6 +39,10 @@ const HomeScreen = ({ navigation, route }) => {
       setError(null);
       try {
         const response = await get_my_fields();
+        if (!response) {
+          // setError('Failed to fetch subscribed fields');
+          return;
+        }
         setFields(response.data.fields);
         setSubscriptions(response.data.subscriptions);
         
@@ -50,7 +62,7 @@ const HomeScreen = ({ navigation, route }) => {
       }
     };
     fetchFields();
-  }, [fId]);
+  }, [refreshing]);
 
   const handleLearn = (fieldId) => {
     navigation.navigate('Learn', { screen: 'Field', params: { fieldId } });
@@ -80,6 +92,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   return (
     <ScrollView style={styles.container}>
+      <StatusBar style={`${darkMode ? 'light' : 'dark'}`} />
       <View style={styles.header}>
         <Text style={styles.title}>My Learning</Text>
         <Text style={styles.subtitle}>Continue your educational journey</Text>
@@ -154,6 +167,7 @@ const HomeScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       )}
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 };

@@ -45,9 +45,6 @@ const Courses = sequelize.define('Courses', {
     uniqueKeys: {
         unq: {
             fields: ['title', 'fieldId']
-        },
-        unq2: {
-            fields: ['fieldId', 'year', 'semester']
         }
     }
 });

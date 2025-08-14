@@ -1,4 +1,5 @@
-import { StyleSheet } from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
+const { height } = Dimensions.get('window');
 
 export const createStyles = (colors, textSize) => {
 
@@ -10,7 +11,6 @@ export const createStyles = (colors, textSize) => {
     scrollContainer: {
       flexGrow: 1,
       padding: 20,
-      justifyContent: 'center',
     },
     title: {
       fontSize: textSize + 10,

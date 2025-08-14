@@ -1,13 +1,14 @@
-import { StyleSheet } from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 
 export const createStyles = (colors, textSize) => {
 
   return StyleSheet.create({
     container: {
-      flex: 1,
+      // flex: 1,
+      height: Dimensions.get('window').height,
       padding: 24,
-      justifyContent: 'center',
       backgroundColor: colors.background,
+      justifyContent: 'center',
     },
     title: {
       fontSize: textSize + 8,

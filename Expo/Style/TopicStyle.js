@@ -78,11 +78,11 @@ export const createStyles = (colors, textSize) => {
     },
     input: {
       flex: 1,
-      height: 56,
       fontSize: textSize + 2,
       color: colors.title,
       paddingVertical: 16,
       paddingHorizontal: 8,
+      minHeight: 64
     },
     sendButton: {
       padding: 10,

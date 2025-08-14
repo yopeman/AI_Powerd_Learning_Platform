@@ -59,6 +59,10 @@ export default function ProfileScreen() {
     setLoading(true);
     try {
       const response = await api(token).put('/users/me', formData);
+      if (!response) {
+        setMessage({ text: 'Update failed', type: 'error' });
+        return;
+      }
       const { success, message: responseMessage } = response.data;
 
       if (success) {
@@ -79,17 +83,6 @@ export default function ProfileScreen() {
     setFormData(initialValue);
   };
 
-  // const handleBiometricToggle = async () => {
-  //   try {
-  //     const current = await SecureStore.getItemAsync('useBiometrics');
-  //     const newValue = current === 'true' ? 'false' : 'true';
-  //     await SecureStore.setItemAsync('useBiometrics', newValue);
-  //     setBiometricsEnabled(newValue === 'true');
-  //   } catch (error) {
-  //     console.error('Error toggling biometrics', error);
-  //   }
-  // };
-
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
@@ -104,7 +97,7 @@ export default function ProfileScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={[styles.scrollContainer, styles.container]}>
+      <ScrollView style={[styles.scrollContainer, styles.container]}>
         <Text style={styles.title}>Update Account</Text>
         
         {message.text && (
@@ -143,23 +136,9 @@ export default function ProfileScreen() {
             <TouchableOpacity style={[styles.button, { backgroundColor: colors.logoutBgColor }]} onPress={handleLogout}>
               <Text style={styles.buttonText}>Sign Out</Text>
             </TouchableOpacity>
+            <Text style={{ height: 50 }}></Text>
           </>
         )}
-
-        {/*<View style={styles.section}>*/}
-        {/*  <Text style={styles.sectionTitle}>Security</Text>*/}
-        {/*  <TouchableOpacity */}
-        {/*    style={styles.securityCard}*/}
-        {/*    onPress={handleBiometricToggle}*/}
-        {/*  >*/}
-        {/*    <Text style={styles.securityText}>Enable Biometric Login</Text>*/}
-        {/*    <MaterialIcons */}
-        {/*      name={biometricsEnabled ? "toggle-on" : "toggle-off"} */}
-        {/*      size={32} */}
-        {/*      color={biometricsEnabled ? colors.primary : colors.text + '80'} */}
-        {/*    />*/}
-        {/*  </TouchableOpacity>*/}
-        {/*</View>*/}
       </ScrollView>
     </KeyboardAvoidingView>
   );

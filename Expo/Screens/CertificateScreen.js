@@ -42,6 +42,10 @@ const CertificateScreen = ({ navigation, route }) => {
           setModalVisible(true);
         } else {
           const response = await get_certification_questions(fieldId);
+          if (!response) {
+            setError('Failed to load data.');
+            return;
+          }
           setQuestions(response.data);
           setAnswers(Array(response.data.length).fill(null));
         }
@@ -53,8 +57,6 @@ const CertificateScreen = ({ navigation, route }) => {
     };
 
     fetchData();
-    // preventScreenCapture();
-    // return () => allowScreenCaptureAsync();
   }, [fieldId, submitted]);
 
   const handleRetry = () => {
@@ -85,9 +87,6 @@ const CertificateScreen = ({ navigation, route }) => {
       await submit_certification_answer_results(fieldId, calculatedScore);
       setScore(calculatedScore);
       setSubmitted(true);
-      // navigation.navigate('CertificateScreen', { fieldId });
-      // Alert.alert('Congratulations!');
-      // navigation.goBack();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -152,6 +151,7 @@ const CertificateScreen = ({ navigation, route }) => {
             <Text style={styles.result}>Your Score: {score}%</Text>
           )}
         </View>
+        <Text style={{ height: 50 }}></Text>
       </ScrollView>
     </PaperProvider>
   );

@@ -58,19 +58,16 @@ export default function RegisterScreen({ setIsAuth }) {
 
     try {
       const response = await authApi.post('/register', formData);
+      if (!response.data) {
+        setMessage({ text: 'Registration failed', type: 'error' });
+        return;
+      }
       const { success, data, message: responseMessage } = response.data;
       
       if (success) {
         if (data.user.role === 'student') {
           await AsyncStorage.setItem('response', JSON.stringify(data));
-          // setIsAuth(true);
           signIn(data.token);
-          // navigation.dispatch(
-          //   CommonActions.reset({
-          //     index: 0,
-          //     routes: [{name: 'MainApp'}],
-          //   })
-          // );
         } else {
           setMessage({ text: 'You need student privileges to access this app', type: 'error' });
         }
@@ -111,8 +108,9 @@ export default function RegisterScreen({ setIsAuth }) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      <Text style={{ height: 50 }}></Text>
       <ScrollView 
-        contentContainerStyle={styles.scrollContainer}
+        style={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
@@ -195,6 +193,7 @@ export default function RegisterScreen({ setIsAuth }) {
             <Text style={styles.footerLink}>Sign In</Text>
           </TouchableOpacity>
         </View>
+        <Text style={{ height: 50 }}></Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );

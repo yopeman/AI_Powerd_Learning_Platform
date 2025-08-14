@@ -71,6 +71,7 @@ export default function SettingScreen() {
           </View>
         </View>
       </View>
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 }

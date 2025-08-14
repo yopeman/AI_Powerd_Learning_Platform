@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { 
   View, Text, TouchableOpacity, 
   ActivityIndicator, ScrollView, StyleSheet 
@@ -6,6 +6,7 @@ import {
 import { get_all_fields, subscribe_field } from "../Utilities/operations";
 import {useTheme} from "../Utilities/ThemeContext";
 import {createStyles} from "../Style/SubscriptionStyle";
+import {useFocusEffect} from "@react-navigation/native";
 
 const SubscriptionScreen = ({ navigation }) => {
   const [fields, setFields] = useState([]);
@@ -14,16 +15,30 @@ const SubscriptionScreen = ({ navigation }) => {
   const [success, setSuccess] = useState(null);
   const {colors, textSize} = useTheme();
   const [styles, setStyles] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     setStyles(createStyles(colors, textSize));
   }, [colors, textSize, ]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshing(true);
+      return () => {
+        setRefreshing(false);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     const fetchFields = async () => {
       setLoading(true);
       try {
         const response = await get_all_fields();
+        if (!response) {
+          setError('Failed to fetch available fields');
+          return;
+        }
         setFields(response.data);
         setError(null);
         setSuccess(response.data.message);
@@ -35,7 +50,7 @@ const SubscriptionScreen = ({ navigation }) => {
       }
     };
     fetchFields();
-  }, []);
+  }, [refreshing]);
 
   const handleSubscribe = async (fieldId) => {
     setLoading(true);
@@ -43,7 +58,6 @@ const SubscriptionScreen = ({ navigation }) => {
       const result = await subscribe_field(fieldId);
       setSuccess(result.message);
       setError(null);
-      navigation.navigate('Home', { fId: result.data.id });
     } catch (err) {
       setError(err.response?.data?.message || err.message);
       setSuccess(null);
@@ -98,6 +112,7 @@ const SubscriptionScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       ))}
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 };

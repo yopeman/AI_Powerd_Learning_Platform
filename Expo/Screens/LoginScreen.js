@@ -35,19 +35,16 @@ export default function LoginScreen() {
 
     try {
       const response = await authApi.post('/login', formData);
+      if (!response.data) {
+        setMessage({text: 'Login failed', type: 'error'});
+        return;
+      }
       const {success, data, message: responseMessage} = response.data;
 
       if (success) {
         if (data.user.role === 'student') {
           await AsyncStorage.setItem('response', JSON.stringify(data));
-          // setIsAuth(true);
           signIn(data.token);
-          // navigation.dispatch(
-          //   CommonActions.reset({
-          //     index: 0,
-          //     routes: [{ name: 'MainApp' }],
-          //   })
-          // );
         } else {
           setMessage({text: 'You need student privileges to access this app', type: 'error'});
         }
@@ -131,6 +128,7 @@ export default function LoginScreen() {
           <Text style={styles.linkText}>Create Account</Text>
         </TouchableOpacity>
       </View>
+      <Text style={{ height: 50 }}></Text>
     </ScrollView>
   );
 }
