@@ -91,7 +91,7 @@ export default function GetCertificates() {
                           href={`${authApi.getUri()}/results/${result.id}/link`} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="certificate-link"
+                          className="action-btn view-btn certificate-link"
                         >
                           View Certificate
                         </a>

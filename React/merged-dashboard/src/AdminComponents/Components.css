@@ -667,7 +667,7 @@
   color: #374151;
 }
 
-.form-group input {
+.form-group input, textarea, select {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid #d1d5db;

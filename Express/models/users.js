@@ -24,7 +24,6 @@ const Users = sequelize.define('Users', {
     },
     phone: {
         type: DataTypes.STRING(21),
-        unique: true,
         set(value) {
             const cleaned = value.replace(/[^\d+]/g, '');
             if (cleaned.startsWith('+0')) {

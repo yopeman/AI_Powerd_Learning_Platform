@@ -88,6 +88,7 @@ export default function UpdateAmounts() {
                   step="0.01"
                   placeholder="Enter amount"
                   className="amount-input"
+                  style={{ marginLeft: 8 }}
                 />
               </div>
             </div>

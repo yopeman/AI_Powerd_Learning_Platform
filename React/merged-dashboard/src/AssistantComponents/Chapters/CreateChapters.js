@@ -118,6 +118,7 @@ const CreateChapters = () => {
       if (response.data.success) {
         setSuccess('Chapters created successfully!');
         handleReset();
+        setSuccess('Chapters created successfully!');
       } else {
         setError(response.data.message);
       }

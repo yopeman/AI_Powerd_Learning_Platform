@@ -15,7 +15,8 @@ import Results from './results.js';
 import bcrypt from 'bcrypt';
 
 (async () => {
-    await sequelize.sync();
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
+    await sequelize.sync({ force: false });
     await Users.sync();
     await Fields.sync();
     await Courses.sync();
@@ -29,6 +30,7 @@ import bcrypt from 'bcrypt';
     await Feedbacks.sync();
     await Amounts.sync();
     await Payments.sync();
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
     
     const adminUser = await Users.findOne({ where: { role: 'admin' } });
     if (!adminUser) {

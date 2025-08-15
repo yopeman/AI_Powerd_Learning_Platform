@@ -52,5 +52,15 @@ export const createStyles = (colors, textSize) => {
       color: colors.btnText,
       fontWeight: 'bold',
     },
+    scoreErrorText: {
+      color: colors.error,
+      textAlign: 'center',
+      marginVertical: 16,
+    },
+    scoreSuccessText: {
+      color: colors.success,
+      textAlign: 'center',
+      marginVertical: 16,
+    },
   });
 }

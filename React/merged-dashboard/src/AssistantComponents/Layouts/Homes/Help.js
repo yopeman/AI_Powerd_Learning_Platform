@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Help() {
   return (
@@ -31,7 +32,9 @@ export default function Help() {
           </div>
 
           <div className="button-group" style={{ marginTop: '30px' }}>
-            <button className="primary-btn">Contact Support</button>
+            <Link to="/home/about">
+              <button className="primary-btn">Contact Support</button>
+            </Link>
           </div>
         </div>
       </div>

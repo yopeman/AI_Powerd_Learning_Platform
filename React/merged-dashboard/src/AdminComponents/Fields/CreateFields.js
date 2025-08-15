@@ -45,6 +45,7 @@ export default function CreateFields() {
         });
       } else {
         setError(response.data.message);
+        setSuccess(null);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Creation failed');

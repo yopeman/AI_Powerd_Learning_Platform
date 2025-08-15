@@ -16,7 +16,7 @@ export default function Sidebars() {
     { path: '/users', label: 'Users', icon: <FiUsers size={20} /> },
     { path: '/fields', label: 'Fields', icon: <FiBook size={20} /> },
     { path: '/assistants', label: 'Assistants', icon: <FiHelpCircle size={20} /> },
-    { path: '/amounts', label: 'Payments', icon: <FiDollarSign size={20} /> },
+    { path: '/amounts', label: 'Amounts', icon: <FiDollarSign size={20} /> },
     { path: '/feedbacks', label: 'Feedbacks', icon: <FiMessageSquare size={20} /> },
     { path: '/certificates', label: 'Certificates', icon: <FiAward size={20} /> },
     { path: '/analytics', label: 'Analytics', icon: <FiBarChart2 size={20} /> },

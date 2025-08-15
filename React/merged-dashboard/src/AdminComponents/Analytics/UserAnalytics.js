@@ -35,10 +35,10 @@ export default function UserAnalytics() {
   if (!analytic) return <div className="error-message">Analytic not found</div>;
 
   const analyticsItems = [
-    { label: 'Total Users', value: analytic.totalUsers },
-    { label: 'Assistants', value: analytic.assistant },
-    { label: 'Students', value: analytic.student },
-    { label: 'Admins', value: analytic.admin },
+    { label: 'Total Users', value: analytic.totalUsers || 0 },
+    { label: 'Assistants', value: analytic.assistant || 0 },
+    { label: 'Students', value: analytic.student || 0 },
+    { label: 'Admins', value: analytic.admin || 0 },
     { label: 'Active Users', value: analytic.activeUsers || 'N/A' },
     { label: 'New Users (7d)', value: analytic.newUsers7d || 'N/A' }
   ];

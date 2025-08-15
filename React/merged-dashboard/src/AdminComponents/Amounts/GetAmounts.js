@@ -37,7 +37,7 @@ export default function GetAmounts() {
         ) : (
           <div className="amount-display">
             <div className="amount-value">${amount.toLocaleString()}</div>
-            <div className="amount-label">Available Balance</div>
+            <div className="amount-label">Current Fee Amounts</div>
           </div>
         )}
       </div>

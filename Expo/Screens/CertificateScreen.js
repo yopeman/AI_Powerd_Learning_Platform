@@ -3,7 +3,6 @@ import {
   View, Text, ScrollView, ActivityIndicator,
   StyleSheet, Button, Linking, TouchableOpacity, Alert
 } from 'react-native';
-import { /* preventScreenCapture, */ allowScreenCaptureAsync } from 'expo-screen-capture';
 import {
   get_certification_document,
   get_certification_questions,
@@ -94,6 +93,13 @@ const CertificateScreen = ({ navigation, route }) => {
     }
   };
 
+  const renderScoreMessage = (score) => {
+    if (score < 50) {
+        return <Text style={styles.scoreErrorText}> Sorry, your result is below 50%. Please try again.</Text>;
+    }
+    return <Text style={styles.scoreSuccessText}> Congratulations, you passed the exam. Now you can get your certificates!</Text>;
+  };
+
   if (loading) {
     return <ActivityIndicator size="large" color={colors.primary} />;
   }
@@ -148,7 +154,7 @@ const CertificateScreen = ({ navigation, route }) => {
           ))}
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>Submit</TouchableOpacity>
           {submitted && (
-            <Text style={styles.result}>Your Score: {score}%</Text>
+            <Text style={styles.result}>Your Score: {score}%. {renderScoreMessage(score)}</Text>
           )}
         </View>
         <Text style={{ height: 50 }}></Text>

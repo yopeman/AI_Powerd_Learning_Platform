@@ -80,7 +80,7 @@ export default function GetFields() {
                     <td className="actions-cell">
                       <Link 
                         to={`/fields/subscription/${field.id}`} 
-                        className="action-btn status-btn"
+                        className="action-btn secondary-btn"
                       >
                         Subscriptions
                       </Link>

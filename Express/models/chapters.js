@@ -24,7 +24,6 @@ const Chapters = sequelize.define('Chapters', {
     },
     order: {
         type: DataTypes.INTEGER,
-        unique: true
     }
 }, { 
     timestamps: true,
@@ -32,6 +31,9 @@ const Chapters = sequelize.define('Chapters', {
     uniqueKeys: {
         unq: {
             fields: ['courseId', 'title']
+        },
+        unq2: {
+            fields: ['courseId', 'order']
         }
     }
 });

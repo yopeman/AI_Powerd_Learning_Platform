@@ -29,7 +29,7 @@ export default function Headers() {
         </button>
         <Link to="/" className="logo">
           <h1>AI Powered Learning Platform</h1>
-          <p>(AiPLP)</p>
+          <p>Admin Dashboard Panel</p>
         </Link>
         <Link to="/profile" className="profile-link">
             <i className="fas fa-user-circle"></i> Profile

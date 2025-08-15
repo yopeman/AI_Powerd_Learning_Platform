@@ -112,12 +112,12 @@ export default function GetChapters() {
         <div className="table-container">
           <div className="card-header-row" style={{ marginBottom: '16px' }}>
             <h3 className="section-title">Chapter List</h3>
-            <Link 
+            {/* <Link 
               to={`/chapters/create/${courseId}`} 
               className="primary-btn"
             >
               + Create New Chapters
-            </Link>
+            </Link> */}
           </div>
           
           <table className="data-table">

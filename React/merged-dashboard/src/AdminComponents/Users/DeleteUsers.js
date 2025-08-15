@@ -10,9 +10,12 @@ export default function DeleteUsers() {
   const [success, setSuccess] = useState(null);
   const [user, setUser] = useState(null);
   const { id } = useParams();
+  let onece = true;
 
   useEffect(() => {
     const fetchAndDelete = async () => {
+      if (!onece) return;
+      onece = false;
       try {
         // First get user details
         const userResponse = await api.get(`/users/${id}`);
