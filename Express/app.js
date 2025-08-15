@@ -54,8 +54,9 @@ app.use(error_handler);
 
 // Sync the database and start the server
 sequelize.sync().then(() => {
-    app.listen(process.env.PORT, (err) => {
+    const PORT = process.env.PORT || 7000;
+    app.listen(PORT, (err) => {
         if (err) console.error(err);
-        console.log(`Server running at http://127.0.0.1:${process.env.PORT}`);
+        console.log(`Server running at http://127.0.0.1:${PORT}`);
     });
 }).catch(err => console.error(err));
