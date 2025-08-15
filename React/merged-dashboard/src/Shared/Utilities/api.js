@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const DOMAIN = process.env.DOMAIN || 'http://localhost:7000';
+const DOMAIN = 'http://localhost:7000';
 
 export const api = axios.create({
     baseURL: `${DOMAIN}/api/v1`,
