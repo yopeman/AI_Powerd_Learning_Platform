@@ -17,8 +17,7 @@
       "**/*"
     ],
     "android": {
-      "package": "com.yopeai.aiplp",
-      "versionCode": 1
+      "package": "com.yopeai.aiplp"
     },
     "ios": {
       "bundleIdentifier": "com.yopeai.aiplp",

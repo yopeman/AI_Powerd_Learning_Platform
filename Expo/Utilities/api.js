@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL =  'http://10.162.208.229:7000';
+const BASE_URL =  'https://ai-powered-learning-platform.onrender.com';
 
 const api = (bearer) => axios.create({
     baseURL: `${BASE_URL}/api/v1`,
