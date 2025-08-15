@@ -8,6 +8,7 @@ routes.get('/results/:resultId/link', controllers.redirect_certification_doc);
 routes.get('/field/:fieldId/questions', isStudent, controllers.certification_questions);
 routes.post('/results', isStudent, controllers.certification_result);
 routes.get('/results', isAdmin, controllers.certification_get_results);
+routes.get('/results/:resultId', isAdmin, controllers.certification_get_by_id);
 routes.delete('/:resultId', isAdmin, controllers.certification_delete);
 
 export default routes;

@@ -30,7 +30,10 @@ const Chapters = sequelize.define('Chapters', {
     tableName: 'Chapters',
     uniqueKeys: {
         unq: {
-            fields: ['courseId', 'title', 'order']
+            fields: ['courseId', 'title']
+        },
+        unq2: {
+            fields: ['courseId', 'order']
         }
     }
 });

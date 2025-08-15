@@ -60,6 +60,10 @@ async function certification_result(req, res, next) {
         return next(createError(400, 'Certification details are required.'));
     }
 
+    if (value < 50) {
+        return next(createError(400, 'Your result is below 50%. Please try again.'));
+    }
+
     try {
         const certification = await Certifications.findOne({ where: {fieldId} });
         if (!certification) {
@@ -99,6 +103,33 @@ async function certification_get_results(req, res, next) {
         return next(err);
     }
 }
+
+async function certification_get_by_id(req, res, next) {
+    try {
+        console.log(`\n\n\n\n\n\n00000000000000\n\n\n\n\n\n\n\n\n`);
+        
+        const { resultId } = req.params;
+
+        if (!resultId) {
+            return next(createError(400, 'Result ID is required.'));
+        }
+
+        const result = await Results.findByPk(resultId);
+
+        if (!result) {
+            return next(createError(404, 'Result not found.'));
+        }
+
+        res.status(200).json({
+            message: 'Result fetched successfully.',
+            data: result,
+            success: true,
+        });
+    } catch (err) {
+        return next(err);
+    }
+}
+
 async function certification_delete(req, res, next) {
     const { resultId } = req.params;
     if (!resultId) {
@@ -513,6 +544,7 @@ export {
     certification_questions,
     certification_result,
     certification_get_results,
+    certification_get_by_id,
     certification_delete,
     get_my_certificate_doc,
     redirect_certification_doc
