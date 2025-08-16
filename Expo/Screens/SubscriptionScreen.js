@@ -56,6 +56,10 @@ const SubscriptionScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const result = await subscribe_field(fieldId);
+      if (!result) {
+        setError('Failed field subscription');
+        return;
+      }
       setSuccess(result.message);
       setError(null);
     } catch (err) {

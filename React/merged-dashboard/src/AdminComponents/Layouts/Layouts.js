@@ -19,6 +19,7 @@ import GetFieldsById from '../Fields/GetFieldsById';
 import UpdateFields from '../Fields/UpdateFields';
 import DeleteFields from '../Fields/DeleteFields';
 import SubscriptionFields from '../Fields/SubscriptionFields';
+import DeleteSubscriptions from '../Fields/DeleteSubscriptions';
 
 import Assistants from '../Assistants/Assistants';
 import CreateAssistants from '../Assistants/CreateAssistants';
@@ -72,6 +73,7 @@ export default function Layouts() {
         <Route path='/fields/get' element={<GetFields />} />
         <Route path='/fields/get/:id' element={<GetFieldsById />} />
         <Route path='/fields/subscription/:id' element={<SubscriptionFields />} />
+        <Route path='/fields/subscription/delete/:id' element={<DeleteSubscriptions />} />
         <Route path='/fields/update/:id' element={<UpdateFields />} />
         <Route path='/fields/delete/:id' element={<DeleteFields />} />
 

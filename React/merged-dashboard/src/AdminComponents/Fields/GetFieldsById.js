@@ -31,6 +31,13 @@ export default function GetFieldsById() {
     );
   };
 
+  const getStatusBadge = (status) => {
+    switch(status) {
+      case 'active': return <span className="status-badge active">Active</span>;
+      default: return <span className="status-badge expired">Inactive</span>;
+    }
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -61,6 +68,7 @@ export default function GetFieldsById() {
             <div className="detail-grid">
               <DetailItem label="Duration" value={`${field.years_length} years`} />
               <DetailItem label="Free Topics" value={field.number_of_free_topics} />
+              <DetailItem label="Status" value={getStatusBadge(field.status)} />
               <DetailItem label="Created" value={new Date(field.createdAt).toLocaleDateString()} />
               <DetailItem label="Last Updated" value={new Date(field.updatedAt).toLocaleDateString()} />
             </div>

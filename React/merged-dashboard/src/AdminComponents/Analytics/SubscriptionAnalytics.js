@@ -36,8 +36,6 @@ export default function SubscriptionAnalytics() {
 
   const analyticsItems = [
     { label: 'Total Subscriptions', value: analytic.totalSubscriptions },
-    { label: 'Active Subscriptions', value: analytic.activeSubscriptions },
-    { label: 'Inactive Subscriptions', value: analytic.inactiveSubscriptions },
     { label: 'Avg Learned Topics', value: analytic.avgLearnedTopics },
     { label: 'Avg Subscription Duration', value: analytic.avgDuration || 'N/A' },
     { label: 'Renewal Rate', value: analytic.renewalRate || 'N/A' }

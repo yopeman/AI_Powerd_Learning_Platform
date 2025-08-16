@@ -7,7 +7,8 @@ export default function CreateFields() {
     description: '',
     years_length: 1,
     isFree: 'false',
-    number_of_free_topics: 0
+    number_of_free_topics: 0,
+    status: 'inactive'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,7 +42,8 @@ export default function CreateFields() {
           description: '',
           years_length: 1,
           isFree: 'false',
-          number_of_free_topics: 0
+          number_of_free_topics: 0,
+          status: 'inactive'
         });
       } else {
         setError(response.data.message);
@@ -129,8 +131,22 @@ export default function CreateFields() {
               onChange={handleChange}
               required
             >
-              <option value="true">Yes</option>
-              <option value="false">No</option>
+              <option value="true">Yes / Free Access</option>
+              <option value="false">No / Premium Access</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              required
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
           

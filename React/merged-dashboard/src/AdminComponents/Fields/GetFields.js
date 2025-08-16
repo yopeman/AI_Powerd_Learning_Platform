@@ -38,6 +38,13 @@ export default function GetFields() {
     );
   };
 
+  const getStatusBadge = (status) => {
+    switch(status) {
+      case 'active': return <span className="status-badge active">Active</span>;
+      default: return <span className="status-badge expired">Inactive</span>;
+    }
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -65,6 +72,7 @@ export default function GetFields() {
                 <tr>
                   <th>Title</th>
                   <th>Access</th>
+                  <th>Status</th>
                   <th>Duration</th>
                   <th>Free Topics</th>
                   <th>Actions</th>
@@ -75,6 +83,7 @@ export default function GetFields() {
                   <tr key={field.id}>
                     <td>{field.title}</td>
                     <td>{getAccessType(field.isFree)}</td>
+                    <td>{getStatusBadge(field.status)}</td>
                     <td>{field.years_length} years</td>
                     <td>{field.number_of_free_topics}</td>
                     <td className="actions-cell">

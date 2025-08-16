@@ -34,6 +34,7 @@ const handleApiResponse = async (apiCall, storageKey) => {
     await AsyncStorage.setItem(storageKey, JSON.stringify(data));
     return data;
   } catch (err) {
+    console.log(err);
     const cachedData = await AsyncStorage.getItem(storageKey);
     return cachedData ? JSON.parse(cachedData) : null; // Return null if there's no cached data
   }

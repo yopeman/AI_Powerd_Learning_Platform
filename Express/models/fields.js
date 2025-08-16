@@ -23,6 +23,11 @@ const Fields = sequelize.define('Fields', {
     },
     number_of_free_topics: {
         type: DataTypes.INTEGER,
+    },
+    status: {
+        type: DataTypes.ENUM('active', 'inactive'),
+        allowNull: false,
+        defaultValue: 'inactive'
     }
 }, { 
     timestamps: true,

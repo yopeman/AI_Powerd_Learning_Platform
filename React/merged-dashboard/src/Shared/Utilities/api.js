@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const DOMAIN = 'https://ai-powered-learning-platform.onrender.com';
+const DOMAIN = 'http://127.0.0.1:7000';
 
 export const api = axios.create({
     baseURL: `${DOMAIN}/api/v1`,

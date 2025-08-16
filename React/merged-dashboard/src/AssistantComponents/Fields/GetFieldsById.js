@@ -30,6 +30,13 @@ export default function GetFieldsById() {
     fetchField();
   }, [id]);
 
+  const getStatusBadge = (status) => {
+    switch(status) {
+      case 'active': return <span className="status-badge active">Active</span>;
+      default: return <span className="status-badge expired">Inactive</span>;
+    }
+  };
+
   if (loading) return (
     <div className="loader-container">
       <div className="loader"></div>
@@ -74,6 +81,12 @@ export default function GetFieldsById() {
         </div>
         
         <div className="detail-grid">
+            
+          <div className="detail-item">
+            <div className="detail-label">Status</div>
+            <div className="detail-value">{getStatusBadge(field.status)}</div>
+          </div>
+          
           <div className="detail-item">
             <div className="detail-label">Created At</div>
             <div className="detail-value">
@@ -87,11 +100,7 @@ export default function GetFieldsById() {
               {new Date(field.updatedAt).toLocaleString()}
             </div>
           </div>
-          
-          <div className="detail-item">
-            <div className="detail-label">Field ID</div>
-            <div className="detail-value">{field.id}</div>
-          </div>
+        
         </div>
       </div>
     </div>

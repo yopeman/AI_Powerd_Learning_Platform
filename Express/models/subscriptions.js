@@ -24,11 +24,6 @@ const Subscriptions = sequelize.define('Subscriptions', {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
     },
-    status: {
-        type: DataTypes.ENUM('active', 'inactive'),
-        allowNull: false,
-        defaultValue: 'active'
-    },
     learned_topic_numbers: {
         type: DataTypes.INTEGER,
         defaultValue: 0

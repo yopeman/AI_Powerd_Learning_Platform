@@ -2,32 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../Shared/Utilities/api";
 
-export default function DeleteFields() {
+export default function DeleteSubscriptions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [field, setField] = useState(null);
+  const [subscription, setSubscription] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchField = async () => {
+    const fetchSubscription = async () => {
       try {
-        const response = await api.get(`/fields/${id}`);
-        setField(response.data.data);
+        const response = await api.get(`/subscriptions/${id}`);
+        setSubscription(response.data.data);
       } catch (err) {
-        setError('Failed to load field details');
+        setError('Failed to load subscription details');
       }
     };
-    fetchField();
+    fetchSubscription();
   }, [id]);
 
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const response = await api.delete(`/fields/${id}`);
+      const response = await api.delete(`/subscriptions/${id}`);
       if (response.data.success) {
-        setSuccess('Field deleted successfully');
+        setSuccess('Subscription deleted successfully');
         setTimeout(() => navigate('/fields/get'), 1500);
       } else {
         setError(response.data.message);
@@ -42,7 +42,7 @@ export default function DeleteFields() {
   return (
     <div className="card">
       <div className="card-header">
-        <h2 className="card-title">Delete Field</h2>
+        <h2 className="card-title">Delete Subscription</h2>
       </div>
       
       <div className="card-body">
@@ -50,23 +50,15 @@ export default function DeleteFields() {
           <div className="error-message">{error}</div>
         ) : success ? (
           <div className="success-message">{success}</div>
-        ) : field ? (
+        ) : subscription ? (
           <div className="confirmation-dialog">
             <div className="confirmation-text">
-              Are you sure you want to delete this field?
+              Are you sure you want to delete this subscription record?
             </div>
-            
-            <div className="field-info">
-              <div className="field-title">{field.title}</div>
-              <div className="field-description">{field.description}</div>
-              <div className="field-meta">
-                <span>Duration: {field.years_length} years</span>
-                <span>Free Topics: {field.number_of_free_topics}</span>
-                <span>Access: {field.isFree ? 'Free' : 'Premium'}</span>
-                <span>Status: {field.status}</span>
-              </div>
+            <div className="certificate-info">
+              <p><strong>userId:</strong> {subscription.userId}</p>
+              <p><strong>fieldId:</strong> {subscription.fieldId}</p>
             </div>
-            
             <div className="button-group">
               <button 
                 onClick={handleDelete} 

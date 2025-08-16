@@ -16,7 +16,7 @@ export default function DeleteUsers() {
         const response = await api.get(`/users/${id}`);
         setUser(response.data.data);
       } catch (err) {
-        setError('Failed to load User details');
+        setError('Failed to load user details');
       }
     };
     fetchUser();

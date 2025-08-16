@@ -8,7 +8,8 @@ export default function UpdateFields() {
     description: '',
     years_length: 1,
     isFree: 'false',
-    number_of_free_topics: 0
+    number_of_free_topics: 0,
+    status: 'inactive'
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -142,20 +143,34 @@ export default function UpdateFields() {
               </div>
             </div>
             
-            <div className="form-group">
-              <label htmlFor="isFree">Free Access</label>
-              <select
-                id="isFree"
-                name="isFree"
-                value={formData.isFree}
-                onChange={handleChange}
-                required
-              >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-            
+          <div className="form-group">
+            <label htmlFor="isFree">Free Access</label>
+            <select
+              id="isFree"
+              name="isFree"
+              value={formData.isFree}
+              onChange={handleChange}
+              required
+            >
+              <option value="true">Yes / Free Access</option>
+              <option value="false">No / Premium Access</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              required
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          
             <div className="button-group">
               <button 
                 type="submit" 

@@ -37,15 +37,6 @@ export default function SubscriptionFields() {
   const nextPage = () => setPage(p => Math.min(p + 1, totalPages));
   const prevPage = () => setPage(p => Math.max(p - 1, 1));
 
-  const getStatusBadge = (status) => {
-    switch(status) {
-      case 'active': return <span className="status-badge active">Active</span>;
-      case 'expired': return <span className="status-badge expired">Expired</span>;
-      case 'pending': return <span className="status-badge pending">Pending</span>;
-      default: return <span className="status-badge">Unknown</span>;
-    }
-  };
-
   return (
     <div className="card">
       <div className="card-header">
@@ -82,7 +73,6 @@ export default function SubscriptionFields() {
                 <thead>
                   <tr>
                     <th>Student</th>
-                    <th>Status</th>
                     <th>Topics Learned</th>
                     <th>Actions</th>
                   </tr>
@@ -99,9 +89,6 @@ export default function SubscriptionFields() {
                           </div>
                         </td>
                         <td>
-                          {subscription ? getStatusBadge(subscription.status) : 'N/A'}
-                        </td>
-                        <td>
                           {subscription?.learned_topic_numbers || 0}
                         </td>
                         <td>
@@ -110,6 +97,13 @@ export default function SubscriptionFields() {
                             className="action-btn view-btn"
                           >
                             View Student
+                          </Link>
+                          <Link>&nbsp; &nbsp;</Link>
+                          <Link 
+                            to={`/fields/subscription/delete/${subscription.id}`} 
+                            className="action-btn delete-btn"
+                          >
+                            Delete
                           </Link>
                         </td>
                       </tr>

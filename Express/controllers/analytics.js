@@ -5,11 +5,14 @@ async function analytic_fields(req, res, next) {
     try {
         const totalFields = await Fields.count();
         const freeFields = await Fields.count({ where: { isFree: true } });
+        const activeFields = await Fields.count({ where: { status: 'active' } });
 
         res.json({
             message: 'Field analytic are fetched successfully',
             data: {
                 totalFields,
+                activeFields,
+                inactiveFields: totalFields - activeFields,
                 freeFields,
                 paidFields: totalFields - freeFields
             },
@@ -48,10 +51,6 @@ async function analytic_topics(req, res, next) {
 async function analytic_subscriptions(req, res, next) {
     try {
         const totalSubscriptions = await Subscriptions.count();
-        const activeSubscriptions = await Subscriptions.count({
-            where: { status: 'active' }
-        });
-
         const avgLearnedTopics = await Subscriptions.findAll({
             attributes: [[sequelize.fn('AVG', sequelize.col('learned_topic_numbers')), 'avgLearned']],
             raw: true
@@ -61,8 +60,6 @@ async function analytic_subscriptions(req, res, next) {
             message: 'Subscription analytic are fetched successfully',
             data: {
                 totalSubscriptions,
-                activeSubscriptions,
-                inactiveSubscriptions: totalSubscriptions - activeSubscriptions,
                 avgLearnedTopics: parseFloat(avgLearnedTopics[0].avgLearned || 0).toFixed(2)
             },
             success: true

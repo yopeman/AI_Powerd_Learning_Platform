@@ -3,15 +3,23 @@ import { createError } from '../utilities/error-handlers.js';
 
 async function field_get(req, res, next) {
     try {
-        const all_fields = await Fields.findAll();
-        if (!all_fields.length) {
+        const whereClose = {};
+
+        // Adjust query based on user role
+        if (req.user.role === 'student') {
+            whereClose.status = 'active';
+        }
+
+        const allFields = await Fields.findAll({ where: whereClose });
+
+        if (allFields.length === 0) {
             return next(createError(404, 'No fields found.'));
         }
 
         res.status(200).json({
             message: 'Fields fetched successfully.',
             success: true,
-            data: all_fields
+            data: allFields
         });
     } catch (err) {
         return next(err);
@@ -41,7 +49,7 @@ async function field_get_by_id(req, res, next) {
 }
 
 async function field_create(req, res, next) {
-    const { title, description, years_length, isFree, number_of_free_topics } = req.body;
+    const { title, description, years_length, isFree, number_of_free_topics, status } = req.body;
 
     if (!title || !years_length || !number_of_free_topics) {
         return next(createError(400, 'All required fields must be fulfilled.'));
@@ -53,7 +61,8 @@ async function field_create(req, res, next) {
             description,
             years_length,
             isFree,
-            number_of_free_topics
+            number_of_free_topics,
+            status
         });
 
         res.status(201).json({

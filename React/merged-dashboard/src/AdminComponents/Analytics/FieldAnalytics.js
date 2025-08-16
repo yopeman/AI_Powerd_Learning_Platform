@@ -36,6 +36,8 @@ export default function FieldAnalytics() {
 
   const analyticsItems = [
     { label: 'Total Fields', value: analytic.totalFields },
+    { label: 'Active Fields', value: analytic.activeFields },
+    { label: 'Inactive Fields', value: analytic.inactiveFields },
     { label: 'Free Fields', value: analytic.freeFields },
     { label: 'Paid Fields', value: analytic.paidFields },
     { label: 'Most Popular Field', value: analytic.mostPopularField || 'N/A' },

@@ -42,6 +42,22 @@ export default function GetMyFields() {
     }
   };
 
+  const getAccessType = (isFree) => {
+    return isFree ? (
+      <span className="free-access">Free</span>
+    ) : (
+      <span className="premium-access">Premium</span>
+    );
+  };
+
+  const getStatusBadge = (status) => {
+    switch(status) {
+      case 'active': return <span className="status-badge active">Active</span>;
+      default: return <span className="status-badge expired">Inactive</span>;
+    }
+  };
+
+
   if (loading) return (
     <div className="loader-container">
       <div className="loader"></div>
@@ -81,24 +97,21 @@ export default function GetMyFields() {
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Access</th>
+                <th>Status</th>
                 <th>Duration</th>
                 <th>Free Topics</th>
-                <th>Access</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {paginatedFields().map((field) => (
                 <tr key={field.id}>
-                  <td>{field.title}</td>
-                  <td>{field.years_length} year(s)</td>
-                  <td>{field.number_of_free_topics}</td>
-                  <td>
-                    {field.isFree ? 
-                      <span className="free-access">Free</span> : 
-                      <span className="premium-access">Premium</span>
-                    }
-                  </td>
+                    <td>{field.title}</td>
+                    <td>{getAccessType(field.isFree)}</td>
+                    <td>{getStatusBadge(field.status)}</td>
+                    <td>{field.years_length} years</td>
+                    <td>{field.number_of_free_topics}</td>
                   <td className="actions-cell">
                     <Link 
                       to={`/fields/get/${field.id}`} 
